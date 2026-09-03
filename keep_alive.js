@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
                 @keyframes slideInFade {
                     from {
                         opacity: 0;
-                        transform: translateY(25px);
+                        transform: translateY(8px);
                     }
                     to {
                         opacity: 1;
@@ -207,7 +207,7 @@ app.get('/', (req, res) => {
                     height: 2px;
                     background: linear-gradient(90deg, transparent, var(--gold), var(--gold-bright), var(--gold), transparent);
                     background-size: 200% 100%;
-                    animation: goldShine 6s linear infinite;
+                    animation: goldShine 8s linear infinite;
                 }
 
                 header h1 {
@@ -767,10 +767,10 @@ app.get('/', (req, res) => {
                     pointer-events: none;
                 }
 
-                .card:nth-child(1) { animation-delay: 0.05s; }
-                .card:nth-child(2) { animation-delay: 0.1s; }
-                .card:nth-child(3) { animation-delay: 0.15s; }
-                .card:nth-child(4) { animation-delay: 0.2s; }
+                .card:nth-child(1) { animation-delay: 0s; }
+                .card:nth-child(2) { animation-delay: 0s; }
+                .card:nth-child(3) { animation-delay: 0s; }
+                .card:nth-child(4) { animation-delay: 0s; }
 
                 .card:hover {
                     border-color: var(--line-strong);
@@ -1194,31 +1194,51 @@ app.get('/', (req, res) => {
 
                 /* ====== AI CHAT PANEL ====== */
                 .aichat-card {
-                    min-height: 540px;
+                    min-height: 600px;
                     display: flex;
                     flex-direction: column;
+                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.98), rgba(13, 15, 20, 0.98));
                 }
 
                 .aichat-header {
                     display: flex;
                     align-items: center;
-                    gap: 14px;
-                    padding-bottom: 16px;
-                    border-bottom: 1px solid var(--line);
+                    gap: 16px;
+                    padding: 18px 20px;
+                    border-radius: 12px;
+                    border: 1px solid var(--gold-dim);
+                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.12), rgba(184, 115, 51, 0.02));
                     margin-bottom: 18px;
+                    box-shadow: 0 0 24px rgba(184, 115, 51, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .aichat-header::before {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background: radial-gradient(circle at 20% 50%, rgba(184, 115, 51, 0.08), transparent 60%);
+                    pointer-events: none;
                 }
 
                 .aichat-avatar {
-                    width: 48px;
-                    height: 48px;
+                    width: 56px;
+                    height: 56px;
                     display: grid;
                     place-items: center;
                     border-radius: 50%;
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.25), rgba(184, 115, 51, 0.05));
-                    border: 1px solid var(--gold-dim);
-                    font-size: 1.5rem;
-                    box-shadow: 0 0 18px rgba(184, 115, 51, 0.25);
-                    animation: floatGlow 3s ease-in-out infinite;
+                    background: linear-gradient(135deg, #d68a3f, #8a5524);
+                    border: 2px solid var(--gold-bright);
+                    font-size: 1.7rem;
+                    box-shadow: 0 0 24px rgba(184, 115, 51, 0.5), 0 0 0 4px rgba(184, 115, 51, 0.15);
+                    position: relative;
+                    z-index: 1;
+                }
+
+                .aichat-title {
+                    position: relative;
+                    z-index: 1;
                 }
 
                 .aichat-title h3 {
@@ -1226,13 +1246,19 @@ app.get('/', (req, res) => {
                     border: none;
                     padding: 0;
                     color: var(--text-bright);
-                    font-size: 1.05rem;
+                    font-size: 1.15rem;
+                    font-weight: 800;
+                    background: linear-gradient(135deg, #f8f9fb 0%, #d68a3f 100%);
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
                 }
 
                 .aichat-title p {
-                    color: var(--text-sub);
+                    color: var(--text-soft);
                     font-size: 0.78rem;
                     margin: 0;
+                    font-weight: 500;
                 }
 
                 .aichat-status {
@@ -1240,9 +1266,15 @@ app.get('/', (req, res) => {
                     display: flex;
                     align-items: center;
                     gap: 8px;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    background: rgba(74, 222, 128, 0.08);
+                    border: 1px solid rgba(74, 222, 128, 0.3);
                     color: var(--success);
-                    font-size: 0.8rem;
-                    font-weight: 600;
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                    position: relative;
+                    z-index: 1;
                 }
 
                 .aichat-status .status-dot {
@@ -1252,95 +1284,104 @@ app.get('/', (req, res) => {
 
                 .aichat-messages {
                     flex: 1;
-                    min-height: 360px;
-                    max-height: 520px;
+                    min-height: 420px;
+                    max-height: 560px;
                     overflow-y: auto;
-                    padding: 14px;
+                    padding: 18px;
                     border: 1px solid var(--line);
-                    background: rgba(0, 0, 0, 0.25);
-                    border-radius: 10px;
+                    background:
+                        linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
+                        radial-gradient(ellipse at top, rgba(184, 115, 51, 0.04), transparent 60%);
+                    border-radius: 14px;
                     display: flex;
                     flex-direction: column;
-                    gap: 12px;
+                    gap: 14px;
+                    box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.3);
                 }
 
                 .aichat-msg {
                     display: flex;
-                    gap: 10px;
+                    gap: 12px;
                     align-items: flex-start;
-                    animation: slideInFade 0.35s ease-out both;
                 }
 
                 .aichat-msg .msg-avatar {
-                    flex: 0 0 32px;
-                    width: 32px;
-                    height: 32px;
+                    flex: 0 0 36px;
+                    width: 36px;
+                    height: 36px;
                     display: grid;
                     place-items: center;
                     border-radius: 50%;
-                    font-size: 0.95rem;
-                    font-weight: 700;
+                    font-size: 1rem;
+                    font-weight: 800;
                 }
 
                 .aichat-msg.user .msg-avatar {
-                    background: rgba(184, 115, 51, 0.18);
+                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.3), rgba(184, 115, 51, 0.1));
                     color: var(--gold-bright);
                     border: 1px solid var(--gold-dim);
+                    box-shadow: 0 0 10px rgba(184, 115, 51, 0.2);
                 }
 
                 .aichat-msg.ai .msg-avatar {
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.3), rgba(184, 115, 51, 0.08));
-                    color: var(--gold);
-                    border: 1px solid var(--gold-dim);
-                    box-shadow: 0 0 10px rgba(184, 115, 51, 0.3);
+                    background: linear-gradient(135deg, #d68a3f, #8a5524);
+                    color: #fff;
+                    border: 1px solid var(--gold-bright);
+                    box-shadow: 0 0 14px rgba(184, 115, 51, 0.4);
                 }
 
                 .aichat-msg .msg-body {
                     flex: 1;
                     min-width: 0;
-                    padding: 10px 14px;
-                    border-radius: 10px;
+                    padding: 12px 16px;
+                    border-radius: 12px;
                     border: 1px solid var(--line);
                     background: var(--bg-card);
                     color: var(--text-bright);
-                    font-size: 0.92rem;
-                    line-height: 1.65;
+                    font-size: 0.94rem;
+                    line-height: 1.7;
                     word-break: break-word;
                     white-space: pre-wrap;
                 }
 
                 .aichat-msg.user .msg-body {
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.12), rgba(184, 115, 51, 0.02));
+                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.15), rgba(184, 115, 51, 0.03));
                     border-color: var(--gold-dim);
+                    box-shadow: 0 4px 14px rgba(184, 115, 51, 0.08);
                 }
 
                 .aichat-msg.ai .msg-body {
-                    box-shadow: 0 0 14px rgba(184, 115, 51, 0.08);
+                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.95), rgba(17, 20, 26, 0.95));
+                    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
                 }
 
                 .aichat-msg .msg-name {
                     display: block;
-                    font-size: 0.7rem;
+                    font-size: 0.72rem;
                     color: var(--text-sub);
                     font-weight: 700;
-                    margin-bottom: 4px;
-                    letter-spacing: 0.3px;
+                    margin-bottom: 6px;
+                    letter-spacing: 0.4px;
+                    text-transform: uppercase;
                 }
+
+                .aichat-msg.user .msg-name { color: var(--gold-bright); }
+                .aichat-msg.ai .msg-name { color: var(--gold); }
 
                 .aichat-empty {
                     flex: 1;
                     display: grid;
                     place-items: center;
                     text-align: center;
-                    color: var(--text-sub);
-                    font-size: 0.92rem;
-                    padding: 30px;
+                    color: var(--text-soft);
+                    font-size: 0.95rem;
+                    padding: 40px 20px;
                 }
 
                 .aichat-empty .big-emoji {
-                    font-size: 3rem;
-                    margin-bottom: 12px;
-                    filter: drop-shadow(0 0 12px rgba(184, 115, 51, 0.5));
+                    font-size: 3.5rem;
+                    margin-bottom: 14px;
+                    filter: drop-shadow(0 0 18px rgba(184, 115, 51, 0.5));
                 }
 
                 .aichat-typing {
@@ -1351,8 +1392,8 @@ app.get('/', (req, res) => {
                 }
 
                 .aichat-typing span {
-                    width: 7px;
-                    height: 7px;
+                    width: 8px;
+                    height: 8px;
                     border-radius: 50%;
                     background: var(--gold);
                     display: inline-block;
@@ -1371,26 +1412,62 @@ app.get('/', (req, res) => {
                     display: flex;
                     gap: 10px;
                     margin-top: 14px;
+                    padding: 6px;
+                    background: var(--bg-card);
+                    border: 1px solid var(--line);
+                    border-radius: 14px;
+                    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                }
+
+                .aichat-input:focus-within {
+                    border-color: var(--gold);
+                    box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.12), 0 0 24px rgba(184, 115, 51, 0.15);
                 }
 
                 .aichat-input input {
                     flex: 1;
                     min-width: 0;
+                    background: transparent;
+                    border: none;
+                    padding: 12px 14px;
+                    color: var(--text-bright);
+                    outline: none;
+                    font-size: 0.95rem;
+                    font-family: inherit;
+                }
+
+                .aichat-input input:focus {
+                    box-shadow: none;
+                    background: transparent;
+                }
+
+                .aichat-input input::placeholder {
+                    color: var(--text-sub);
                 }
 
                 .aichat-input .btn {
                     flex: 0 0 auto;
-                    min-width: 130px;
+                    min-width: 120px;
+                    border-radius: 10px;
+                    margin: 0;
                 }
 
-                .aichat-suggestions {
+                .aichat-quickbar {
                     display: flex;
-                    flex-wrap: wrap;
+                    align-items: center;
                     gap: 8px;
                     margin-top: 12px;
+                    flex-wrap: wrap;
                 }
 
-                .aichat-suggestions button {
+                .aichat-quickbar-label {
+                    color: var(--text-sub);
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    margin-left: 4px;
+                }
+
+                .aichat-quickbar button {
                     padding: 7px 14px;
                     background: rgba(184, 115, 51, 0.06);
                     border: 1px solid var(--gold-dim);
@@ -1399,10 +1476,10 @@ app.get('/', (req, res) => {
                     font: inherit;
                     font-size: 0.78rem;
                     cursor: pointer;
-                    transition: all 0.4s ease;
+                    transition: all 0.25s ease;
                 }
 
-                .aichat-suggestions button:hover {
+                .aichat-quickbar button:hover {
                     background: rgba(184, 115, 51, 0.18);
                     color: var(--gold-bright);
                     border-color: var(--gold);
@@ -1413,6 +1490,19 @@ app.get('/', (req, res) => {
                     color: var(--danger);
                     background: var(--danger-dim);
                     border: 1px solid rgba(248, 113, 113, 0.3);
+                }
+
+                .aichat-msg .msg-model {
+                    display: inline-block;
+                    margin-right: 6px;
+                    padding: 1px 7px;
+                    background: rgba(184, 115, 51, 0.12);
+                    border: 1px solid var(--gold-dim);
+                    border-radius: 10px;
+                    font-size: 0.65rem;
+                    color: var(--gold);
+                    font-weight: 600;
+                    vertical-align: middle;
                 }
 
                 @media (max-width: 768px) {
@@ -1705,8 +1795,8 @@ app.get('/', (req, res) => {
                         <div class="aichat-header">
                             <div class="aichat-avatar">🤖</div>
                             <div class="aichat-title">
-                                <h3>مساعد الذكاء الاصطناعي</h3>
-                                <p>اختبر خدمة الذكاء الاصطناعي المجانية مباشرة</p>
+                                <h3>المساعد الذكي</h3>
+                                <p>نماذج ذكاء اصطناعي متعددة • رد فوري بالعربية</p>
                             </div>
                             <div class="aichat-status" id="aichatStatus">
                                 <span class="status-dot active"></span>
@@ -1718,20 +1808,21 @@ app.get('/', (req, res) => {
                             <div class="aichat-empty" id="aichatEmpty">
                                 <div class="big-emoji">✨</div>
                                 <div>ابدأ محادثة جديدة مع الذكاء الاصطناعي</div>
-                                <div style="margin-top:6px; font-size:0.8rem; color:var(--text-sub);">اكتب سؤالك في الأسفل أو اختر اقتراحاً</div>
+                                <div style="margin-top:6px; font-size:0.8rem; color:var(--text-sub);">اكتب سؤالك في الأسفل</div>
                             </div>
                         </div>
 
-                        <div class="aichat-suggestions">
-                            <button type="button" onclick="useAIPrompt('عرفني عن نفسك باختصار')">👋 عرفني عن نفسك</button>
-                            <button type="button" onclick="useAIPrompt('اكتب لي كود JavaScript بسيط يطبع من 1 إلى 10')">💻 مثال كود</button>
-                            <button type="button" onclick="useAIPrompt('ما هي أحدث تقنيات الويب في 2026؟')">🌐 تقنيات الويب</button>
-                            <button type="button" onclick="useAIPrompt('اكتب لي قصيدة قصيرة عن التكنولوجيا')">📝 قصيدة قصيرة</button>
-                            <button type="button" onclick="useAIPrompt('اشرح لي مفهوم API ببساطة')">📖 شرح API</button>
+                        <div class="aichat-quickbar">
+                            <span class="aichat-quickbar-label">اختصارات:</span>
+                            <button type="button" onclick="aichatClear()">🗑️ مسح المحادثة</button>
+                            <button type="button" onclick="useAIPrompt('لخص هذا النص: ')">📋 تلخيص</button>
+                            <button type="button" onclick="useAIPrompt('ترجم للإنجليزية: ')">🌐 ترجمة</button>
+                            <button type="button" onclick="useAIPrompt('اشرح ببساطة: ')">💡 شرح</button>
+                            <button type="button" onclick="useAIPrompt('حلل هذا الكود: ')">💻 تحليل كود</button>
                         </div>
 
                         <form class="aichat-input" id="aichatForm" onsubmit="event.preventDefault(); sendAIMessage();">
-                            <input type="text" id="aichatInput" placeholder="اكتب رسالتك هنا... (Enter للإرسال)" autocomplete="off" maxlength="2000" required>
+                            <input type="text" id="aichatInput" placeholder="اكتب رسالتك هنا... (Enter للإرسال)" autocomplete="off" maxlength="4000" required>
                             <button type="submit" class="btn btn-warning" id="aichatSendBtn">🚀 إرسال</button>
                         </form>
                     </div>
@@ -2049,6 +2140,16 @@ app.get('/', (req, res) => {
                     const input = document.getElementById('aichatInput');
                     input.value = text;
                     input.focus();
+                }
+
+                function aichatClear() {
+                    const wrap = document.getElementById('aichatMessages');
+                    wrap.innerHTML = '';
+                    const empty = document.createElement('div');
+                    empty.className = 'aichat-empty';
+                    empty.id = 'aichatEmpty';
+                    empty.innerHTML = '<div class="big-emoji">✨</div><div>المحادثة فارغة</div><div style="margin-top:6px; font-size:0.8rem; color:var(--text-sub);">اكتب سؤالك في الأسفل</div>';
+                    wrap.appendChild(empty);
                 }
 
                 function aichatAppendMessage(role, text) {
