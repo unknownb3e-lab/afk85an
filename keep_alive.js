@@ -102,29 +102,35 @@ app.get('/', (req, res) => {
                 }
 
                 :root {
-                    --bg-deep: #050608;
-                    --bg-base: #0a0c10;
-                    --bg-surface: #11141a;
-                    --bg-card: #161a22;
-                    --bg-card-hover: #1c2129;
-                    --bg-elevated: #1f242d;
-                    --line-soft: rgba(255, 255, 255, 0.04);
-                    --line: rgba(255, 255, 255, 0.07);
-                    --line-strong: rgba(255, 255, 255, 0.12);
-                    --text-bright: #f8f9fb;
-                    --text-main: #e8eaed;
-                    --text-soft: #a8afb7;
-                    --text-sub: #6b7280;
-                    --accent-rgb: 184, 115, 51;
-                    --gold: #b87333;
-                    --gold-bright: #d68a3f;
-                    --gold-dim: #8a5524;
-                    --gold-glow: rgba(184, 115, 51, 0.35);
-                    --gold-glow-strong: rgba(184, 115, 51, 0.6);
-                    --success: #4ade80;
-                    --success-dim: rgba(74, 222, 128, 0.15);
+                    --bg-deep: #05070a;
+                    --bg-base: #0a0d12;
+                    --bg-surface: #11151c;
+                    --bg-card: #161b24;
+                    --bg-card-hover: #1c222c;
+                    --bg-elevated: #212833;
+                    --line-soft: rgba(255, 255, 255, 0.03);
+                    --line: rgba(255, 255, 255, 0.06);
+                    --line-strong: rgba(255, 255, 255, 0.1);
+                    --text-bright: #f5f7fa;
+                    --text-main: #e2e6ec;
+                    --text-soft: #9ba3b1;
+                    --text-sub: #5d6675;
+
+                    --neon-rgb: 200, 220, 255;
+                    --neon: #c8dcff;
+                    --neon-bright: #ffffff;
+                    --neon-dim: rgba(200, 220, 255, 0.15);
+                    --neon-glow: rgba(200, 220, 255, 0.35);
+                    --neon-glow-strong: rgba(200, 220, 255, 0.6);
+
+                    --accent: #4a6fa5;
+                    --accent-dim: rgba(74, 111, 165, 0.15);
+                    --accent-soft: rgba(74, 111, 165, 0.3);
+
+                    --success: #6ee7a8;
+                    --success-dim: rgba(110, 231, 168, 0.12);
                     --danger: #f87171;
-                    --danger-dim: rgba(248, 113, 113, 0.15);
+                    --danger-dim: rgba(248, 113, 113, 0.12);
                 }
 
                 * {
@@ -135,15 +141,15 @@ app.get('/', (req, res) => {
                 }
 
                 body {
-                    --account-accent: var(--gold);
-                    --account-accent-soft: var(--gold-glow);
+                    --account-accent: var(--neon);
+                    --account-accent-soft: var(--neon-dim);
                     background-color: var(--bg-deep);
                     background-image:
-                        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(184, 115, 51, 0.08), transparent 60%),
-                        radial-gradient(ellipse 60% 50% at 90% 100%, rgba(184, 115, 51, 0.05), transparent 60%),
-                        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
-                    background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+                        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(200, 220, 255, 0.04), transparent 60%),
+                        radial-gradient(ellipse 60% 50% at 90% 100%, rgba(200, 220, 255, 0.025), transparent 60%),
+                        linear-gradient(rgba(255,255,255,0.008) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.008) 1px, transparent 1px);
+                    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
                     color: var(--text-main);
                     min-height: 100vh;
                     padding: 32px 18px 60px;
@@ -159,8 +165,9 @@ app.get('/', (req, res) => {
                     left: 0;
                     right: 0;
                     height: 1px;
-                    background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+                    background: linear-gradient(90deg, transparent, var(--neon) 50%, transparent);
                     z-index: 100;
+                    box-shadow: 0 0 12px var(--neon-glow);
                 }
 
                 .container {
@@ -176,13 +183,13 @@ app.get('/', (req, res) => {
                     padding: 32px 36px;
                     border: 1px solid var(--line);
                     background:
-                        linear-gradient(135deg, rgba(184, 115, 51, 0.04), transparent 50%),
-                        rgba(17, 20, 26, 0.85);
+                        linear-gradient(135deg, rgba(200, 220, 255, 0.025), transparent 50%),
+                        rgba(17, 21, 28, 0.85);
                     backdrop-filter: blur(12px);
                     -webkit-backdrop-filter: blur(12px);
                     box-shadow:
                         0 20px 60px rgba(0, 0, 0, 0.5),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+                        inset 0 1px 0 rgba(255, 255, 255, 0.02);
                     position: relative;
                     overflow: hidden;
                 }
@@ -194,7 +201,7 @@ app.get('/', (req, res) => {
                     right: 0;
                     width: 200px;
                     height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(184, 115, 51, 0.08));
+                    background: linear-gradient(90deg, transparent, rgba(200, 220, 255, 0.04));
                     pointer-events: none;
                 }
 
@@ -205,7 +212,7 @@ app.get('/', (req, res) => {
                     left: 0;
                     right: 0;
                     height: 2px;
-                    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-bright), var(--gold), transparent);
+                    background: linear-gradient(90deg, transparent, var(--neon), var(--neon-bright), var(--neon), transparent);
                     background-size: 200% 100%;
                     animation: goldShine 8s linear infinite;
                 }
@@ -215,14 +222,14 @@ app.get('/', (req, res) => {
                     font-weight: 900;
                     font-family: 'Orbitron', monospace;
                     letter-spacing: 2px;
-                    background: linear-gradient(135deg, var(--text-bright) 0%, var(--gold) 50%, var(--gold-bright) 100%);
+                    background: linear-gradient(135deg, var(--text-bright) 0%, var(--neon) 50%, var(--neon-bright) 100%);
                     background-size: 200% 200%;
                     -webkit-background-clip: text;
                     background-clip: text;
                     -webkit-text-fill-color: transparent;
                     color: transparent;
                     margin-bottom: 8px;
-                    text-shadow: 0 0 30px rgba(184, 115, 51, 0.3);
+                    text-shadow: 0 0 30px rgba(200, 220, 255, 0.2);
                 }
 
                 header p {
@@ -332,7 +339,7 @@ app.get('/', (req, res) => {
                     left: 50%;
                     width: 0;
                     height: 0;
-                    background: radial-gradient(circle, rgba(184, 115, 51, 0.3), transparent 70%);
+                    background: radial-gradient(circle, rgba(200, 220, 255, 0.15), transparent 70%);
                     border-radius: 50%;
                     transform: translate(-50%, -50%);
                     transition: width 0.5s ease, height 0.5s ease;
@@ -341,8 +348,8 @@ app.get('/', (req, res) => {
 
                 .dashboard-nav button:hover {
                     color: var(--text-bright);
-                    background: rgba(255, 255, 255, 0.04);
-                    border-color: rgba(255, 255, 255, 0.08);
+                    background: rgba(255, 255, 255, 0.03);
+                    border-color: rgba(255, 255, 255, 0.06);
                 }
 
                 .dashboard-nav button:hover::before {
@@ -351,13 +358,13 @@ app.get('/', (req, res) => {
                 }
 
                 .dashboard-nav button.active {
-                    color: var(--gold-bright);
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.18), rgba(184, 115, 51, 0.06));
-                    border-color: var(--gold-dim);
+                    color: var(--neon-bright);
+                    background: linear-gradient(135deg, rgba(200, 220, 255, 0.12), rgba(200, 220, 255, 0.03));
+                    border-color: rgba(200, 220, 255, 0.2);
                     box-shadow:
-                        0 6px 20px rgba(184, 115, 51, 0.25),
-                        inset 0 1px 0 rgba(184, 115, 51, 0.15),
-                        inset 0 0 0 1px rgba(184, 115, 51, 0.1);
+                        0 6px 20px rgba(200, 220, 255, 0.15),
+                        inset 0 1px 0 rgba(200, 220, 255, 0.08),
+                        inset 0 0 0 1px rgba(200, 220, 255, 0.06);
                 }
 
                 .dashboard-nav button.active::after {
@@ -368,11 +375,11 @@ app.get('/', (req, res) => {
                     transform: translateX(-50%);
                     width: 30%;
                     height: 2px;
-                    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-bright), var(--gold), transparent);
+                    background: linear-gradient(90deg, transparent, var(--neon), var(--neon-bright), var(--neon), transparent);
                     background-size: 200% 100%;
                     border-radius: 2px;
                     animation: goldShine 2s linear infinite;
-                    box-shadow: 0 0 8px var(--gold);
+                    box-shadow: 0 0 8px var(--neon);
                 }
 
                 .dashboard-panel {
@@ -735,11 +742,11 @@ app.get('/', (req, res) => {
 
 
                 .card {
-                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.95), rgba(17, 20, 26, 0.95));
+                    background: linear-gradient(180deg, rgba(22, 27, 36, 0.95), rgba(17, 21, 28, 0.95));
                     border: 1px solid var(--line);
                     border-radius: 10px;
                     padding: 26px;
-                    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.025);
+                    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.02);
                     animation: slideInFade 0.7s ease-out both;
                     position: relative;
                     transition: all 0.5s ease;
@@ -753,7 +760,7 @@ app.get('/', (req, res) => {
                     left: 0;
                     right: 0;
                     height: 2px;
-                    background: linear-gradient(90deg, transparent, var(--account-accent), transparent);
+                    background: linear-gradient(90deg, transparent, var(--neon), transparent);
                 }
 
                 .card::after {
@@ -763,7 +770,7 @@ app.get('/', (req, res) => {
                     right: 0;
                     width: 80px;
                     height: 80px;
-                    background: radial-gradient(circle, var(--account-accent-soft), transparent 70%);
+                    background: radial-gradient(circle, var(--neon-dim), transparent 70%);
                     pointer-events: none;
                 }
 
@@ -774,7 +781,7 @@ app.get('/', (req, res) => {
 
                 .card:hover {
                     border-color: var(--line-strong);
-                    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+                    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.03);
                     transform: translateY(-2px);
                 }
 
