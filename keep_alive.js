@@ -1,4 +1,5 @@
 const express = require('express');
+const { GoogleGenAI } = require('@google/genai');
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -2045,8 +2046,6 @@ app.get('/', (req, res) => {
                 }
 
                 // ====== AI CHAT ======
-                const aichatHistory = [];
-
                 function useAIPrompt(text) {
                     const input = document.getElementById('aichatInput');
                     input.value = text;
@@ -2140,65 +2139,30 @@ app.get('/', (req, res) => {
                     btn.disabled = true;
                     btn.textContent = '⏳ جاري الإرسال...';
 
-                    const aiContent = aichatAppendMessage('ai', '');
-                    let streamed = '';
+                    aichatAppendTyping();
 
                     try {
                         const res = await fetch('/api/ai-chat', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ message: text, history: aichatHistory })
+                            body: JSON.stringify({ message: text })
                         });
+                        const data = await res.json().catch(() => ({}));
+                        aichatRemoveTyping();
 
-                        if (!res.ok) {
-                            const data = await res.json().catch(() => ({}));
-                            const errMsg = (data && data.message) || ('HTTP ' + res.status);
-                            aiContent.textContent = '❌ ' + errMsg;
-                            aiContent.parentNode.classList.add('aichat-error');
-                            aichatSetStatus(false);
-                            return;
-                        }
-
-                        const reader = res.body.getReader();
-                        const decoder = new TextDecoder();
-                        let buffer = '';
-
-                        while (true) {
-                            const { done, value } = await reader.read();
-                            if (done) break;
-                            buffer += decoder.decode(value, { stream: true });
-                            const lines = buffer.split('\n\n');
-                            buffer = lines.pop() || '';
-                            for (const line of lines) {
-                                if (!line.startsWith('data: ')) continue;
-                                let data;
-                                try { data = JSON.parse(line.slice(6)); } catch (_) { continue; }
-                                if (data && data.error) {
-                                    aiContent.textContent = '❌ ' + data.error;
-                                    aiContent.parentNode.classList.add('aichat-error');
-                                    aichatSetStatus(false);
-                                }
-                                if (data && data.delta) {
-                                    streamed += data.delta;
-                                    aiContent.textContent = streamed;
-                                    const wrap = document.getElementById('aichatMessages');
-                                    if (wrap) wrap.scrollTop = wrap.scrollHeight;
-                                }
-                            }
-                        }
-
-                        if (!streamed) {
-                            aiContent.textContent = '⚠️ لم يصل رد من النموذج';
-                            aiContent.parentNode.classList.add('aichat-error');
-                            aichatSetStatus(false);
-                        } else {
-                            aichatHistory.push({ role: 'user', content: text });
-                            aichatHistory.push({ role: 'assistant', content: streamed });
+                        if (data && data.success && data.reply) {
+                            aichatAppendMessage('ai', data.reply);
                             aichatSetStatus(true);
+                        } else {
+                            const errMsg = (data && data.message) || 'حدث خطأ غير متوقع';
+                            const c = aichatAppendMessage('ai', '❌ ' + errMsg);
+                            if (c) c.parentNode.classList.add('aichat-error');
+                            aichatSetStatus(false);
                         }
                     } catch (err) {
-                        aiContent.textContent = '❌ تعذر الاتصال بالخادم: ' + (err && err.message ? err.message : 'network error');
-                        aiContent.parentNode.classList.add('aichat-error');
+                        aichatRemoveTyping();
+                        const c = aichatAppendMessage('ai', '❌ تعذر الاتصال بالخادم: ' + (err && err.message ? err.message : 'network error'));
+                        if (c) c.parentNode.classList.add('aichat-error');
                         aichatSetStatus(false);
                     } finally {
                         input.disabled = false;
@@ -2286,82 +2250,97 @@ app.get('/', (req, res) => {
     `);
 });
 
-// ====== AI CHAT API (Proxy to MCP server) ======
-const MCP_SERVER_URL = process.env.MCP_SERVER_URL || '';
-const MCP_SECRET_KEY = process.env.MCP_SECRET_KEY || '';
+// ====== AI CHAT API (Google Gemini - direct, all in one process) ======
+let genaiClient = null;
+function getGenAIClient() {
+    if (genaiClient) return genaiClient;
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return null;
+    genaiClient = new GoogleGenAI({ apiKey });
+    return genaiClient;
+}
+
+const AI_TEXT_MODEL = process.env.GEMINI_TEXT_MODEL || 'gemini-2.5-flash';
+
+async function callGeminiWithRetry(genai, contents, systemInstruction, maxAttempts = 3) {
+    let lastErr = null;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+            const response = await genai.models.generateContent({
+                model: AI_TEXT_MODEL,
+                contents,
+                config: {
+                    systemInstruction,
+                    temperature: 0.7,
+                    topK: 40,
+                    topP: 0.95,
+                    maxOutputTokens: 2048
+                }
+            });
+            return response;
+        } catch (err) {
+            lastErr = err;
+            const status = err && err.status ? err.status : (err && err.response && err.response.status);
+            const retriable = status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+            if (!retriable || attempt === maxAttempts) break;
+            await new Promise(r => setTimeout(r, 1500 * attempt));
+        }
+    }
+    throw lastErr;
+}
 
 app.post('/api/ai-chat', async (req, res) => {
     try {
         const message = String((req.body && req.body.message) || '').trim();
-        const history = Array.isArray(req.body && req.body.history) ? req.body.history : [];
-        const systemPrompt = String((req.body && req.body.systemPrompt) || 'أنت مساعد ذكي ودود اسمه "المساعد الذكي". أجب بالعربية بشكل مختصر وواضح، واستخدم تنسيق Markdown عند الحاجة.');
-
         if (!message) {
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(400).end(JSON.stringify({ success: false, message: '⚠️ اكتب رسالة أولاً' }));
+            return res.json({ success: false, message: '⚠️ اكتب رسالة أولاً' });
         }
         if (message.length > 4000) {
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(400).end(JSON.stringify({ success: false, message: '⚠️ الرسالة طويلة جداً (الحد 4000 حرف)' }));
-        }
-        if (!MCP_SERVER_URL || !MCP_SECRET_KEY) {
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(500).end(JSON.stringify({ success: false, message: '⚠️ MCP_SERVER_URL أو MCP_SECRET_KEY غير معيّن في متغيرات البيئة' }));
+            return res.json({ success: false, message: '⚠️ الرسالة طويلة جداً (الحد 4000 حرف)' });
         }
 
-        const messages = [...history, { role: 'user', content: message }];
-
-        const upstream = await fetch(MCP_SERVER_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-mcp-secret': MCP_SECRET_KEY
-            },
-            body: JSON.stringify({ messages, systemPrompt })
-        });
-
-        if (!upstream.ok || !upstream.body) {
-            const errText = await upstream.text().catch(() => '');
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(502).end(JSON.stringify({ success: false, message: '⚠️ MCP server غير متاح: ' + (errText || ('HTTP ' + upstream.status)) }));
+        const genai = getGenAIClient();
+        if (!genai) {
+            return res.json({ success: false, message: '⚠️ لم يتم تعيين GEMINI_API_KEY في متغيرات البيئة' });
         }
 
-        res.setHeader('Content-Type', 'text/event-stream');
-        res.setHeader('Cache-Control', 'no-cache');
-        res.setHeader('Connection', 'keep-alive');
-        res.setHeader('X-Accel-Buffering', 'no');
-        res.flushHeaders();
+        const systemInstruction = 'أنت مساعد ذكي ودود اسمه "المساعد الذكي". أجب بالعربية بشكل مختصر وواضح، واستخدم تنسيق Markdown عند الحاجة.';
 
-        const reader = upstream.body.getReader();
-        const decoder = new TextDecoder();
-        let fullReply = '';
-        let hasError = false;
+        const contents = [
+            { role: 'user', parts: [{ text: message }] }
+        ];
 
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            const chunk = decoder.decode(value, { stream: true });
-            res.write(chunk);
-            for (const line of chunk.split('\n')) {
-                if (!line.startsWith('data: ')) continue;
-                try {
-                    const data = JSON.parse(line.slice(6));
-                    if (data && data.delta) fullReply += data.delta;
-                    if (data && data.error) hasError = true;
-                } catch (_) {}
+        const response = await callGeminiWithRetry(genai, contents, systemInstruction, 3);
+
+        let reply = '';
+        try {
+            if (response && typeof response.text === 'function') {
+                reply = String(response.text() || '').trim();
+            } else if (response && response.text) {
+                reply = String(response.text).trim();
+            } else if (response && response.candidates && response.candidates[0]) {
+                const parts = response.candidates[0].content && response.candidates[0].content.parts;
+                if (Array.isArray(parts)) {
+                    reply = parts.map(p => (p && p.text) ? p.text : '').join('').trim();
+                }
             }
+        } catch (_) {}
+
+        if (!reply) {
+            return res.json({ success: false, message: '⚠️ لم يصل رد من النموذج' });
         }
 
-        res.write(`data: ${JSON.stringify({ fullReply, hasError, done: true })}\n\n`);
-        res.end();
+        res.json({ success: true, reply });
     } catch (err) {
+        const status = err && err.status ? err.status : (err && err.response && err.response.status);
         const msg = err && err.message ? err.message : 'unknown';
-        if (!res.headersSent) {
-            res.setHeader('Content-Type', 'application/json');
-            res.status(500).end(JSON.stringify({ success: false, message: '⚠️ خطأ في الاتصال بـ MCP: ' + msg }));
-        } else {
-            try { res.write(`data: ${JSON.stringify({ error: msg })}\n\n`); res.end(); } catch (_) {}
+        if (status === 429) {
+            return res.json({ success: false, message: '⚠️ النموذج مزدحم، حاول بعد لحظات' });
         }
+        if (status === 401 || status === 403) {
+            return res.json({ success: false, message: '⚠️ مفتاح Gemini غير صالح أو محظور' });
+        }
+        res.json({ success: false, message: '⚠️ خدمة الذكاء الاصطناعي غير متاحة (' + msg + ')' });
     }
 });
 
