@@ -2138,7 +2138,8 @@ app.get('/', (req, res) => {
                     btn.disabled = true;
                     btn.textContent = '⏳ جاري الإرسال...';
 
-                    aichatAppendTyping();
+                    let aiContent = null;
+                    let streamed = '';
 
                     try {
                         const res = await fetch('/api/ai-chat', {
@@ -2146,22 +2147,75 @@ app.get('/', (req, res) => {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ message: text })
                         });
-                        const data = await res.json().catch(() => ({}));
-                        aichatRemoveTyping();
 
-                        if (data && data.success && data.reply) {
-                            aichatAppendMessage('ai', data.reply);
-                            aichatSetStatus(true);
-                        } else {
-                            const errMsg = (data && data.message) || 'حدث خطأ غير متوقع';
-                            const c = aichatAppendMessage('ai', '❌ ' + errMsg);
-                            if (c) c.parentNode.classList.add('aichat-error');
+                        const ct = (res.headers.get('content-type') || '').toLowerCase();
+
+                        if (ct.includes('application/json')) {
+                            const data = await res.json().catch(() => ({}));
+                            if (data && data.success && data.reply) {
+                                aichatAppendMessage('ai', data.reply);
+                                aichatSetStatus(true);
+                            } else {
+                                const errMsg = (data && data.message) || 'حدث خطأ غير متوقع';
+                                aichatAppendMessage('ai', '❌ ' + errMsg);
+                                aichatSetStatus(false);
+                            }
+                            return;
+                        }
+
+                        if (!res.ok) {
+                            aichatAppendMessage('ai', '❌ خطأ HTTP ' + res.status);
+                            aichatSetStatus(false);
+                            return;
+                        }
+
+                        aiContent = aichatAppendMessage('ai', '');
+
+                        const reader = res.body.getReader();
+                        const decoder = new TextDecoder();
+                        let buffer = '';
+                        let gotError = false;
+
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) break;
+                            buffer += decoder.decode(value, { stream: true });
+                            const lines = buffer.split('\n\n');
+                            buffer = lines.pop() || '';
+                            for (const line of lines) {
+                                if (!line.startsWith('data: ')) continue;
+                                let data;
+                                try { data = JSON.parse(line.slice(6)); } catch (_) { continue; }
+                                if (data && data.error) {
+                                    gotError = true;
+                                    aiContent.textContent = '❌ ' + data.error;
+                                    aiContent.parentNode.classList.add('aichat-error');
+                                    aichatSetStatus(false);
+                                }
+                                if (data && data.delta) {
+                                    streamed += data.delta;
+                                    aiContent.textContent = streamed;
+                                    const wrap = document.getElementById('aichatMessages');
+                                    if (wrap) wrap.scrollTop = wrap.scrollHeight;
+                                }
+                                if (data && data.done && !gotError) {
+                                    aichatSetStatus(true);
+                                }
+                            }
+                        }
+
+                        if (!streamed && !gotError) {
+                            aiContent.textContent = '⚠️ لم يصل رد من النموذج';
+                            aiContent.parentNode.classList.add('aichat-error');
                             aichatSetStatus(false);
                         }
                     } catch (err) {
-                        aichatRemoveTyping();
-                        const c = aichatAppendMessage('ai', '❌ تعذر الاتصال بالخادم: ' + (err && err.message ? err.message : 'network error'));
-                        if (c) c.parentNode.classList.add('aichat-error');
+                        if (aiContent) {
+                            aiContent.textContent = '❌ تعذر الاتصال بالخادم: ' + (err && err.message ? err.message : 'network error');
+                            aiContent.parentNode.classList.add('aichat-error');
+                        } else {
+                            aichatAppendMessage('ai', '❌ تعذر الاتصال بالخادم: ' + (err && err.message ? err.message : 'network error'));
+                        }
                         aichatSetStatus(false);
                     } finally {
                         input.disabled = false;
