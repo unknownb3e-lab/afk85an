@@ -55,46 +55,15 @@ app.get('/', (req, res) => {
                     to { opacity: 1; }
                 }
 
-                @keyframes slideInFade {
-                    from {
-                        opacity: 0;
-                        transform: translateY(8px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-
-                @keyframes goldPulse {
-                    0%, 100% { box-shadow: 0 0 4px rgba(184, 115, 51, 0.2), inset 0 0 0 1px rgba(184, 115, 51, 0.3); }
-                    50% { box-shadow: 0 0 18px rgba(184, 115, 51, 0.55), inset 0 0 0 1px rgba(184, 115, 51, 0.5); }
-                }
-
-                @keyframes shimmer {
-                    0% { background-position: -200% 0; }
-                    100% { background-position: 200% 0; }
-                }
-
-                @keyframes borderGlow {
-                    0%, 100% { border-color: rgba(184, 115, 51, 0.4); }
-                    50% { border-color: rgba(184, 115, 51, 0.9); }
-                }
-
-                @keyframes goldShine {
-                    0% { background-position: 0% 50%; }
-                    100% { background-position: 200% 50%; }
-                }
-
-                @keyframes floatGlow {
-                    0%, 100% { transform: translateY(0); box-shadow: 0 0 8px rgba(184, 115, 51, 0.3); }
-                    50% { transform: translateY(-2px); box-shadow: 0 0 18px rgba(184, 115, 51, 0.5); }
-                }
-
                 @keyframes pulseAnim {
                     0% { background-color: rgba(255, 255, 255, 0.03); }
                     50% { background-color: rgba(255, 255, 255, 0.12); }
                     100% { background-color: rgba(255, 255, 255, 0.03); }
+                }
+
+                @keyframes aichatDot {
+                    0%, 60%, 100% { opacity: 0.4; }
+                    30% { opacity: 1; }
                 }
 
                 .pulse-anim {
@@ -144,12 +113,6 @@ app.get('/', (req, res) => {
                     --account-accent: var(--neon);
                     --account-accent-soft: var(--neon-dim);
                     background-color: var(--bg-deep);
-                    background-image:
-                        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(200, 220, 255, 0.04), transparent 60%),
-                        radial-gradient(ellipse 60% 50% at 90% 100%, rgba(200, 220, 255, 0.025), transparent 60%),
-                        linear-gradient(rgba(255,255,255,0.008) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.008) 1px, transparent 1px);
-                    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
                     color: var(--text-main);
                     min-height: 100vh;
                     padding: 32px 18px 60px;
@@ -180,56 +143,19 @@ app.get('/', (req, res) => {
                 header {
                     text-align: right;
                     margin-bottom: 32px;
-                    padding: 32px 36px;
+                    padding: 28px 32px;
                     border: 1px solid var(--line);
-                    background:
-                        linear-gradient(135deg, rgba(200, 220, 255, 0.025), transparent 50%),
-                        rgba(17, 21, 28, 0.85);
-                    backdrop-filter: blur(12px);
-                    -webkit-backdrop-filter: blur(12px);
-                    box-shadow:
-                        0 20px 60px rgba(0, 0, 0, 0.5),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.02);
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                header::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    width: 200px;
-                    height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(200, 220, 255, 0.04));
-                    pointer-events: none;
-                }
-
-                header::after {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 2px;
-                    background: linear-gradient(90deg, transparent, var(--neon), var(--neon-bright), var(--neon), transparent);
-                    background-size: 200% 100%;
-                    animation: goldShine 8s linear infinite;
+                    background: rgba(17, 21, 28, 0.6);
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
                 }
 
                 header h1 {
-                    font-size: 2.4rem;
+                    font-size: 2.2rem;
                     font-weight: 900;
                     font-family: 'Orbitron', monospace;
                     letter-spacing: 2px;
-                    background: linear-gradient(135deg, var(--text-bright) 0%, var(--neon) 50%, var(--neon-bright) 100%);
-                    background-size: 200% 200%;
-                    -webkit-background-clip: text;
-                    background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    color: transparent;
+                    color: var(--text-bright);
                     margin-bottom: 8px;
-                    text-shadow: 0 0 30px rgba(200, 220, 255, 0.2);
                 }
 
                 header p {
@@ -263,8 +189,8 @@ app.get('/', (req, res) => {
                 }
 
                 .status-indicator:hover {
-                    border-color: var(--gold-dim);
-                    background: rgba(184, 115, 51, 0.05);
+                    border-color: var(--line-strong);
+                    background: var(--bg-card-hover);
                 }
 
                 .status-dot {
@@ -309,7 +235,7 @@ app.get('/', (req, res) => {
                     left: 10%;
                     right: 10%;
                     height: 1px;
-                    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+                    background: linear-gradient(90deg, transparent, var(--neon), transparent);
                     opacity: 0.6;
                 }
 
@@ -375,16 +301,13 @@ app.get('/', (req, res) => {
                     transform: translateX(-50%);
                     width: 30%;
                     height: 2px;
-                    background: linear-gradient(90deg, transparent, var(--neon), var(--neon-bright), var(--neon), transparent);
-                    background-size: 200% 100%;
+                    background: var(--neon);
                     border-radius: 2px;
-                    animation: goldShine 2s linear infinite;
-                    box-shadow: 0 0 8px var(--neon);
+                    box-shadow: 0 0 6px var(--neon-dim);
                 }
 
                 .dashboard-panel {
                     display: none;
-                    animation: slideInFade 0.4s ease-out both;
                 }
 
                 .dashboard-panel.active {
@@ -409,17 +332,14 @@ app.get('/', (req, res) => {
                     padding: 15px 16px;
                     border: 1px solid var(--line);
                     border-right: 3px solid var(--line-strong);
-                    background: rgba(255, 255, 255, 0.015);
+                    background: var(--bg-card);
                     border-radius: 6px;
-                    transition: all 0.5s ease;
+                    transition: border-color 0.2s ease, background 0.2s ease;
                 }
 
                 .task-row:hover {
-                    background: rgba(184, 115, 51, 0.04);
-                    border-color: var(--gold-dim);
-                    border-right-color: var(--gold);
-                    transform: translateX(-3px);
-                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+                    background: var(--bg-card-hover);
+                    border-color: var(--line-strong);
                 }
 
                 .task-name {
@@ -437,13 +357,12 @@ app.get('/', (req, res) => {
                     width: 32px;
                     height: 32px;
                     flex: 0 0 32px;
-                    border: 1px solid var(--gold-dim);
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.2), rgba(184, 115, 51, 0.05));
-                    color: var(--gold);
+                    border: 1px solid var(--accent-soft);
+                    background: var(--accent-dim);
+                    color: var(--neon);
                     font-size: 0.8rem;
                     font-weight: 800;
                     border-radius: 6px;
-                    box-shadow: 0 0 8px rgba(184, 115, 51, 0.15);
                 }
 
                 .task-state {
@@ -466,20 +385,18 @@ app.get('/', (req, res) => {
                 }
 
                 .planb-card {
-                    border: 1px solid var(--gold-dim);
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.05), rgba(17, 20, 26, 0.6));
-                    animation: slideInFade 0.6s ease-out both, goldPulse 3s ease-in-out infinite;
+                    border: 1px solid var(--accent-soft);
+                    background: var(--bg-card);
                 }
 
                 .planb-card h3 {
-                    color: var(--gold-bright);
-                    border-bottom-color: rgba(184, 115, 51, 0.3);
+                    color: var(--neon);
+                    border-bottom-color: var(--line);
                 }
 
                 .planb-card .task-row {
-                    border-color: rgba(184, 115, 51, 0.3);
-                    border-right-color: var(--gold);
-                    background: rgba(184, 115, 51, 0.04);
+                    border-color: var(--line);
+                    border-right-color: var(--accent);
                 }
 
                 .timing-group {
@@ -491,8 +408,8 @@ app.get('/', (req, res) => {
                 }
 
                 .timing-group:hover {
-                    border-color: var(--gold-dim);
-                    background: rgba(184, 115, 51, 0.025);
+                    border-color: var(--line-strong);
+                    background: var(--bg-card-hover);
                 }
 
                 .timing-group label {
@@ -538,7 +455,7 @@ app.get('/', (req, res) => {
                     margin-bottom: 4px;
                     border-bottom: 0;
                     padding-bottom: 0;
-                    color: var(--gold-bright);
+                    color: var(--neon);
                 }
 
                 .target-title p {
@@ -548,9 +465,9 @@ app.get('/', (req, res) => {
 
                 .target-count {
                     padding: 7px 12px;
-                    border: 1px solid var(--gold-dim);
-                    background: rgba(184, 115, 51, 0.1);
-                    color: var(--gold);
+                    border: 1px solid var(--accent-soft);
+                    background: var(--accent-dim);
+                    color: var(--neon);
                     font-size: 0.78rem;
                     font-weight: 700;
                     white-space: nowrap;
@@ -604,7 +521,7 @@ app.get('/', (req, res) => {
                     color: var(--text-bright);
                     font-size: 0.85rem;
                     border-radius: 6px;
-                    transition: all 0.5s ease;
+                    transition: border-color 0.2s ease, background 0.2s ease;
                 }
 
                 .target-chip:hover {
@@ -613,10 +530,9 @@ app.get('/', (req, res) => {
                 }
 
                 .target-chip.is-primary {
-                    border-color: var(--gold-dim);
-                    border-right-color: var(--gold);
-                    background: linear-gradient(90deg, rgba(184, 115, 51, 0.18), rgba(184, 115, 51, 0.04));
-                    box-shadow: 0 0 12px rgba(184, 115, 51, 0.15);
+                    border-color: var(--accent-soft);
+                    border-right-color: var(--neon);
+                    background: var(--accent-dim);
                 }
 
                 .target-manager.random-mode .target-chip.is-primary {
@@ -636,7 +552,7 @@ app.get('/', (req, res) => {
                 }
 
                 .target-chip .primary-label {
-                    color: var(--gold);
+                    color: var(--neon);
                     font-size: 0.75rem;
                     font-weight: 700;
                 }
@@ -651,13 +567,12 @@ app.get('/', (req, res) => {
                     font-size: 0.75rem;
                     font-weight: 600;
                     border-radius: 4px;
-                    transition: all 0.4s ease;
+                    transition: border-color 0.2s ease, color 0.2s ease;
                 }
 
                 .target-chip button:hover {
                     color: var(--text-bright);
-                    border-color: var(--gold);
-                    background: rgba(184, 115, 51, 0.1);
+                    border-color: var(--neon-dim);
                 }
 
                 .monitor-channel-item {
@@ -678,9 +593,7 @@ app.get('/', (req, res) => {
 
                 .monitor-channel-item:hover {
                     background: var(--bg-card-hover);
-                    border-right-color: var(--gold);
-                    border-color: var(--gold-dim);
-                    transform: translateX(-3px);
+                    border-color: var(--line-strong);
                 }
 
                 .monitor-channel-item .ch-name {
@@ -689,9 +602,9 @@ app.get('/', (req, res) => {
 
                 .monitor-channel-item .ch-count {
                     padding: 4px 10px;
-                    background: rgba(184, 115, 51, 0.15);
-                    color: var(--gold);
-                    border: 1px solid var(--gold-dim);
+                    background: var(--accent-dim);
+                    color: var(--neon);
+                    border: 1px solid var(--accent-soft);
                     border-radius: 4px;
                     font-size: 0.78rem;
                     font-weight: 700;
@@ -721,8 +634,8 @@ app.get('/', (req, res) => {
                 }
 
                 .monitor-message:hover {
-                    border-color: var(--gold-dim);
-                    background: rgba(184, 115, 51, 0.04);
+                    border-color: var(--line-strong);
+                    background: var(--bg-card-hover);
                 }
 
                 .monitor-message .msg-time {
@@ -742,47 +655,18 @@ app.get('/', (req, res) => {
 
 
                 .card {
-                    background: linear-gradient(180deg, rgba(22, 27, 36, 0.95), rgba(17, 21, 28, 0.95));
+                    background: var(--bg-card);
                     border: 1px solid var(--line);
                     border-radius: 10px;
-                    padding: 26px;
-                    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.02);
-                    animation: slideInFade 0.7s ease-out both;
-                    position: relative;
-                    transition: all 0.5s ease;
-                    overflow: hidden;
+                    padding: 24px;
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+                    transition: border-color 0.2s ease;
                 }
-
-                .card::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 2px;
-                    background: linear-gradient(90deg, transparent, var(--neon), transparent);
-                }
-
-                .card::after {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    width: 80px;
-                    height: 80px;
-                    background: radial-gradient(circle, var(--neon-dim), transparent 70%);
-                    pointer-events: none;
-                }
-
-                .card:nth-child(1) { animation-delay: 0s; }
-                .card:nth-child(2) { animation-delay: 0s; }
-                .card:nth-child(3) { animation-delay: 0s; }
-                .card:nth-child(4) { animation-delay: 0s; }
 
                 .card:hover {
                     border-color: var(--line-strong);
-                    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+                    transform: none;
                 }
 
                 .card h3 {
@@ -812,10 +696,9 @@ app.get('/', (req, res) => {
                 }
 
                 .status-on {
-                    background: rgba(184, 115, 51, 0.1);
-                    color: var(--gold-bright);
-                    border-color: rgba(184, 115, 51, 0.4);
-                    box-shadow: 0 0 10px rgba(184, 115, 51, 0.15);
+                    background: var(--success-dim);
+                    color: var(--success);
+                    border-color: rgba(110, 231, 168, 0.35);
                 }
 
                 .status-off {
@@ -838,14 +721,13 @@ app.get('/', (req, res) => {
                 }
 
                 .stat-item:hover {
-                    background: rgba(184, 115, 51, 0.04);
-                    padding-left: 16px;
+                    background: var(--bg-card-hover);
                     color: var(--text-bright);
                 }
 
                 .stat-item span:last-child {
                     font-weight: 700;
-                    color: var(--gold);
+                    color: var(--neon);
                     font-family: 'Orbitron', monospace;
                     letter-spacing: 0.5px;
                 }
@@ -925,14 +807,14 @@ app.get('/', (req, res) => {
                 }
 
                 .btn-warning {
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.18), rgba(184, 115, 51, 0.06));
-                    border-color: var(--gold-dim);
-                    color: var(--gold);
+                    background: var(--accent-dim);
+                    border-color: var(--accent-soft);
+                    color: var(--neon);
                 }
 
                 .btn-warning:hover {
-                    box-shadow: 0 8px 24px rgba(184, 115, 51, 0.25);
-                    border-color: var(--gold);
+                    background: var(--accent-soft);
+                    border-color: var(--neon-dim);
                 }
 
                 form {
@@ -977,8 +859,7 @@ app.get('/', (req, res) => {
                 }
 
                 textarea:focus {
-                    border-color: var(--gold);
-                    box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.15);
+                    border-color: var(--neon-dim);
                     background: rgba(0, 0, 0, 0.5);
                 }
 
@@ -1005,8 +886,7 @@ app.get('/', (req, res) => {
 
                 input:focus,
                 select:focus {
-                    border-color: var(--gold);
-                    box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.15);
+                    border-color: var(--neon-dim);
                     background: rgba(0, 0, 0, 0.5);
                 }
 
@@ -1068,7 +948,7 @@ app.get('/', (req, res) => {
                 }
 
                 .num-wrap .num-spin button:hover {
-                    color: var(--gold);
+                    color: var(--neon);
                     opacity: 1;
                 }
 
@@ -1107,7 +987,7 @@ app.get('/', (req, res) => {
 
                 .accordion-item:hover {
                     border-color: var(--line-strong);
-                    background: rgba(184, 115, 51, 0.04);
+                    background: var(--bg-card-hover);
                 }
 
                 .accordion-header {
@@ -1123,13 +1003,13 @@ app.get('/', (req, res) => {
                 }
 
                 .accordion-header:hover {
-                    color: var(--gold);
+                    color: var(--neon);
                 }
 
                 .accordion-icon {
                     font-size: 1.2rem;
-                    transition: transform 0.5s ease;
-                    color: var(--gold);
+                    transition: transform 0.3s ease;
+                    color: var(--neon);
                 }
 
                 .accordion-item.active .accordion-icon {
@@ -1156,7 +1036,6 @@ app.get('/', (req, res) => {
 
                 .panel {
                     display: none;
-                    animation: slideInFade 0.55s ease-out both;
                 }
 
                 .panel.active {
@@ -1175,19 +1054,17 @@ app.get('/', (req, res) => {
                 }
 
                 ::-webkit-scrollbar-thumb {
-                    background: linear-gradient(180deg, var(--gold-dim), rgba(184, 115, 51, 0.6));
+                    background: var(--accent-soft);
                     border-radius: 5px;
                     border: 2px solid var(--bg-deep);
-                    transition: all 0.4s ease;
                 }
 
                 ::-webkit-scrollbar-thumb:hover {
-                    background: linear-gradient(180deg, var(--gold), var(--gold-bright));
-                    box-shadow: 0 0 10px rgba(184, 115, 51, 0.4);
+                    background: var(--neon-dim);
                 }
 
                 ::-webkit-scrollbar-thumb:active {
-                    background: var(--gold-bright);
+                    background: var(--neon);
                 }
 
                 ::-webkit-scrollbar-corner {
@@ -1196,74 +1073,52 @@ app.get('/', (req, res) => {
 
                 * {
                     scrollbar-width: thin;
-                    scrollbar-color: var(--gold-dim) var(--bg-deep);
+                    scrollbar-color: var(--accent-soft) var(--bg-deep);
                 }
 
-                /* ====== AI CHAT PANEL ====== */
+                /* ====== AI CHAT PANEL (Gemini-style) ====== */
                 .aichat-card {
                     min-height: 600px;
                     display: flex;
                     flex-direction: column;
-                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.98), rgba(13, 15, 20, 0.98));
+                    background: var(--bg-surface);
                 }
 
                 .aichat-header {
                     display: flex;
                     align-items: center;
-                    gap: 16px;
-                    padding: 18px 20px;
-                    border-radius: 12px;
-                    border: 1px solid var(--gold-dim);
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.12), rgba(184, 115, 51, 0.02));
-                    margin-bottom: 18px;
-                    box-shadow: 0 0 24px rgba(184, 115, 51, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .aichat-header::before {
-                    content: '';
-                    position: absolute;
-                    inset: 0;
-                    background: radial-gradient(circle at 20% 50%, rgba(184, 115, 51, 0.08), transparent 60%);
-                    pointer-events: none;
+                    gap: 14px;
+                    padding: 14px 18px;
+                    border-radius: 10px;
+                    border: 1px solid var(--line);
+                    background: var(--bg-card);
+                    margin-bottom: 14px;
                 }
 
                 .aichat-avatar {
-                    width: 56px;
-                    height: 56px;
+                    width: 40px;
+                    height: 40px;
                     display: grid;
                     place-items: center;
                     border-radius: 50%;
-                    background: linear-gradient(135deg, #d68a3f, #8a5524);
-                    border: 2px solid var(--gold-bright);
-                    font-size: 1.7rem;
-                    box-shadow: 0 0 24px rgba(184, 115, 51, 0.5), 0 0 0 4px rgba(184, 115, 51, 0.15);
-                    position: relative;
-                    z-index: 1;
-                }
-
-                .aichat-title {
-                    position: relative;
-                    z-index: 1;
+                    background: linear-gradient(135deg, var(--accent), #2a4a78);
+                    border: 1px solid var(--neon-dim);
+                    font-size: 1.2rem;
+                    color: var(--neon);
                 }
 
                 .aichat-title h3 {
-                    margin: 0 0 4px 0;
+                    margin: 0 0 2px 0;
                     border: none;
                     padding: 0;
                     color: var(--text-bright);
-                    font-size: 1.15rem;
-                    font-weight: 800;
-                    background: linear-gradient(135deg, #f8f9fb 0%, #d68a3f 100%);
-                    -webkit-background-clip: text;
-                    background-clip: text;
-                    -webkit-text-fill-color: transparent;
+                    font-size: 1.05rem;
+                    font-weight: 700;
                 }
 
                 .aichat-title p {
                     color: var(--text-soft);
-                    font-size: 0.78rem;
+                    font-size: 0.75rem;
                     margin: 0;
                     font-weight: 500;
                 }
@@ -1272,108 +1127,109 @@ app.get('/', (req, res) => {
                     margin-right: auto;
                     display: flex;
                     align-items: center;
-                    gap: 8px;
-                    padding: 6px 12px;
-                    border-radius: 20px;
-                    background: rgba(74, 222, 128, 0.08);
-                    border: 1px solid rgba(74, 222, 128, 0.3);
+                    gap: 6px;
+                    padding: 4px 10px;
+                    border-radius: 14px;
+                    background: var(--success-dim);
+                    border: 1px solid rgba(110, 231, 168, 0.25);
                     color: var(--success);
-                    font-size: 0.78rem;
-                    font-weight: 700;
-                    position: relative;
-                    z-index: 1;
+                    font-size: 0.72rem;
+                    font-weight: 600;
                 }
 
                 .aichat-status .status-dot {
-                    width: 8px;
-                    height: 8px;
+                    width: 7px;
+                    height: 7px;
                 }
 
                 .aichat-messages {
                     flex: 1;
-                    min-height: 420px;
-                    max-height: 560px;
+                    min-height: 440px;
+                    max-height: 580px;
                     overflow-y: auto;
-                    padding: 18px;
+                    padding: 16px;
                     border: 1px solid var(--line);
-                    background:
-                        linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
-                        radial-gradient(ellipse at top, rgba(184, 115, 51, 0.04), transparent 60%);
-                    border-radius: 14px;
+                    background: var(--bg-deep);
+                    border-radius: 10px;
                     display: flex;
                     flex-direction: column;
-                    gap: 14px;
-                    box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.3);
+                    gap: 16px;
                 }
 
+                /* Gemini-style: AI left full-width, user right compact */
                 .aichat-msg {
                     display: flex;
-                    gap: 12px;
+                    gap: 10px;
                     align-items: flex-start;
+                    width: 100%;
+                }
+
+                .aichat-msg.user {
+                    flex-direction: row-reverse;
+                    max-width: 85%;
+                    margin-right: auto;
+                }
+
+                .aichat-msg.ai {
+                    max-width: 100%;
                 }
 
                 .aichat-msg .msg-avatar {
-                    flex: 0 0 36px;
-                    width: 36px;
-                    height: 36px;
+                    flex: 0 0 32px;
+                    width: 32px;
+                    height: 32px;
                     display: grid;
                     place-items: center;
                     border-radius: 50%;
-                    font-size: 1rem;
-                    font-weight: 800;
+                    font-size: 0.95rem;
+                    font-weight: 700;
                 }
 
                 .aichat-msg.user .msg-avatar {
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.3), rgba(184, 115, 51, 0.1));
-                    color: var(--gold-bright);
-                    border: 1px solid var(--gold-dim);
-                    box-shadow: 0 0 10px rgba(184, 115, 51, 0.2);
+                    background: var(--accent-dim);
+                    color: var(--neon);
+                    border: 1px solid var(--accent-soft);
                 }
 
                 .aichat-msg.ai .msg-avatar {
-                    background: linear-gradient(135deg, #d68a3f, #8a5524);
-                    color: #fff;
-                    border: 1px solid var(--gold-bright);
-                    box-shadow: 0 0 14px rgba(184, 115, 51, 0.4);
+                    background: linear-gradient(135deg, var(--accent), #2a4a78);
+                    color: var(--neon);
+                    border: 1px solid var(--neon-dim);
                 }
 
                 .aichat-msg .msg-body {
-                    flex: 1;
                     min-width: 0;
-                    padding: 12px 16px;
+                    padding: 10px 14px;
                     border-radius: 12px;
-                    border: 1px solid var(--line);
-                    background: var(--bg-card);
                     color: var(--text-bright);
-                    font-size: 0.94rem;
-                    line-height: 1.7;
+                    font-size: 0.92rem;
+                    line-height: 1.65;
                     word-break: break-word;
                     white-space: pre-wrap;
                 }
 
                 .aichat-msg.user .msg-body {
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.15), rgba(184, 115, 51, 0.03));
-                    border-color: var(--gold-dim);
-                    box-shadow: 0 4px 14px rgba(184, 115, 51, 0.08);
+                    background: var(--accent-dim);
+                    border: 1px solid var(--accent-soft);
                 }
 
                 .aichat-msg.ai .msg-body {
-                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.95), rgba(17, 20, 26, 0.95));
-                    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+                    background: transparent;
+                    padding-left: 0;
+                    padding-right: 0;
                 }
 
                 .aichat-msg .msg-name {
                     display: block;
-                    font-size: 0.72rem;
+                    font-size: 0.7rem;
                     color: var(--text-sub);
-                    font-weight: 700;
-                    margin-bottom: 6px;
-                    letter-spacing: 0.4px;
-                    text-transform: uppercase;
+                    font-weight: 600;
+                    margin-bottom: 4px;
+                    letter-spacing: 0.3px;
                 }
 
-                .aichat-msg.user .msg-name { color: var(--gold-bright); }
-                .aichat-msg.ai .msg-name { color: var(--gold); }
+                .aichat-msg.user .msg-name { color: var(--neon); }
+                .aichat-msg.ai .msg-name { color: var(--text-soft); }
 
                 .aichat-empty {
                     flex: 1;
@@ -1386,49 +1242,45 @@ app.get('/', (req, res) => {
                 }
 
                 .aichat-empty .big-emoji {
-                    font-size: 3.5rem;
-                    margin-bottom: 14px;
-                    filter: drop-shadow(0 0 18px rgba(184, 115, 51, 0.5));
+                    font-size: 3rem;
+                    margin-bottom: 12px;
+                    color: var(--neon);
+                    opacity: 0.6;
                 }
 
                 .aichat-typing {
                     display: inline-flex;
                     align-items: center;
-                    gap: 5px;
+                    gap: 4px;
                     padding: 4px 0;
                 }
 
                 .aichat-typing span {
-                    width: 8px;
-                    height: 8px;
+                    width: 7px;
+                    height: 7px;
                     border-radius: 50%;
-                    background: var(--gold);
+                    background: var(--neon);
                     display: inline-block;
-                    animation: aichatDot 1.2s ease-in-out infinite;
+                    animation: aichatDot 1s ease-in-out infinite;
+                    opacity: 0.5;
                 }
 
                 .aichat-typing span:nth-child(2) { animation-delay: 0.15s; }
                 .aichat-typing span:nth-child(3) { animation-delay: 0.3s; }
 
-                @keyframes aichatDot {
-                    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-                    30% { transform: translateY(-6px); opacity: 1; box-shadow: 0 0 8px var(--gold); }
-                }
-
                 .aichat-input {
                     display: flex;
-                    gap: 10px;
-                    margin-top: 14px;
+                    gap: 8px;
+                    margin-top: 12px;
                     padding: 6px;
                     background: var(--bg-card);
                     border: 1px solid var(--line);
-                    border-radius: 14px;
-                    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                    border-radius: 12px;
+                    transition: border-color 0.2s ease;
                 }
 
                 .aichat-input:focus-within {
-                    border-color: var(--gold);
-                    box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.12), 0 0 24px rgba(184, 115, 51, 0.15);
+                    border-color: var(--accent-soft);
                 }
 
                 .aichat-input input {
@@ -1436,10 +1288,10 @@ app.get('/', (req, res) => {
                     min-width: 0;
                     background: transparent;
                     border: none;
-                    padding: 12px 14px;
+                    padding: 10px 12px;
                     color: var(--text-bright);
                     outline: none;
-                    font-size: 0.95rem;
+                    font-size: 0.92rem;
                     font-family: inherit;
                 }
 
@@ -1454,60 +1306,61 @@ app.get('/', (req, res) => {
 
                 .aichat-input .btn {
                     flex: 0 0 auto;
-                    min-width: 120px;
-                    border-radius: 10px;
+                    min-width: 100px;
+                    border-radius: 8px;
                     margin: 0;
                 }
 
                 .aichat-quickbar {
                     display: flex;
                     align-items: center;
-                    gap: 8px;
-                    margin-top: 12px;
+                    gap: 6px;
+                    margin-top: 10px;
                     flex-wrap: wrap;
                 }
 
                 .aichat-quickbar-label {
                     color: var(--text-sub);
-                    font-size: 0.75rem;
+                    font-size: 0.72rem;
                     font-weight: 600;
                     margin-left: 4px;
                 }
 
                 .aichat-quickbar button {
-                    padding: 7px 14px;
-                    background: rgba(184, 115, 51, 0.06);
-                    border: 1px solid var(--gold-dim);
+                    padding: 6px 12px;
+                    background: var(--bg-card);
+                    border: 1px solid var(--line);
                     color: var(--text-soft);
-                    border-radius: 18px;
+                    border-radius: 14px;
                     font: inherit;
-                    font-size: 0.78rem;
+                    font-size: 0.75rem;
                     cursor: pointer;
-                    transition: all 0.25s ease;
+                    transition: border-color 0.2s ease, color 0.2s ease;
                 }
 
                 .aichat-quickbar button:hover {
-                    background: rgba(184, 115, 51, 0.18);
-                    color: var(--gold-bright);
-                    border-color: var(--gold);
-                    transform: translateY(-1px);
+                    background: var(--bg-card-hover);
+                    color: var(--text-bright);
+                    border-color: var(--line-strong);
                 }
 
                 .aichat-error {
                     color: var(--danger);
                     background: var(--danger-dim);
                     border: 1px solid rgba(248, 113, 113, 0.3);
+                    padding: 8px 12px;
+                    border-radius: 8px;
                 }
 
                 .aichat-msg .msg-model {
                     display: inline-block;
                     margin-right: 6px;
                     padding: 1px 7px;
-                    background: rgba(184, 115, 51, 0.12);
-                    border: 1px solid var(--gold-dim);
+                    background: var(--accent-dim);
+                    border: 1px solid var(--accent-soft);
                     border-radius: 10px;
-                    font-size: 0.65rem;
-                    color: var(--gold);
+                    font-size: 0.62rem;
+                    color: var(--neon);
                     font-weight: 600;
                     vertical-align: middle;
                 }
@@ -1792,7 +1645,7 @@ app.get('/', (req, res) => {
 
                     <div class="card" id="monitorMessagesCard" style="display:none;">
                         <h3>💬 الرسائل <button type="button" class="btn btn-primary" style="float:left; padding:6px 12px; min-width:auto; font-size:0.8rem;" onclick="closeMessages()">✕ إغلاق</button></h3>
-                        <p style="color:var(--text-sub); font-size:0.85rem; margin-bottom:14px;">القناة: <span id="monitorMessagesChannel" style="color:var(--gold);"></span></p>
+                        <p style="color:var(--text-sub); font-size:0.85rem; margin-bottom:14px;">القناة: <span id="monitorMessagesChannel" style="color:var(--neon);"></span></p>
                         <div class="monitor-messages-list" id="monitorMessagesList"></div>
                     </div>
                 </div>
