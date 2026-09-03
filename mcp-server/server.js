@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const { GoogleGenAI } = require('@google/genai');
 require('dotenv').config();
 
 const app = express();
@@ -8,18 +7,17 @@ const app = express();
 const SHARED_SECRET = process.env.MCP_SECRET_KEY;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
 const PORT = process.env.PORT || 3001;
-const TEXT_MODEL = process.env.GEMINI_TEXT_MODEL || 'gemini-2.5-flash';
+const AI_MODEL = process.env.AI_MODEL || 'google/gemini-2.0-flash-exp:free';
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 if (!SHARED_SECRET) {
     console.error('FATAL: MCP_SECRET_KEY is not set');
     process.exit(1);
 }
-if (!process.env.GEMINI_API_KEY) {
-    console.error('FATAL: GEMINI_API_KEY is not set');
+if (!OPENROUTER_API_KEY) {
+    console.error('FATAL: OPENROUTER_API_KEY is not set');
     process.exit(1);
 }
-
-const genai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 app.use(express.json({ limit: '20mb' }));
 app.use(cors({ origin: ALLOWED_ORIGIN === '*' ? true : ALLOWED_ORIGIN, credentials: true }));
@@ -33,7 +31,7 @@ const authMiddleware = (req, res, next) => {
 };
 
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', model: TEXT_MODEL, uptime: process.uptime() });
+    res.json({ status: 'ok', model: AI_MODEL, uptime: process.uptime() });
 });
 
 app.post('/api/chat', authMiddleware, async (req, res) => {
@@ -42,15 +40,12 @@ app.post('/api/chat', authMiddleware, async (req, res) => {
         return res.status(400).json({ error: 'messages array is required' });
     }
 
-    const contents = [];
-    if (systemPrompt) {
-        contents.push({ role: 'user', parts: [{ text: systemPrompt }] });
-        contents.push({ role: 'model', parts: [{ text: 'Understood.' }] });
-    }
+    const openRouterMessages = [];
+    if (systemPrompt) openRouterMessages.push({ role: 'system', content: systemPrompt });
     for (const msg of messages) {
-        const role = msg.role === 'assistant' ? 'model' : 'user';
+        const role = msg.role === 'assistant' ? 'assistant' : 'user';
         const text = String(msg.content || '');
-        if (text) contents.push({ role, parts: [{ text }] });
+        if (text) openRouterMessages.push({ role, content: text });
     }
 
     res.setHeader('Content-Type', 'text/event-stream');
@@ -62,20 +57,59 @@ app.post('/api/chat', authMiddleware, async (req, res) => {
     const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
     try {
-        const streamResult = await genai.models.generateContentStream({
-            model: TEXT_MODEL,
-            contents,
-            config: { temperature: 0.7, maxOutputTokens: 2048 }
+        const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + OPENROUTER_API_KEY,
+                'HTTP-Referer': 'https://afk85an-dashboard.local',
+                'X-Title': 'AFK85an Dashboard'
+            },
+            body: JSON.stringify({
+                model: AI_MODEL,
+                messages: openRouterMessages,
+                stream: true,
+                max_tokens: 2048,
+                temperature: 0.7
+            })
         });
 
-        for await (const chunk of streamResult) {
-            const parts = (chunk.candidates && chunk.candidates[0] && chunk.candidates[0].content && chunk.candidates[0].content.parts) || [];
-            let textDelta = '';
-            for (const part of parts) {
-                if (part && part.text) textDelta += part.text;
-            }
-            if (textDelta) send({ delta: textDelta });
+        if (!upstream.ok || !upstream.body) {
+            const errText = await upstream.text().catch(() => '');
+            send({ error: 'OpenRouter ' + upstream.status + ': ' + errText });
+            return res.end();
         }
+
+        const reader = upstream.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || !trimmed.startsWith('data:')) continue;
+                const payload = trimmed.slice(5).trim();
+                if (payload === '[DONE]') {
+                    send({ done: true });
+                    res.end();
+                    return;
+                }
+                try {
+                    const obj = JSON.parse(payload);
+                    const delta = obj.choices && obj.choices[0] && obj.choices[0].delta && obj.choices[0].delta.content;
+                    if (delta) send({ delta });
+                    if (obj.error) send({ error: obj.error.message || JSON.stringify(obj.error) });
+                } catch (_) {}
+            }
+        }
+
         send({ done: true });
         res.end();
     } catch (err) {
@@ -85,6 +119,7 @@ app.post('/api/chat', authMiddleware, async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`MCP Server running on port ${PORT}`);
-    console.log(`Model: ${TEXT_MODEL}`);
+    console.log('MCP Server running on port ' + PORT);
+    console.log('Provider: OpenRouter');
+    console.log('Model: ' + AI_MODEL);
 });
