@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const app = express();
@@ -8,12 +9,13 @@ const SHARED_SECRET = process.env.MCP_SECRET_KEY;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
 const PORT = process.env.PORT || 3001;
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS) || 60000;
 
 const AI_MODELS = (process.env.AI_MODELS || 'z-ai/glm-5.2:free,google/gemma-4-31b-it:free,minimax/minimax-m2.7:free,minimax/minimax-m3:free,nvidia/nemotron-3-super-120b-a12b:free')
     .split(',').map(s => s.trim()).filter(Boolean);
 
-if (!SHARED_SECRET) {
-    console.error('FATAL: MCP_SECRET_KEY is not set');
+if (!SHARED_SECRET || SHARED_SECRET.length < 16) {
+    console.error('FATAL: MCP_SECRET_KEY is not set or too short (min 16 chars)');
     process.exit(1);
 }
 if (!OPENROUTER_API_KEY) {
@@ -26,7 +28,16 @@ app.use(cors({ origin: ALLOWED_ORIGIN === '*' ? true : ALLOWED_ORIGIN, credentia
 
 const authMiddleware = (req, res, next) => {
     const provided = req.headers['x-mcp-secret'];
-    if (provided !== SHARED_SECRET) {
+    if (!provided || typeof provided !== 'string') {
+        return res.status(401).json({ error: 'Missing secret key' });
+    }
+    try {
+        const a = Buffer.from(provided);
+        const b = Buffer.from(SHARED_SECRET);
+        if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+            return res.status(401).json({ error: 'Invalid secret key' });
+        }
+    } catch {
         return res.status(401).json({ error: 'Invalid secret key' });
     }
     next();
@@ -37,22 +48,29 @@ app.get('/health', (req, res) => {
 });
 
 async function callOpenRouter(model, openRouterMessages) {
-    return await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + OPENROUTER_API_KEY,
-            'HTTP-Referer': 'https://afk85an-dashboard.local',
-            'X-Title': 'AFK85an Dashboard'
-        },
-        body: JSON.stringify({
-            model,
-            messages: openRouterMessages,
-            stream: true,
-            max_tokens: 2048,
-            temperature: 0.7
-        })
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    try {
+        return await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + OPENROUTER_API_KEY,
+                'HTTP-Referer': 'https://afk85an-dashboard.local',
+                'X-Title': 'AFK85an Dashboard'
+            },
+            body: JSON.stringify({
+                model,
+                messages: openRouterMessages,
+                stream: true,
+                max_tokens: 2048,
+                temperature: 0.7
+            }),
+            signal: controller.signal
+        });
+    } finally {
+        clearTimeout(timeout);
+    }
 }
 
 app.post('/api/chat', authMiddleware, async (req, res) => {

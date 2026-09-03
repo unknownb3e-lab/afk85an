@@ -84,6 +84,14 @@ let isTaskRunning = true;
 const taskStates = { task1: false, task2: false, task3: false, task4: false, task5: false };
 let planBInterval = null;
 let isPlanBRunning = false;
+let task5Stopped = true;
+const taskTimers = { task1: null, task2: null, task3: null, task4: null, task5: null };
+const MESSAGE_THROTTLE_MS = 5000;
+let lastMessageSentAt = 0;
+let messageQueue = Promise.resolve();
+let taskQueue = Promise.resolve();
+let globalRateLimitedUntil = 0;
+let taskFunctions = {};
 
 let stats = {
     totalSent: 0,
@@ -475,15 +483,17 @@ global.botEmitter.on('monitorStop', () => {
     global.sharedMonitorState.active = false;
 });
 
-const MESSAGE_THROTTLE_MS = 2000;
-let lastMessageSentAt = 0;
-let messageQueue = Promise.resolve();
-let taskQueue = Promise.resolve();
-
 const sendChannelMessage = async (channelId, messageText, label, skipThrottle = false) => {
     if (!channelId || !messageText) return false;
     const send = messageQueue.then(async () => {
         try {
+            const now = Date.now();
+            if (now < globalRateLimitedUntil) {
+                const wait = globalRateLimitedUntil - now;
+                console.log(`⏸️ ${label}: انتظار ${Math.ceil(wait/1000)}ث بسبب rate limit`);
+                await new Promise(resolve => setTimeout(resolve, wait));
+            }
+
             if (!skipThrottle) {
                 const elapsed = Date.now() - lastMessageSentAt;
                 if (elapsed < MESSAGE_THROTTLE_MS) {
@@ -500,7 +510,18 @@ const sendChannelMessage = async (channelId, messageText, label, skipThrottle = 
             );
             if (!isTextChannel) return false;
 
-            await channel.send(messageText);
+            try {
+                await channel.send(messageText);
+            } catch (sendErr) {
+                if (sendErr && (sendErr.status === 429 || sendErr.code === 429)) {
+                    const retryAfter = (sendErr.retry_after || sendErr.rateLimit?.timeout || 5) * 1000;
+                    globalRateLimitedUntil = Date.now() + retryAfter + 1000;
+                    console.warn(`⚠️ ${label}: rate limit - انتظار ${Math.ceil(retryAfter/1000)}ث`);
+                    return false;
+                }
+                throw sendErr;
+            }
+
             lastMessageSentAt = Date.now();
             stats.totalSent += 1;
             stats.lastActiveTime = new Date().toLocaleString('ar-SA');
@@ -528,8 +549,6 @@ const getTaskRepeatDelay = (taskName) => {
     return randomBetween((Number.isFinite(min) ? min : fallback) * 60 * 1000,
         (Number.isFinite(max) ? max : fallback) * 60 * 1000);
 };
-
-const taskTimers = { task1: null, task2: null, task3: null, task4: null, task5: null };
 
 const scheduleSingleTask = (taskName, taskFn) => {
     const delay = getTaskRepeatDelay(taskName);
@@ -598,16 +617,18 @@ const runTask4 = async () => {
     const targets = Array.isArray(config.task4TargetIds) && config.task4TargetIds.length > 0
         ? config.task4TargetIds
         : [config.task4TargetId].filter(Boolean);
+    if (targets.length === 0) {
+        console.warn('⚠️ مهمة 4: لا توجد أهداف هجوم صحيحة');
+        return;
+    }
     const targetId = config.task4TargetMode === 'random'
         ? targets[Math.floor(Math.random() * targets.length)]
-        : config.task4TargetId || targets[0];
+        : (config.task4TargetId && targets.includes(config.task4TargetId) ? config.task4TargetId : targets[0]);
     const targetMention = targetId ? `<@${targetId}>` : '';
     const taskMessage = config.task4Msg.replace(/<@!?\d+>/g, targetMention) || `!هجوم ${targetMention}`;
     await sendChannelMessage(config.task4Channel, taskMessage, 'مهمة 4');
     stats.task4CountLog += 1;
 };
-
-let task5Stopped = true;
 
 const runTask5 = async () => {
     if (!taskStates.task5 || !config.task5Channel) return;
@@ -641,7 +662,7 @@ const runTask5 = async () => {
     }
 };
 
-const taskFunctions = {
+taskFunctions = {
     task1: runTask1Burst,
     task2: runTask2,
     task3: runTask3,
