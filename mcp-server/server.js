@@ -142,5 +142,5 @@ app.post('/api/chat', authMiddleware, async (req, res) => {
 app.listen(PORT, () => {
     console.log('MCP Server running on port ' + PORT);
     console.log('Provider: OpenRouter');
-    console.log('Model: ' + AI_MODEL);
+    console.log('Models: ' + AI_MODELS.join(', '));
 });
