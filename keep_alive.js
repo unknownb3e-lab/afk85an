@@ -2180,7 +2180,8 @@ app.get('/', (req, res) => {
                             const { done, value } = await reader.read();
                             if (done) break;
                             buffer += decoder.decode(value, { stream: true });
-                            const lines = buffer.split('\n\n');
+                            const NL2 = String.fromCharCode(10, 10);
+                            const lines = buffer.split(NL2);
                             buffer = lines.pop() || '';
                             for (const line of lines) {
                                 if (!line.startsWith('data: ')) continue;
@@ -2359,7 +2360,7 @@ app.post('/api/ai-chat', async (req, res) => {
             if (done) break;
             const chunk = decoder.decode(value, { stream: true });
             res.write(chunk);
-            for (const line of chunk.split('\n')) {
+            for (const line of chunk.split(String.fromCharCode(10))) {
                 if (!line.startsWith('data: ')) continue;
                 try {
                     const data = JSON.parse(line.slice(6));
@@ -2369,7 +2370,8 @@ app.post('/api/ai-chat', async (req, res) => {
             }
         }
 
-        res.write(`data: ${JSON.stringify({ fullReply, hasError, done: true })}\n\n`);
+        const NL_NL = String.fromCharCode(10, 10);
+        res.write('data: ' + JSON.stringify({ fullReply, hasError, done: true }) + NL_NL);
         res.end();
     } catch (err) {
         const msg = err && err.message ? err.message : 'unknown';
@@ -2377,7 +2379,7 @@ app.post('/api/ai-chat', async (req, res) => {
             res.setHeader('Content-Type', 'application/json');
             res.status(500).end(JSON.stringify({ success: false, message: '⚠️ خطأ في الاتصال بـ MCP: ' + msg }));
         } else {
-            try { res.write(`data: ${JSON.stringify({ error: msg })}\n\n`); res.end(); } catch (_) {}
+            try { res.write('data: ' + JSON.stringify({ error: msg }) + String.fromCharCode(10, 10)); res.end(); } catch (_) {}
         }
     }
 });
