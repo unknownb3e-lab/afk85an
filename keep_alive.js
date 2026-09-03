@@ -1241,11 +1241,42 @@ app.get('/', (req, res) => {
                     padding: 40px 20px;
                 }
 
-                .aichat-empty .big-emoji {
-                    font-size: 3rem;
-                    margin-bottom: 12px;
-                    color: var(--neon);
-                    opacity: 0.6;
+                .aichat-greeting {
+                    font-size: 2.6rem;
+                    font-weight: 800;
+                    font-family: 'Cairo', 'Tajawal', sans-serif;
+                    letter-spacing: 1px;
+                    color: var(--neon-bright);
+                    text-shadow:
+                        0 0 8px var(--neon-glow),
+                        0 0 18px var(--neon-glow),
+                        0 0 32px var(--neon-dim);
+                    animation: neonPulse 2.4s ease-in-out infinite;
+                }
+
+                @keyframes neonPulse {
+                    0%, 100% {
+                        opacity: 0.55;
+                        text-shadow:
+                            0 0 4px var(--neon-dim),
+                            0 0 10px var(--neon-dim),
+                            0 0 18px transparent;
+                    }
+                    50% {
+                        opacity: 1;
+                        text-shadow:
+                            0 0 8px var(--neon-glow),
+                            0 0 22px var(--neon-glow),
+                            0 0 36px var(--neon-dim);
+                    }
+                }
+
+                .aichat-greeting.fade-out {
+                    animation: fadeOut 0.4s ease-out forwards;
+                }
+
+                @keyframes fadeOut {
+                    to { opacity: 0; transform: translateY(-8px); }
                 }
 
                 .aichat-typing {
@@ -1350,6 +1381,22 @@ app.get('/', (req, res) => {
                     border: 1px solid rgba(248, 113, 113, 0.3);
                     padding: 8px 12px;
                     border-radius: 8px;
+                }
+
+                .aichat-cursor {
+                    display: inline-block;
+                    width: 7px;
+                    height: 1em;
+                    background: var(--neon);
+                    margin-left: 2px;
+                    vertical-align: text-bottom;
+                    animation: cursorBlink 0.8s step-end infinite;
+                    box-shadow: 0 0 6px var(--neon-glow);
+                }
+
+                @keyframes cursorBlink {
+                    0%, 50% { opacity: 1; }
+                    51%, 100% { opacity: 0; }
                 }
 
                 .aichat-msg .msg-model {
@@ -1666,9 +1713,7 @@ app.get('/', (req, res) => {
 
                         <div class="aichat-messages" id="aichatMessages">
                             <div class="aichat-empty" id="aichatEmpty">
-                                <div class="big-emoji">✨</div>
-                                <div>ابدأ محادثة جديدة مع الذكاء الاصطناعي</div>
-                                <div style="margin-top:6px; font-size:0.8rem; color:var(--text-sub);">اكتب سؤالك في الأسفل</div>
+                                <div class="aichat-greeting">مرحبا Anas</div>
                             </div>
                         </div>
 
@@ -2008,8 +2053,36 @@ app.get('/', (req, res) => {
                     const empty = document.createElement('div');
                     empty.className = 'aichat-empty';
                     empty.id = 'aichatEmpty';
-                    empty.innerHTML = '<div class="big-emoji">✨</div><div>المحادثة فارغة</div><div style="margin-top:6px; font-size:0.8rem; color:var(--text-sub);">اكتب سؤالك في الأسفل</div>';
+                    empty.innerHTML = '<div class="aichat-greeting">مرحبا Anas</div>';
                     wrap.appendChild(empty);
+                }
+
+                function hideGreeting() {
+                    const empty = document.getElementById('aichatEmpty');
+                    if (!empty) return;
+                    empty.classList.add('fade-out');
+                    setTimeout(() => {
+                        if (empty.parentNode) empty.parentNode.removeChild(empty);
+                    }, 400);
+                }
+
+                function revealGreeting() {
+                    const wrap = document.getElementById('aichatMessages');
+                    if (!wrap) return;
+                    if (document.getElementById('aichatEmpty')) return;
+                    if (wrap.querySelector('.aichat-msg')) return;
+                    const empty = document.createElement('div');
+                    empty.className = 'aichat-empty';
+                    empty.id = 'aichatEmpty';
+                    empty.innerHTML = '<div class="aichat-greeting">مرحبا Anas</div>';
+                    wrap.appendChild(empty);
+                }
+
+                const aichatInputEl = document.getElementById('aichatInput');
+                if (aichatInputEl) {
+                    aichatInputEl.addEventListener('input', () => {
+                        if (aichatInputEl.value.trim().length > 0) hideGreeting();
+                    });
                 }
 
                 function aichatAppendMessage(role, text) {
@@ -2100,7 +2173,45 @@ app.get('/', (req, res) => {
                     btn.textContent = '⏳ جاري الإرسال...';
 
                     let aiContent = null;
-                    let streamed = '';
+                    let fullText = '';
+                    let typeInterval = null;
+                    let typeQueue = [];
+                    let typing = false;
+
+                    const startTypewriter = (cursorEl) => {
+                        if (typing) return;
+                        typing = true;
+                        const tick = () => {
+                            if (typeQueue.length === 0) {
+                                typing = false;
+                                if (cursorEl && cursorEl.parentNode) cursorEl.parentNode.removeChild(cursorEl);
+                                return;
+                            }
+                            const next = typeQueue.shift();
+                            if (aiContent) {
+                                aiContent.textContent += next;
+                                const wrap = document.getElementById('aichatMessages');
+                                if (wrap) wrap.scrollTop = wrap.scrollHeight;
+                            }
+                            typeInterval = setTimeout(tick, 55);
+                        };
+                        tick();
+                    };
+
+                    const enqueueWords = (text, cursorEl) => {
+                        const words = text.split(/(\s+)/);
+                        for (const w of words) {
+                            if (w.length === 0) continue;
+                            typeQueue.push(w);
+                        }
+                        startTypewriter(cursorEl);
+                    };
+
+                    const makeCursor = () => {
+                        const c = document.createElement('span');
+                        c.className = 'aichat-cursor';
+                        return c;
+                    };
 
                     try {
                         const res = await fetch('/api/ai-chat', {
@@ -2114,7 +2225,10 @@ app.get('/', (req, res) => {
                         if (ct.includes('application/json')) {
                             const data = await res.json().catch(() => ({}));
                             if (data && data.success && data.reply) {
-                                aichatAppendMessage('ai', data.reply);
+                                aiContent = aichatAppendMessage('ai', '');
+                                const cursor = makeCursor();
+                                aiContent.parentNode.appendChild(cursor);
+                                enqueueWords(data.reply, cursor);
                                 aichatSetStatus(true);
                             } else {
                                 const errMsg = (data && data.message) || 'حدث خطأ غير متوقع';
@@ -2131,6 +2245,8 @@ app.get('/', (req, res) => {
                         }
 
                         aiContent = aichatAppendMessage('ai', '');
+                        const streamCursor = makeCursor();
+                        aiContent.parentNode.appendChild(streamCursor);
 
                         const reader = res.body.getReader();
                         const decoder = new TextDecoder();
@@ -2150,15 +2266,19 @@ app.get('/', (req, res) => {
                                 try { data = JSON.parse(line.slice(6)); } catch (_) { continue; }
                                 if (data && data.error) {
                                     gotError = true;
-                                    aiContent.textContent = '❌ ' + data.error;
-                                    aiContent.parentNode.classList.add('aichat-error');
+                                    if (typeInterval) { clearTimeout(typeInterval); typeInterval = null; }
+                                    typeQueue = [];
+                                    if (aiContent) {
+                                        aiContent.textContent = '❌ ' + data.error;
+                                        aiContent.parentNode.classList.add('aichat-error');
+                                        const cur = aiContent.parentNode.querySelector('.aichat-cursor');
+                                        if (cur && cur.parentNode) cur.parentNode.removeChild(cur);
+                                    }
                                     aichatSetStatus(false);
                                 }
                                 if (data && data.delta) {
-                                    streamed += data.delta;
-                                    aiContent.textContent = streamed;
-                                    const wrap = document.getElementById('aichatMessages');
-                                    if (wrap) wrap.scrollTop = wrap.scrollHeight;
+                                    fullText += data.delta;
+                                    enqueueWords(data.delta, streamCursor);
                                 }
                                 if (data && data.done && !gotError) {
                                     aichatSetStatus(true);
@@ -2166,15 +2286,24 @@ app.get('/', (req, res) => {
                             }
                         }
 
-                        if (!streamed && !gotError) {
-                            aiContent.textContent = '⚠️ لم يصل رد من النموذج';
-                            aiContent.parentNode.classList.add('aichat-error');
+                        if (!fullText && !gotError) {
+                            if (typeInterval) { clearTimeout(typeInterval); typeInterval = null; }
+                            if (aiContent) {
+                                aiContent.textContent = '⚠️ لم يصل رد من النموذج';
+                                aiContent.parentNode.classList.add('aichat-error');
+                                const cur = aiContent.parentNode.querySelector('.aichat-cursor');
+                                if (cur && cur.parentNode) cur.parentNode.removeChild(cur);
+                            }
                             aichatSetStatus(false);
                         }
                     } catch (err) {
+                        if (typeInterval) { clearTimeout(typeInterval); typeInterval = null; }
+                        typeQueue = [];
                         if (aiContent) {
                             aiContent.textContent = '❌ تعذر الاتصال بالخادم: ' + (err && err.message ? err.message : 'network error');
                             aiContent.parentNode.classList.add('aichat-error');
+                            const cur = aiContent.parentNode.querySelector('.aichat-cursor');
+                            if (cur && cur.parentNode) cur.parentNode.removeChild(cur);
                         } else {
                             aichatAppendMessage('ai', '❌ تعذر الاتصال بالخادم: ' + (err && err.message ? err.message : 'network error'));
                         }
