@@ -1608,7 +1608,7 @@ app.get('/', (req, res) => {
                     }).catch(() => {});
                 }
 
-                setInterval(refreshState, 300);
+                setInterval(refreshState, 3000);
                 refreshState();
                 document.querySelectorAll('[data-panel-target]').forEach(button => {
                     button.addEventListener('click', function(event) {
