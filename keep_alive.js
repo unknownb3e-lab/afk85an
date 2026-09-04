@@ -5,12 +5,14 @@ const port = process.env.PORT || 8080;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const { pipeline } = require('@xenova/transformers');
-
+let transformersModule = null;
 let chatPipeline = null;
 async function getChatPipeline() {
     if (!chatPipeline) {
-        chatPipeline = await pipeline('text-generation', 'Xenova/Qwen1.5-0.5B-Chat');
+        if (!transformersModule) {
+            transformersModule = await import('@xenova/transformers');
+        }
+        chatPipeline = await transformersModule.pipeline('text-generation', 'Xenova/Qwen1.5-0.5B-Chat');
     }
     return chatPipeline;
 }
