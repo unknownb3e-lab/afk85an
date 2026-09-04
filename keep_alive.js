@@ -55,76 +55,59 @@ app.get('/', (req, res) => {
                     to { opacity: 1; }
                 }
 
-                @keyframes slideInFade {
-                    from {
-                        opacity: 0;
-                        transform: translateY(8px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-
-                @keyframes goldPulse {
-                    0%, 100% { box-shadow: 0 0 4px rgba(184, 115, 51, 0.2), inset 0 0 0 1px rgba(184, 115, 51, 0.3); }
-                    50% { box-shadow: 0 0 18px rgba(184, 115, 51, 0.55), inset 0 0 0 1px rgba(184, 115, 51, 0.5); }
-                }
-
-                @keyframes shimmer {
-                    0% { background-position: -200% 0; }
-                    100% { background-position: 200% 0; }
-                }
-
-                @keyframes borderGlow {
-                    0%, 100% { border-color: rgba(184, 115, 51, 0.4); }
-                    50% { border-color: rgba(184, 115, 51, 0.9); }
-                }
-
-                @keyframes goldShine {
-                    0% { background-position: 0% 50%; }
-                    100% { background-position: 200% 50%; }
-                }
-
-                @keyframes floatGlow {
-                    0%, 100% { transform: translateY(0); box-shadow: 0 0 8px rgba(184, 115, 51, 0.3); }
-                    50% { transform: translateY(-2px); box-shadow: 0 0 18px rgba(184, 115, 51, 0.5); }
-                }
-
                 @keyframes pulseAnim {
                     0% { background-color: rgba(255, 255, 255, 0.03); }
                     50% { background-color: rgba(255, 255, 255, 0.12); }
                     100% { background-color: rgba(255, 255, 255, 0.03); }
                 }
 
+                @keyframes aichatDot {
+                    0%, 60%, 100% { opacity: 0.4; }
+                    30% { opacity: 1; }
+                }
+
                 .pulse-anim {
                     animation: pulseAnim 0.5s ease-out;
                 }
 
-                :root {
-                    --bg-deep: #050608;
-                    --bg-base: #0a0c10;
-                    --bg-surface: #11141a;
-                    --bg-card: #161a22;
-                    --bg-card-hover: #1c2129;
-                    --bg-elevated: #1f242d;
-                    --line-soft: rgba(255, 255, 255, 0.04);
-                    --line: rgba(255, 255, 255, 0.07);
-                    --line-strong: rgba(255, 255, 255, 0.12);
-                    --text-bright: #f8f9fb;
-                    --text-main: #e8eaed;
-                    --text-soft: #a8afb7;
-                    --text-sub: #6b7280;
-                    --accent-rgb: 184, 115, 51;
-                    --gold: #b87333;
-                    --gold-bright: #d68a3f;
-                    --gold-dim: #8a5524;
-                    --gold-glow: rgba(184, 115, 51, 0.35);
-                    --gold-glow-strong: rgba(184, 115, 51, 0.6);
-                    --success: #4ade80;
-                    --success-dim: rgba(74, 222, 128, 0.15);
-                    --danger: #f87171;
-                    --danger-dim: rgba(248, 113, 113, 0.15);
+:root {
+
+--bg-deep: #0C0D15; /* خلفية أعمق */
+                    --bg-base: #151720; /* خلفية أساسية */
+                    --bg-surface: #1E212B; /* سطح العناصر */
+                    --bg-card: #282C3A; /* خلفية الكروت */
+                    --bg-card-hover: #34394A; /* خلفية الكروت عند التحويم */
+                    --bg-elevated: #3C4253; /* خلفية العناصر المرتفعة */
+                    --line-soft: rgba(255, 255, 255, 0.05); /* خطوط ناعمة */
+                    --line: rgba(255, 255, 255, 0.08); /* خطوط متوسطة */
+                    --line-strong: rgba(255, 255, 255, 0.12); /* خطوط قوية */
+                    --text-bright: #E0E6F0; /* نص ساطع */
+                    --text-main: #C8D1DE; /* نص رئيسي */
+                    --text-soft: #9AA8BA; /* نص ناعم */
+
+--text-sub: #7A899C; /* نص فرعي */
+
+--neon-rgb: 135, 206, 250; /* سماء زرقاء نيون */
+                    --neon: #87CEFA; /* لون النيون */
+                    --neon-bright: #ADD8E6; /* نيون ساطع */
+                    --neon-dim: rgba(135, 206, 250, 0.15); /* نيون خافت */
+                    --neon-glow: rgba(135, 206, 250, 0.3); /* توهج نيون */
+
+--neon-glow-strong: rgba(135, 206, 250, 0.5); /* توهج نيون قوي */
+
+--accent: #6A9CFF; /* لون التمييز (أزرق فاتح) */
+                    --accent-dim: rgba(106, 156, 255, 0.15); /* تمييز خافت */
+
+--accent-soft: rgba(106, 156, 255, 0.3); /* تمييز ناعم */
+
+--success: #6EE7B7; /* نجاح (أخضر زمردي) */
+                    --success-dim: rgba(110, 231, 183, 0.12);
+                    --danger: #FF7B8A; /* خطر (أحمر مرجاني) */
+                    --danger-dim: rgba(255, 123, 138, 0.12);
+
+                    --shadow-light: rgba(0, 0, 0, 0.1);
+                    --shadow-medium: rgba(0, 0, 0, 0.25);
+                    --shadow-strong: rgba(0, 0, 0, 0.4);
                 }
 
                 * {
@@ -135,18 +118,13 @@ app.get('/', (req, res) => {
                 }
 
                 body {
-                    --account-accent: var(--gold);
-                    --account-accent-soft: var(--gold-glow);
+                    --account-accent: var(--neon);
+                    --account-accent-soft: var(--neon-dim);
                     background-color: var(--bg-deep);
-                    background-image:
-                        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(184, 115, 51, 0.08), transparent 60%),
-                        radial-gradient(ellipse 60% 50% at 90% 100%, rgba(184, 115, 51, 0.05), transparent 60%),
-                        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
-                    background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
                     color: var(--text-main);
                     min-height: 100vh;
-                    padding: 32px 18px 60px;
+
+                    padding: 40px 24px 80px; /* زيادة الهوامش لتوفير مساحة */
                     overflow-x: hidden;
                     position: relative;
                     letter-spacing: 0.2px;
@@ -157,230 +135,247 @@ app.get('/', (req, res) => {
                     position: fixed;
                     top: 0;
                     left: 0;
-                    right: 0;
-                    height: 1px;
-                    background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+
+right: 0;
+
+height: 2px; /* خط علوي أسمك */
+                    background: linear-gradient(90deg, transparent, var(--neon-bright) 50%, transparent);
                     z-index: 100;
+
+                    box-shadow: 0 0 15px var(--neon-glow-strong); /* توهج أقوى */
                 }
 
                 .container {
-                    max-width: 1280px;
+
+                    max-width: 1320px; /* عرض أقصى أكبر */
                     margin: 0 auto;
                     position: relative;
                     z-index: 2;
                 }
 
                 header {
-                    text-align: right;
-                    margin-bottom: 32px;
-                    padding: 32px 36px;
-                    border: 1px solid var(--line);
-                    background:
-                        linear-gradient(135deg, rgba(184, 115, 51, 0.04), transparent 50%),
-                        rgba(17, 20, 26, 0.85);
-                    backdrop-filter: blur(12px);
-                    -webkit-backdrop-filter: blur(12px);
-                    box-shadow:
-                        0 20px 60px rgba(0, 0, 0, 0.5),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.03);
-                    position: relative;
-                    overflow: hidden;
-                }
 
-                header::before {
+text-align: right;
+
+margin-bottom: 40px; /* مسافة أكبر */
+                    padding: 32px 40px; /* بادينغ أكبر */
+                    border: 1px solid var(--line-strong); /* حدود أقوى */
+                    background: linear-gradient(145deg, var(--bg-surface), var(--bg-base)); /* تدرج خلفية */
+                    box-shadow: 0 8px 25px var(--shadow-strong); /* ظلال أعمق */
+                    border-radius: 12px; /* زوايا مستديرة */
+
+position: relative;
+
+overflow: hidden;
+
+}
+
+header::before {
                     content: '';
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    width: 200px;
-                    height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(184, 115, 51, 0.08));
+
+position: absolute;
+
+top: -50%;
+                    right: -50%;
+                    width: 200%;
+                    height: 200%;
+                    background: radial-gradient(circle at 100% 0%, rgba(var(--neon-rgb), 0.08) 0%, transparent 70%);
+                    opacity: 0.6;
                     pointer-events: none;
-                }
 
-                header::after {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 2px;
-                    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-bright), var(--gold), transparent);
-                    background-size: 200% 100%;
-                    animation: goldShine 8s linear infinite;
-                }
+}
 
-                header h1 {
-                    font-size: 2.4rem;
+header h1 {
+                    font-size: 2.5rem; /* حجم خط أكبر */
                     font-weight: 900;
-                    font-family: 'Orbitron', monospace;
-                    letter-spacing: 2px;
-                    background: linear-gradient(135deg, var(--text-bright) 0%, var(--gold) 50%, var(--gold-bright) 100%);
-                    background-size: 200% 200%;
-                    -webkit-background-clip: text;
-                    background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    color: transparent;
-                    margin-bottom: 8px;
-                    text-shadow: 0 0 30px rgba(184, 115, 51, 0.3);
-                }
 
-                header p {
+font-family: 'Orbitron', monospace;
+
+letter-spacing: 3px;
+
+color: var(--text-bright);
+
+margin-bottom: 12px; /* مسافة أكبر */
+                    text-shadow: 0 0 10px rgba(var(--neon-rgb), 0.4); /* ظلال نص نيون */
+
+}
+
+header p {
                     color: var(--text-soft);
-                    font-size: 0.95rem;
+                    font-size: 1rem; /* حجم خط أكبر */
                     font-weight: 400;
-                    letter-spacing: 0.5px;
-                }
+                    letter-spacing: 0.7px;
 
-                .status-line {
+}
+
+.status-line {
                     display: flex;
                     justify-content: flex-start;
-                    gap: 12px;
-                    margin-top: 22px;
-                    flex-wrap: wrap;
-                }
+                    gap: 16px; /* مسافة أكبر */
+                    margin-top: 28px; /* مسافة أكبر */
 
-                .status-indicator {
+flex-wrap: wrap;
+
+}
+
+.status-indicator {
                     display: flex;
                     align-items: center;
-                    gap: 9px;
-                    padding: 9px 16px;
+                    gap: 10px;
+                    padding: 10px 18px; /* بادينغ أكبر */
                     border: 1px solid var(--line);
-                    border-radius: 6px;
-                    background: rgba(255, 255, 255, 0.02);
-                    backdrop-filter: blur(8px);
-                    -webkit-backdrop-filter: blur(8px);
+                    border-radius: 8px; /* زوايا مستديرة */
+                    background: var(--bg-surface); /* خلفية العنصر */
+                    backdrop-filter: blur(10px); /* فلتر ضبابي أقوى */
+                    -webkit-backdrop-filter: blur(10px);
                     font-weight: 600;
-                    font-size: 0.88rem;
-                    transition: all 0.5s ease;
+                    font-size: 0.9rem; /* حجم خط أكبر */
+                    transition: all 0.3s ease-out;
+                    box-shadow: 0 2px 8px var(--shadow-medium); /* ظلال للعناصر */
                 }
 
                 .status-indicator:hover {
-                    border-color: var(--gold-dim);
-                    background: rgba(184, 115, 51, 0.05);
-                }
+                    border-color: var(--neon-dim); /* حدود نيون عند التحويم */
+                    background: var(--bg-card-hover);
+                    transform: translateY(-2px); /* تأثير رفع بسيط */
+                    box-shadow: 0 6px 16px var(--shadow-strong);
 
-                .status-dot {
-                    width: 8px;
-                    height: 8px;
+}
+
+.status-dot {
+                    width: 9px; /* حجم أكبر */
+                    height: 9px;
                     border-radius: 50%;
-                    box-shadow: 0 0 8px currentColor;
+                    box-shadow: 0 0 10px currentColor; /* توهج أكبر */
                 }
 
                 .status-dot.active { background: var(--success); color: var(--success); }
                 .status-dot.inactive { background: var(--danger); color: var(--danger); }
-
                 .grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-                    gap: 20px;
-                    margin-bottom: 30px;
-                }
+                    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); /* كروت أكبر */
+                    gap: 25px; /* مسافة أكبر بين الكروت */
+                    margin-bottom: 35px; /* مسافة أكبر */
 
-                .dashboard-nav {
+}
+
+.dashboard-nav {
                     display: flex;
-                    gap: 6px;
-                    padding: 6px;
-                    margin-bottom: 30px;
-                    border: 1px solid var(--line);
-                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.95), rgba(13, 15, 20, 0.95));
-                    backdrop-filter: blur(16px);
-                    -webkit-backdrop-filter: blur(16px);
+                    gap: 8px; /* مسافة أكبر */
+                    padding: 8px; /* بادينغ أكبر */
+                    margin-bottom: 40px; /* مسافة أكبر */
+                    border: 1px solid var(--line-strong);
+                    background: linear-gradient(180deg, var(--bg-surface), var(--bg-base));
+                    backdrop-filter: blur(20px); /* فلتر ضبابي أقوى */
+                    -webkit-backdrop-filter: blur(20px);
                     overflow-x: auto;
                     box-shadow:
-                        0 10px 30px rgba(0, 0, 0, 0.4),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.04),
-                        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
-                    border-radius: 12px;
+                        0 12px 35px var(--shadow-strong),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+                    border-radius: 15px; /* زوايا مستديرة أكبر */
                     position: relative;
-                }
 
-                .dashboard-nav::before {
+}
+
+.dashboard-nav::before {
                     content: '';
                     position: absolute;
                     top: -1px;
-                    left: 10%;
-                    right: 10%;
-                    height: 1px;
-                    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-                    opacity: 0.6;
-                }
+                    left: 5%;
+                    right: 5%;
+                    height: 2px; /* خط علوي أسمك */
+                    background: linear-gradient(90deg, transparent, var(--neon-bright), transparent);
+                    opacity: 0.7;
+                    box-shadow: 0 0 8px var(--neon-glow);
 
-                .dashboard-nav button {
+}
+
+.dashboard-nav button {
                     flex: 1;
-                    min-width: 160px;
-                    padding: 14px 22px;
+                    min-width: 180px; /* عرض أصغر للأزرار */
+                    padding: 16px 25px; /* بادينغ أكبر */
                     border: 1px solid transparent;
-                    border-radius: 8px;
+                    border-radius: 10px; /* زوايا مستديرة أكبر */
                     background: transparent;
-                    color: var(--text-sub);
-                    cursor: pointer;
+
+color: var(--text-sub);
+
+cursor: pointer;
                     font: inherit;
                     font-weight: 700;
-                    font-size: 0.92rem;
+                    font-size: 0.95rem; /* حجم خط أكبر */
                     white-space: nowrap;
-                    transition: all 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+                    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
                     position: relative;
                     overflow: hidden;
-                    letter-spacing: 0.3px;
-                }
+                    letter-spacing: 0.4px;
 
-                .dashboard-nav button::before {
+}
+
+.dashboard-nav button::before {
                     content: '';
                     position: absolute;
                     top: 50%;
                     left: 50%;
                     width: 0;
                     height: 0;
-                    background: radial-gradient(circle, rgba(184, 115, 51, 0.3), transparent 70%);
+                    background: radial-gradient(circle, rgba(var(--neon-rgb), 0.1), transparent 70%);
                     border-radius: 50%;
                     transform: translate(-50%, -50%);
-                    transition: width 0.5s ease, height 0.5s ease;
+                    transition: width 0.6s ease, height 0.6s ease;
                     pointer-events: none;
-                }
+                    opacity: 0;
 
-                .dashboard-nav button:hover {
+}
+
+.dashboard-nav button:hover {
                     color: var(--text-bright);
-                    background: rgba(255, 255, 255, 0.04);
-                    border-color: rgba(255, 255, 255, 0.08);
+                    background: rgba(var(--neon-rgb), 0.03); /* خلفية خفيفة عند التحويم */
+                    border-color: rgba(var(--neon-rgb), 0.1);
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                 }
 
                 .dashboard-nav button:hover::before {
-                    width: 200px;
-                    height: 200px;
-                }
+                    width: 220px;
+                    height: 220px;
+
+opacity: 1;
+
+}
 
                 .dashboard-nav button.active {
-                    color: var(--gold-bright);
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.18), rgba(184, 115, 51, 0.06));
-                    border-color: var(--gold-dim);
+                    color: var(--neon-bright);
+                    background: linear-gradient(135deg, rgba(var(--neon-rgb), 0.15), rgba(var(--neon-rgb), 0.05));
+                    border-color: rgba(var(--neon-rgb), 0.3);
                     box-shadow:
-                        0 6px 20px rgba(184, 115, 51, 0.25),
-                        inset 0 1px 0 rgba(184, 115, 51, 0.15),
-                        inset 0 0 0 1px rgba(184, 115, 51, 0.1);
-                }
+                        0 8px 25px rgba(var(--neon-rgb), 0.2),
+                        inset 0 1px 0 rgba(var(--neon-rgb), 0.1),
+                        inset 0 0 0 1px rgba(var(--neon-rgb), 0.08);
 
-                .dashboard-nav button.active::after {
+}
+
+.dashboard-nav button.active::after {
                     content: '';
                     position: absolute;
-                    bottom: 4px;
+                    bottom: 6px; /* خط سفلي أعلى قليلاً */
                     left: 50%;
                     transform: translateX(-50%);
-                    width: 30%;
-                    height: 2px;
-                    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-bright), var(--gold), transparent);
-                    background-size: 200% 100%;
-                    border-radius: 2px;
-                    animation: goldShine 2s linear infinite;
-                    box-shadow: 0 0 8px var(--gold);
-                }
+                    width: 40%; /* خط أوسع */
+                    height: 3px; /* خط أسمك */
+                    background: var(--neon-bright);
+                    border-radius: 3px;
+                    box-shadow: 0 0 10px var(--neon-glow-strong);
 
-                .dashboard-panel {
+}
+
+.dashboard-panel {
                     display: none;
-                    animation: slideInFade 0.4s ease-out both;
-                }
 
-                .dashboard-panel.active {
+}
+
+.dashboard-panel.active {
                     display: grid;
                 }
 
@@ -391,169 +386,185 @@ app.get('/', (req, res) => {
 
                 .task-list {
                     display: grid;
-                    gap: 10px;
-                }
+                    gap: 12px; /* مسافة أكبر */
 
-                .task-row {
-                    display: flex;
-                    align-items: center;
+}
+
+.task-row {
+
+display: flex;
+
+align-items: center;
                     justify-content: space-between;
-                    gap: 14px;
-                    padding: 15px 16px;
-                    border: 1px solid var(--line);
-                    border-right: 3px solid var(--line-strong);
-                    background: rgba(255, 255, 255, 0.015);
-                    border-radius: 6px;
-                    transition: all 0.5s ease;
-                }
+                    gap: 16px; /* مسافة أكبر */
+                    padding: 16px 20px; /* بادينغ أكبر */
 
-                .task-row:hover {
-                    background: rgba(184, 115, 51, 0.04);
-                    border-color: var(--gold-dim);
-                    border-right-color: var(--gold);
-                    transform: translateX(-3px);
-                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-                }
+border: 1px solid var(--line);
 
-                .task-name {
+border-right: 4px solid var(--neon); /* حدود يمين بلون النيون */
+                    background: var(--bg-card);
+                    border-radius: 8px; /* زوايا مستديرة */
+                    transition: all 0.3s ease-out;
+                    box-shadow: 0 2px 10px var(--shadow-light);
+
+}
+
+.task-row:hover {
+                    background: var(--bg-card-hover);
+                    border-color: var(--line-strong);
+                    border-right-color: var(--neon-bright); /* لون نيون أسطع عند التحويم */
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 15px var(--shadow-medium);
+
+}
+
+.task-name {
                     display: flex;
                     align-items: center;
-                    gap: 12px;
+                    gap: 14px; /* مسافة أكبر */
                     min-width: 0;
                     color: var(--text-bright);
                     font-weight: 700;
-                }
+                    font-size: 1.05rem; /* حجم خط أكبر */
 
-                .task-number {
+}
+
+.task-number {
                     display: grid;
                     place-items: center;
-                    width: 32px;
-                    height: 32px;
-                    flex: 0 0 32px;
-                    border: 1px solid var(--gold-dim);
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.2), rgba(184, 115, 51, 0.05));
-                    color: var(--gold);
-                    font-size: 0.8rem;
+                    width: 36px; /* حجم أكبر */
+                    height: 36px;
+                    flex: 0 0 36px;
+                    border: 1px solid var(--neon-dim); /* حدود نيون */
+                    background: var(--neon-dim);
+                    color: var(--neon-bright);
+                    font-size: 0.85rem; /* حجم خط أكبر */
                     font-weight: 800;
-                    border-radius: 6px;
-                    box-shadow: 0 0 8px rgba(184, 115, 51, 0.15);
-                }
+                    border-radius: 8px; /* زوايا مستديرة */
+                    box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.2);
 
-                .task-state {
+}
+
+.task-state {
                     margin-right: auto;
                     color: var(--text-sub);
-                    font-size: 0.8rem;
+                    font-size: 0.85rem; /* حجم خط أكبر */
                     white-space: nowrap;
                     font-weight: 500;
-                }
+                    letter-spacing: 0.2px;
 
-                .task-row .btn {
+}
+
+.task-row .btn {
                     flex: 0 0 auto;
-                    min-width: 110px;
-                    padding: 9px 14px;
-                    border-radius: 6px;
+                    min-width: 120px; /* عرض أكبر للأزرار */
+                    padding: 10px 16px; /* بادينغ أكبر */
+                    border-radius: 8px;
+                    font-size: 0.9rem;
                 }
 
                 .timing-manager form {
-                    gap: 12px;
+                    gap: 14px; /* مسافة أكبر */
                 }
 
                 .planb-card {
-                    border: 1px solid var(--gold-dim);
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.05), rgba(17, 20, 26, 0.6));
-                    animation: slideInFade 0.6s ease-out both, goldPulse 3s ease-in-out infinite;
+                    border: 1px solid var(--accent-soft);
+                    background: linear-gradient(135deg, var(--bg-card), var(--bg-surface)); /* تدرج خلفية */
+                    box-shadow: 0 4px 15px var(--shadow-medium);
                 }
 
                 .planb-card h3 {
-                    color: var(--gold-bright);
-                    border-bottom-color: rgba(184, 115, 51, 0.3);
+                    color: var(--neon);
+                    border-bottom-color: var(--line-strong);
                 }
 
                 .planb-card .task-row {
-                    border-color: rgba(184, 115, 51, 0.3);
-                    border-right-color: var(--gold);
-                    background: rgba(184, 115, 51, 0.04);
+                    border-color: var(--line);
+                    border-right-color: var(--accent); /* حدود بلون التمييز */
                 }
 
                 .timing-group {
-                    padding: 14px 16px;
+                    padding: 16px 20px; /* بادينغ أكبر */
                     border: 1px solid var(--line);
-                    background: rgba(255, 255, 255, 0.015);
-                    border-radius: 8px;
-                    transition: all 0.5s ease;
+                    background: var(--bg-surface);
+                    border-radius: 10px; /* زوايا مستديرة أكبر */
+                    transition: all 0.3s ease-out;
+                    box-shadow: 0 2px 8px var(--shadow-light);
                 }
 
                 .timing-group:hover {
-                    border-color: var(--gold-dim);
-                    background: rgba(184, 115, 51, 0.025);
+                    border-color: var(--neon-dim);
+                    background: var(--bg-card-hover);
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px var(--shadow-medium);
                 }
 
                 .timing-group label {
                     display: block;
-                    margin-bottom: 10px;
+                    margin-bottom: 12px; /* مسافة أكبر */
                     color: var(--text-bright);
-                    font-size: 0.88rem;
+                    font-size: 0.9rem; /* حجم خط أكبر */
                     font-weight: 600;
                 }
 
                 .timing-fields {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
-                    gap: 10px;
+                    gap: 12px; /* مسافة أكبر */
                 }
 
                 .timing-fields input {
                     min-width: 0;
                 }
-
                 .target-list {
                     display: grid;
-                    gap: 8px;
-                    margin-top: 14px;
-                    padding: 10px;
-                    min-height: 60px;
-                    border: 1px solid var(--line);
-                    background: rgba(0, 0, 0, 0.2);
-                    border-radius: 8px;
+                    gap: 10px; /* مسافة أكبر */
+                    margin-top: 16px; /* مسافة أكبر */
+                    padding: 12px; /* بادينغ أكبر */
+                    min-height: 70px; /* ارتفاع أدنى أكبر */
+                    border: 1px solid var(--line-strong);
+                    background: var(--bg-base); /* خلفية أعمق */
+                    border-radius: 10px;
+                    box-shadow: inset 0 1px 3px var(--shadow-light);
                 }
 
                 .target-title {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    gap: 12px;
-                    margin-bottom: 18px;
-                    padding-bottom: 16px;
+                    gap: 14px; /* مسافة أكبر */
+                    margin-bottom: 20px; /* مسافة أكبر */
+                    padding-bottom: 18px; /* بادينغ أكبر */
                     border-bottom: 1px solid var(--line);
                 }
 
                 .target-title h3 {
-                    margin-bottom: 4px;
+                    margin-bottom: 6px; /* مسافة أكبر */
                     border-bottom: 0;
                     padding-bottom: 0;
-                    color: var(--gold-bright);
+                    color: var(--neon-bright); /* لون نيون ساطع */
                 }
 
                 .target-title p {
                     color: var(--text-sub);
-                    font-size: 0.78rem;
+                    font-size: 0.8rem; /* حجم خط أكبر */
                 }
 
                 .target-count {
-                    padding: 7px 12px;
-                    border: 1px solid var(--gold-dim);
-                    background: rgba(184, 115, 51, 0.1);
-                    color: var(--gold);
-                    font-size: 0.78rem;
+                    padding: 8px 14px; /* بادينغ أكبر */
+                    border: 1px solid var(--accent-soft);
+                    background: var(--accent-dim);
+                    color: var(--neon);
+                    font-size: 0.8rem;
                     font-weight: 700;
                     white-space: nowrap;
-                    border-radius: 4px;
+                    border-radius: 6px;
                 }
 
                 .target-add {
                     display: flex;
                     align-items: stretch;
-                    gap: 10px;
+                    gap: 12px; /* مسافة أكبر */
                 }
 
                 .target-add input {
@@ -562,54 +573,57 @@ app.get('/', (req, res) => {
 
                 .target-add .btn {
                     flex: 0 0 auto;
-                    min-width: 130px;
+                    min-width: 140px; /* عرض أكبر */
                 }
 
                 .target-mode {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    gap: 12px;
-                    margin-top: 14px;
-                    padding: 14px;
+                    gap: 14px; /* مسافة أكبر */
+                    margin-top: 18px; /* مسافة أكبر */
+                    padding: 16px; /* بادينغ أكبر */
                     border: 1px solid var(--line);
-                    background: rgba(255, 255, 255, 0.015);
-                    border-radius: 8px;
+                    background: var(--bg-surface);
+                    border-radius: 10px;
+                    box-shadow: 0 2px 8px var(--shadow-light);
                 }
 
                 .target-mode select {
-                    width: min(58%, 260px);
+                    width: min(60%, 280px); /* عرض أكبر */
                 }
 
                 .target-save {
                     width: 100%;
-                    margin-top: 16px;
+                    margin-top: 20px; /* مسافة أكبر */
                 }
 
                 .target-chip {
                     display: flex;
                     align-items: center;
-                    gap: 10px;
-                    padding: 11px 14px;
+                    gap: 12px; /* مسافة أكبر */
+                    padding: 13px 16px; /* بادينغ أكبر */
                     border: 1px solid var(--line);
                     border-right: 3px solid var(--line-strong);
                     background: var(--bg-card);
                     color: var(--text-bright);
-                    font-size: 0.85rem;
-                    border-radius: 6px;
-                    transition: all 0.5s ease;
+                    font-size: 0.9rem; /* حجم خط أكبر */
+                    border-radius: 8px;
+                    transition: all 0.3s ease-out;
+                    box-shadow: 0 1px 6px var(--shadow-light);
                 }
 
                 .target-chip:hover {
                     background: var(--bg-card-hover);
-                    border-right-color: var(--text-soft);
+                    border-right-color: var(--neon-bright);
+                    box-shadow: 0 3px 10px var(--shadow-medium);
                 }
 
                 .target-chip.is-primary {
-                    border-color: var(--gold-dim);
-                    border-right-color: var(--gold);
-                    background: linear-gradient(90deg, rgba(184, 115, 51, 0.18), rgba(184, 115, 51, 0.04));
-                    box-shadow: 0 0 12px rgba(184, 115, 51, 0.15);
+                    border-color: var(--accent-soft);
+                    border-right-color: var(--neon-bright);
+                    background: linear-gradient(90deg, var(--accent-dim) 0%, var(--bg-card) 100%); /* تدرج خلفية */
+                    box-shadow: 0 4px 12px rgba(var(--neon-rgb), 0.2);
                 }
 
                 .target-manager.random-mode .target-chip.is-primary {
@@ -626,54 +640,57 @@ app.get('/', (req, res) => {
                 .target-chip .target-id {
                     margin-right: auto;
                     font-weight: 600;
+                    color: var(--text-bright);
                 }
 
                 .target-chip .primary-label {
-                    color: var(--gold);
-                    font-size: 0.75rem;
+                    color: var(--neon);
+                    font-size: 0.8rem; /* حجم خط أكبر */
                     font-weight: 700;
                 }
 
                 .target-chip button {
                     border: 1px solid var(--line-strong);
-                    background: rgba(0, 0, 0, 0.3);
+                    background: rgba(0, 0, 0, 0.4);
                     color: var(--text-soft);
                     cursor: pointer;
-                    padding: 6px 11px;
+                    padding: 7px 12px; /* بادينغ أكبر */
                     font: inherit;
-                    font-size: 0.75rem;
+                    font-size: 0.8rem;
                     font-weight: 600;
-                    border-radius: 4px;
-                    transition: all 0.4s ease;
+                    border-radius: 5px;
+                    transition: all 0.2s ease;
                 }
 
                 .target-chip button:hover {
-                    color: var(--text-bright);
-                    border-color: var(--gold);
-                    background: rgba(184, 115, 51, 0.1);
+                    color: var(--neon-bright);
+                    border-color: var(--neon-dim);
+                    background: rgba(var(--neon-rgb), 0.1);
                 }
 
                 .monitor-channel-item {
-                    padding: 12px 14px;
+                    padding: 14px 16px; /* بادينغ أكبر */
                     border: 1px solid var(--line);
-                    border-right: 3px solid var(--line-strong);
+                    border-right: 4px solid var(--line-strong);
                     background: var(--bg-card);
                     color: var(--text-bright);
-                    font-size: 0.9rem;
-                    border-radius: 6px;
+                    font-size: 0.95rem; /* حجم خط أكبر */
+                    border-radius: 8px;
                     cursor: pointer;
-                    transition: all 0.4s ease;
+                    transition: all 0.3s ease-out;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    gap: 12px;
+                    gap: 14px; /* مسافة أكبر */
+                    box-shadow: 0 1px 6px var(--shadow-light);
                 }
 
                 .monitor-channel-item:hover {
                     background: var(--bg-card-hover);
-                    border-right-color: var(--gold);
-                    border-color: var(--gold-dim);
-                    transform: translateX(-3px);
+                    border-color: var(--line-strong);
+                    border-right-color: var(--neon);
+                    transform: translateY(-1px);
+                    box-shadow: 0 3px 10px var(--shadow-medium);
                 }
 
                 .monitor-channel-item .ch-name {
@@ -681,138 +698,111 @@ app.get('/', (req, res) => {
                 }
 
                 .monitor-channel-item .ch-count {
-                    padding: 4px 10px;
-                    background: rgba(184, 115, 51, 0.15);
-                    color: var(--gold);
-                    border: 1px solid var(--gold-dim);
-                    border-radius: 4px;
-                    font-size: 0.78rem;
+                    padding: 5px 11px; /* بادينغ أكبر */
+                    background: var(--accent-dim);
+                    color: var(--neon);
+                    border: 1px solid var(--accent-soft);
+                    border-radius: 5px;
+                    font-size: 0.8rem;
                     font-weight: 700;
                 }
 
                 .monitor-channel-item .ch-times {
-                    font-size: 0.72rem;
+                    font-size: 0.75rem; /* حجم خط أكبر */
                     color: var(--text-sub);
-                    margin-top: 4px;
+                    margin-top: 5px; /* مسافة أكبر */
                 }
 
                 .monitor-messages-list {
                     display: flex;
                     flex-direction: column;
-                    gap: 10px;
-                    max-height: 600px;
+                    gap: 12px; /* مسافة أكبر */
+                    max-height: 650px; /* ارتفاع أقصى أكبر */
                     overflow-y: auto;
-                    padding: 4px;
+                    padding: 6px; /* بادينغ أكبر */
                 }
 
                 .monitor-message {
-                    padding: 12px 14px;
+                    padding: 14px 16px; /* بادينغ أكبر */
                     border: 1px solid var(--line);
-                    background: rgba(0, 0, 0, 0.2);
-                    border-radius: 6px;
-                    transition: all 0.4s ease;
+                    background: var(--bg-base);
+                    border-radius: 8px;
+                    transition: all 0.3s ease-out;
+                    box-shadow: 0 1px 6px var(--shadow-light);
                 }
 
                 .monitor-message:hover {
-                    border-color: var(--gold-dim);
-                    background: rgba(184, 115, 51, 0.04);
+                    border-color: var(--line-strong);
+                    background: var(--bg-card-hover);
+                    transform: translateY(-1px);
+                    box-shadow: 0 3px 10px var(--shadow-medium);
                 }
 
                 .monitor-message .msg-time {
-                    font-size: 0.72rem;
+                    font-size: 0.75rem; /* حجم خط أكبر */
                     color: var(--text-sub);
                     font-family: 'Orbitron', monospace;
-                    margin-bottom: 6px;
+                    margin-bottom: 8px; /* مسافة أكبر */
                 }
 
                 .monitor-message .msg-content {
                     color: var(--text-bright);
-                    font-size: 0.9rem;
-                    line-height: 1.5;
+                    font-size: 0.95rem; /* حجم خط أكبر */
+                    line-height: 1.6;
                     word-break: break-word;
                     white-space: pre-wrap;
                 }
-
-
                 .card {
-                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.95), rgba(17, 20, 26, 0.95));
-                    border: 1px solid var(--line);
-                    border-radius: 10px;
-                    padding: 26px;
-                    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.025);
-                    animation: slideInFade 0.7s ease-out both;
-                    position: relative;
-                    transition: all 0.5s ease;
-                    overflow: hidden;
+                    background: linear-gradient(145deg, var(--bg-card), var(--bg-surface)); /* تدرج خلفية */
+                    border: 1px solid var(--line-strong);
+                    border-radius: 12px; /* زوايا مستديرة أكبر */
+                    padding: 28px; /* بادينغ أكبر */
+                    box-shadow: 0 6px 20px var(--shadow-strong);
+                    transition: all 0.3s ease-out;
                 }
-
-                .card::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 2px;
-                    background: linear-gradient(90deg, transparent, var(--account-accent), transparent);
-                }
-
-                .card::after {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    width: 80px;
-                    height: 80px;
-                    background: radial-gradient(circle, var(--account-accent-soft), transparent 70%);
-                    pointer-events: none;
-                }
-
-                .card:nth-child(1) { animation-delay: 0s; }
-                .card:nth-child(2) { animation-delay: 0s; }
-                .card:nth-child(3) { animation-delay: 0s; }
-                .card:nth-child(4) { animation-delay: 0s; }
 
                 .card:hover {
-                    border-color: var(--line-strong);
-                    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-                    transform: translateY(-2px);
+                    border-color: var(--neon-dim); /* حدود نيون عند التحويم */
+                    box-shadow: 0 8px 25px rgba(var(--neon-rgb), 0.25);
+                    transform: translateY(-3px); /* تأثير رفع أكبر */
                 }
 
                 .card h3 {
-                    font-size: 1.2rem;
-                    margin-bottom: 22px;
+                    font-size: 1.3rem; /* حجم خط أكبر */
+                    margin-bottom: 25px; /* مسافة أكبر */
                     border-bottom: 1px solid var(--line);
-                    padding-bottom: 16px;
-                    color: var(--text-bright);
+                    padding-bottom: 18px; /* بادينغ أكبر */
+                    color: var(--neon-bright); /* لون نيون ساطع */
                     display: flex;
                     align-items: center;
-                    gap: 10px;
+                    gap: 12px; /* مسافة أكبر */
                     font-weight: 700;
-                    letter-spacing: 0.3px;
+                    letter-spacing: 0.4px;
                     position: relative;
                     z-index: 1;
+                    text-shadow: 0 0 5px rgba(var(--neon-rgb), 0.2);
                 }
 
                 .status-badge {
                     display: inline-block;
-                    padding: 5px 14px;
-                    border-radius: 20px;
+                    padding: 6px 16px; /* بادينغ أكبر */
+                    border-radius: 22px; /* زوايا مستديرة أكثر */
                     font-weight: 700;
-                    font-size: 0.78rem;
+                    font-size: 0.8rem;
                     border: 1px solid;
-                    transition: all 0.5s ease;
-                    letter-spacing: 0.3px;
+                    transition: all 0.3s ease;
+                    letter-spacing: 0.4px;
+                    box-shadow: 0 2px 8px var(--shadow-light);
                 }
 
                 .status-on {
-                    background: rgba(184, 115, 51, 0.1);
-                    color: var(--gold-bright);
-                    border-color: rgba(184, 115, 51, 0.4);
-                    box-shadow: 0 0 10px rgba(184, 115, 51, 0.15);
+                    background: var(--success-dim);
+                    color: var(--success);
+                    border-color: rgba(110, 231, 183, 0.4);
                 }
 
                 .status-off {
-                    background: rgba(255, 255, 255, 0.04);
+                    background: rgba(255, 255, 255, 0.05);
                     color: var(--text-sub);
                     border-color: var(--line-strong);
                     box-shadow: none;
@@ -822,53 +812,55 @@ app.get('/', (req, res) => {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    padding: 13px 12px;
+                    padding: 14px 15px; /* بادينغ أكبر */
                     border-bottom: 1px solid var(--line-soft);
-                    font-size: 0.95rem;
-                    transition: all 0.5s ease;
+                    font-size: 1rem; /* حجم خط أكبر */
+                    transition: all 0.3s ease;
                     color: var(--text-soft);
-                    border-radius: 6px;
+                    border-radius: 8px;
                 }
 
                 .stat-item:hover {
-                    background: rgba(184, 115, 51, 0.04);
-                    padding-left: 16px;
+                    background: var(--bg-card-hover);
                     color: var(--text-bright);
+                    box-shadow: inset 0 0 5px rgba(var(--neon-rgb), 0.05);
                 }
 
                 .stat-item span:last-child {
                     font-weight: 700;
-                    color: var(--gold);
+                    color: var(--neon);
                     font-family: 'Orbitron', monospace;
-                    letter-spacing: 0.5px;
+                    letter-spacing: 0.7px;
+                    text-shadow: 0 0 3px rgba(var(--neon-rgb), 0.2);
                 }
 
                 .btn-group {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 12px;
-                    margin-top: 22px;
+                    gap: 14px; /* مسافة أكبر */
+                    margin-top: 25px; /* مسافة أكبر */
                 }
 
                 .btn {
                     flex: 1;
-                    min-width: 130px;
-                    padding: 12px 20px;
+                    min-width: 140px; /* عرض أكبر */
+                    padding: 14px 22px; /* بادينغ أكبر */
                     border: 1px solid var(--line-strong);
-                    border-radius: 8px;
+                    border-radius: 10px; /* زوايا مستديرة أكبر */
                     font-weight: 700;
                     cursor: pointer;
-                    transition: all 0.5s ease;
+                    transition: all 0.3s ease-out;
                     text-decoration: none;
                     text-align: center;
                     color: var(--text-bright);
                     display: inline-block;
-                    font-size: 0.88rem;
+                    font-size: 0.9rem; /* حجم خط أكبر */
                     position: relative;
-                    letter-spacing: 0.3px;
+                    letter-spacing: 0.4px;
                     overflow: hidden;
                     font-family: inherit;
-                    background: rgba(255, 255, 255, 0.03);
+                    background: var(--bg-surface); /* خلفية زر */
+                    box-shadow: 0 2px 8px var(--shadow-medium);
                 }
 
                 .btn::before {
@@ -876,62 +868,69 @@ app.get('/', (req, res) => {
                 }
 
                 .btn:hover {
-                    transform: none;
-                    background: rgba(255, 255, 255, 0.06);
-                    border-color: var(--line-strong);
+                    transform: translateY(-2px);
+                    background: var(--bg-card-hover);
+                    border-color: var(--neon-dim);
+                    box-shadow: 0 6px 16px var(--shadow-strong);
+                    color: var(--neon-bright);
                 }
 
                 .btn-primary {
-                    background: rgba(255, 255, 255, 0.04);
-                    border-color: var(--line-strong);
-                    color: var(--text-bright);
+                    background: linear-gradient(135deg, rgba(var(--neon-rgb), 0.15), var(--bg-surface));
+                    border-color: rgba(var(--neon-rgb), 0.3);
+                    color: var(--neon-bright);
+                    box-shadow: 0 4px 15px rgba(var(--neon-rgb), 0.2);
                 }
 
                 .btn-primary:hover {
-                    box-shadow: none;
-                    border-color: var(--line-strong);
-                    background: rgba(255, 255, 255, 0.07);
+                    box-shadow: 0 6px 20px rgba(var(--neon-rgb), 0.35);
+                    border-color: var(--neon);
+                    background: linear-gradient(135deg, rgba(var(--neon-rgb), 0.2), var(--bg-card-hover));
                 }
 
                 .btn-success {
-                    background: rgba(255, 255, 255, 0.03);
-                    border-color: var(--line-strong);
-                    color: var(--text-bright);
+                    background: linear-gradient(135deg, rgba(110, 231, 183, 0.15), var(--bg-surface));
+                    border-color: rgba(110, 231, 183, 0.3);
+                    color: var(--success);
+                    box-shadow: 0 4px 15px rgba(110, 231, 183, 0.2);
                 }
 
                 .btn-success:hover {
-                    box-shadow: none;
-                    border-color: var(--line-strong);
-                    background: rgba(255, 255, 255, 0.06);
+                    box-shadow: 0 6px 20px rgba(110, 231, 183, 0.35);
+                    border-color: var(--success);
+                    background: linear-gradient(135deg, rgba(110, 231, 183, 0.2), var(--bg-card-hover));
                 }
 
                 .btn-danger {
-                    background: rgba(255, 255, 255, 0.03);
-                    border-color: var(--line-strong);
-                    color: var(--text-bright);
+                    background: linear-gradient(135deg, rgba(255, 123, 138, 0.15), var(--bg-surface));
+                    border-color: rgba(255, 123, 138, 0.3);
+                    color: var(--danger);
+                    box-shadow: 0 4px 15px rgba(255, 123, 138, 0.2);
                 }
 
                 .btn-danger:hover {
-                    box-shadow: none;
-                    border-color: var(--line-strong);
-                    background: rgba(255, 255, 255, 0.06);
+                    box-shadow: 0 6px 20px rgba(255, 123, 138, 0.35);
+                    border-color: var(--danger);
+                    background: linear-gradient(135deg, rgba(255, 123, 138, 0.2), var(--bg-card-hover));
                 }
 
                 .btn-warning {
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.18), rgba(184, 115, 51, 0.06));
-                    border-color: var(--gold-dim);
-                    color: var(--gold);
+                    background: linear-gradient(135deg, rgba(255, 204, 102, 0.15), var(--bg-surface));
+                    border-color: rgba(255, 204, 102, 0.3);
+                    color: #FFCC66; /* لون أصفر ذهبي */
+                    box-shadow: 0 4px 15px rgba(255, 204, 102, 0.2);
                 }
 
                 .btn-warning:hover {
-                    box-shadow: 0 8px 24px rgba(184, 115, 51, 0.25);
-                    border-color: var(--gold);
+                    box-shadow: 0 6px 20px rgba(255, 204, 102, 0.35);
+                    border-color: #FFCC66;
+                    background: linear-gradient(135deg, rgba(255, 204, 102, 0.2), var(--bg-card-hover));
                 }
 
                 form {
                     display: flex;
                     flex-direction: column;
-                    gap: 16px;
+                    gap: 18px; /* مسافة أكبر */
                     position: relative;
                     z-index: 1;
                 }
@@ -939,68 +938,69 @@ app.get('/', (req, res) => {
                 .form-group {
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
+                    gap: 10px; /* مسافة أكبر */
                 }
-
                 label {
-                    font-size: 0.85rem;
+                    font-size: 0.9rem; /* حجم خط أكبر */
                     color: var(--text-soft);
                     font-weight: 600;
                     letter-spacing: 0.3px;
                 }
-
                 textarea {
                     width: 100%;
-                    background: rgba(0, 0, 0, 0.3);
+                    background: var(--bg-base); /* خلفية داكنة */
                     border: 1px solid var(--line);
-                    padding: 12px 16px;
-                    border-radius: 8px;
+                    padding: 14px 18px; /* بادينغ أكبر */
+                    border-radius: 9px; /* زوايا مستديرة أكبر */
                     color: var(--text-bright);
                     outline: none;
-                    font-size: 0.92rem;
+                    font-size: 0.95rem; /* حجم خط أكبر */
                     font-family: inherit;
                     transition: all 0.3s ease;
                     resize: vertical;
-                    min-height: 70px;
-                }
+                    min-height: 80px; /* ارتفاع أدنى أكبر */
+                    box-shadow: inset 0 1px 4px var(--shadow-light);
 
-                textarea:hover {
+}
+
+textarea:hover {
                     border-color: var(--line-strong);
-                    background: rgba(0, 0, 0, 0.4);
+                    background: var(--bg-surface);
                 }
 
                 textarea:focus {
-                    border-color: var(--gold);
-                    box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.15);
-                    background: rgba(0, 0, 0, 0.5);
+                    border-color: var(--neon-dim);
+                    background: var(--bg-elevated);
+                    box-shadow: inset 0 1px 4px var(--shadow-medium), 0 0 10px rgba(var(--neon-rgb), 0.2);
                 }
 
                 input[type="text"],
                 input[type="number"],
                 select {
                     width: 100%;
-                    background: rgba(0, 0, 0, 0.3);
+                    background: var(--bg-base);
                     border: 1px solid var(--line);
-                    padding: 12px 16px;
-                    border-radius: 8px;
+                    padding: 14px 18px; /* بادينغ أكبر */
+                    border-radius: 9px;
                     color: var(--text-bright);
                     outline: none;
-                    font-size: 0.92rem;
+                    font-size: 0.95rem;
                     font-family: inherit;
-                    transition: all 0.5s ease;
+                    transition: all 0.3s ease;
+                    box-shadow: inset 0 1px 4px var(--shadow-light);
                 }
 
                 input:hover,
                 select:hover {
                     border-color: var(--line-strong);
-                    background: rgba(0, 0, 0, 0.4);
+                    background: var(--bg-surface);
                 }
 
                 input:focus,
                 select:focus {
-                    border-color: var(--gold);
-                    box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.15);
-                    background: rgba(0, 0, 0, 0.5);
+                    border-color: var(--neon-dim);
+                    background: var(--bg-elevated);
+                    box-shadow: inset 0 1px 4px var(--shadow-medium), 0 0 10px rgba(var(--neon-rgb), 0.2);
                 }
 
                 input::placeholder {
@@ -1010,7 +1010,7 @@ app.get('/', (req, res) => {
                 input[type="number"] {
                     direction: ltr;
                     text-align: left;
-                    padding-right: 26px !important;
+                    padding-right: 30px !important; /* بادينغ أكبر */
                 }
 
                 input[type="number"]::-webkit-outer-spin-button,
@@ -1032,14 +1032,14 @@ app.get('/', (req, res) => {
 
                 .num-wrap .num-spin {
                     position: absolute;
-                    right: 1px;
+                    right: 2px; /* تعديل الموضع */
                     top: 50%;
                     transform: translateY(-50%);
-                    width: 22px;
-                    height: calc(100% - 8px);
+                    width: 26px; /* عرض أكبر */
+                    height: calc(100% - 10px); /* ارتفاع أكبر */
                     display: flex;
                     flex-direction: column;
-                    gap: 1px;
+                    gap: 2px; /* مسافة أكبر */
                     pointer-events: none;
                 }
 
@@ -1057,72 +1057,76 @@ app.get('/', (req, res) => {
                     align-items: center;
                     justify-content: center;
                     pointer-events: auto;
-                    opacity: 0.7;
+                    opacity: 0.8; /* شفافية أعلى */
                 }
 
                 .num-wrap .num-spin button:hover {
-                    color: var(--gold);
+                    color: var(--neon-bright);
                     opacity: 1;
                 }
 
                 .num-wrap .num-spin button svg {
-                    width: 8px;
-                    height: 8px;
+                    width: 9px; /* حجم أكبر */
+                    height: 9px;
                     fill: currentColor;
                 }
 
                 select {
                     appearance: none;
-                    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8afb7' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+                    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238AA2BF' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e"); /* لون السهم */
                     background-repeat: no-repeat;
-                    background-position: left 14px center;
-                    background-size: 16px;
-                    padding-left: 40px;
+                    background-position: left 16px center; /* موضع أيقونة السهم */
+                    background-size: 18px; /* حجم أيقونة السهم */
+                    padding-left: 45px; /* بادينغ أيسر أكبر */
                 }
 
                 form button {
-                    margin-top: 6px;
+                    margin-top: 8px; /* مسافة أكبر */
                 }
 
                 .accordion-container {
                     display: flex;
                     flex-direction: column;
-                    gap: 10px;
+                    gap: 12px;
                 }
 
                 .accordion-item {
-                    background: rgba(0, 0, 0, 0.2);
+                    background: var(--bg-base);
                     border: 1px solid var(--line);
-                    border-radius: 8px;
+                    border-radius: 10px;
                     overflow: hidden;
-                    transition: all 0.5s ease;
+                    transition: all 0.3s ease-out;
+                    box-shadow: 0 2px 8px var(--shadow-light);
                 }
 
                 .accordion-item:hover {
                     border-color: var(--line-strong);
-                    background: rgba(184, 115, 51, 0.04);
+                    background: var(--bg-surface);
+                    box-shadow: 0 4px 12px var(--shadow-medium);
+                    transform: translateY(-1px);
                 }
 
                 .accordion-header {
-                    padding: 14px 18px;
+                    padding: 16px 20px;
                     cursor: pointer;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                     font-weight: 700;
                     color: var(--text-bright);
-                    transition: all 0.5s ease;
+                    transition: all 0.3s ease;
                     user-select: none;
+                    font-size: 1rem;
                 }
 
                 .accordion-header:hover {
-                    color: var(--gold);
+                    color: var(--neon);
                 }
 
                 .accordion-icon {
-                    font-size: 1.2rem;
-                    transition: transform 0.5s ease;
-                    color: var(--gold);
+                    font-size: 1.3rem; /* حجم أكبر */
+                    transition: transform 0.3s ease;
+                    color: var(--neon);
                 }
 
                 .accordion-item.active .accordion-icon {
@@ -1132,31 +1136,30 @@ app.get('/', (req, res) => {
                 .accordion-content {
                     max-height: 0;
                     overflow: hidden;
-                    transition: max-height 0.5s ease;
-                    padding: 0 18px;
+                    transition: max-height 0.5s ease-out; /* انتقال أبطأ */
+                    padding: 0 20px;
                 }
 
                 .accordion-item.active .accordion-content {
-                    max-height: 500px;
-                    padding: 18px;
+                    max-height: 600px; /* ارتفاع أقصى أكبر */
+                    padding: 20px;
                 }
 
                 .accordion-content-inner {
                     display: flex;
                     flex-direction: column;
-                    gap: 14px;
+                    gap: 16px;
                 }
 
                 .panel {
                     display: none;
-                    animation: slideInFade 0.55s ease-out both;
                 }
 
                 .panel.active {
                     display: grid;
                 }
 
-                /* ====== SCROLLBAR (ثيم الموقع) ====== */
+/* ====== SCROLLBAR (ثيم الموقع) ====== */
                 ::-webkit-scrollbar {
                     width: 10px;
                     height: 10px;
@@ -1164,81 +1167,63 @@ app.get('/', (req, res) => {
 
                 ::-webkit-scrollbar-track {
                     background: var(--bg-deep);
-                    border-radius: 5px;
                 }
 
                 ::-webkit-scrollbar-thumb {
-                    background: linear-gradient(180deg, var(--gold-dim), rgba(184, 115, 51, 0.6));
-                    border-radius: 5px;
+                    background: var(--accent-soft);
+                    border-radius: 10px;
                     border: 2px solid var(--bg-deep);
-                    transition: all 0.4s ease;
                 }
 
                 ::-webkit-scrollbar-thumb:hover {
-                    background: linear-gradient(180deg, var(--gold), var(--gold-bright));
-                    box-shadow: 0 0 10px rgba(184, 115, 51, 0.4);
+                    background: var(--neon-dim);
                 }
 
                 ::-webkit-scrollbar-thumb:active {
-                    background: var(--gold-bright);
+                    background: var(--neon);
                 }
 
                 ::-webkit-scrollbar-corner {
                     background: var(--bg-deep);
                 }
 
-                * {
+* {
                     scrollbar-width: thin;
-                    scrollbar-color: var(--gold-dim) var(--bg-deep);
+                    scrollbar-color: var(--accent-soft) var(--bg-deep);
                 }
 
-                /* ====== AI CHAT PANEL ====== */
+                /* ====== AI CHAT PANEL (Gemini-style) ====== */
                 .aichat-card {
-                    min-height: 600px;
+                    min-height: 650px; /* ارتفاع أدنى أكبر */
                     display: flex;
                     flex-direction: column;
-                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.98), rgba(13, 15, 20, 0.98));
+                    background: var(--bg-surface);
+                    box-shadow: 0 8px 30px var(--shadow-strong);
                 }
 
                 .aichat-header {
                     display: flex;
                     align-items: center;
-                    gap: 16px;
-                    padding: 18px 20px;
-                    border-radius: 12px;
-                    border: 1px solid var(--gold-dim);
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.12), rgba(184, 115, 51, 0.02));
-                    margin-bottom: 18px;
-                    box-shadow: 0 0 24px rgba(184, 115, 51, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .aichat-header::before {
-                    content: '';
-                    position: absolute;
-                    inset: 0;
-                    background: radial-gradient(circle at 20% 50%, rgba(184, 115, 51, 0.08), transparent 60%);
-                    pointer-events: none;
+                    gap: 16px; /* مسافة أكبر */
+                    padding: 16px 20px; /* بادينغ أكبر */
+                    border-radius: 10px;
+                    border: 1px solid var(--line-strong);
+                    background: var(--bg-card);
+                    margin-bottom: 16px;
+                    box-shadow: 0 2px 10px var(--shadow-medium);
                 }
 
                 .aichat-avatar {
-                    width: 56px;
-                    height: 56px;
+                    width: 44px; /* حجم أكبر */
+                    height: 44px;
                     display: grid;
                     place-items: center;
                     border-radius: 50%;
-                    background: linear-gradient(135deg, #d68a3f, #8a5524);
-                    border: 2px solid var(--gold-bright);
-                    font-size: 1.7rem;
-                    box-shadow: 0 0 24px rgba(184, 115, 51, 0.5), 0 0 0 4px rgba(184, 115, 51, 0.15);
-                    position: relative;
-                    z-index: 1;
-                }
-
-                .aichat-title {
-                    position: relative;
-                    z-index: 1;
+                    background: linear-gradient(135deg, var(--accent), var(--accent-dim) 80%);
+                    border: 2px solid var(--neon-dim);
+                    font-size: 1.3rem;
+                    color: var(--neon-bright);
+                    box-shadow: 0 0 10px rgba(var(--neon-rgb), 0.3);
                 }
 
                 .aichat-title h3 {
@@ -1246,17 +1231,13 @@ app.get('/', (req, res) => {
                     border: none;
                     padding: 0;
                     color: var(--text-bright);
-                    font-size: 1.15rem;
-                    font-weight: 800;
-                    background: linear-gradient(135deg, #f8f9fb 0%, #d68a3f 100%);
-                    -webkit-background-clip: text;
-                    background-clip: text;
-                    -webkit-text-fill-color: transparent;
+                    font-size: 1.1rem; /* حجم خط أكبر */
+                    font-weight: 700;
                 }
 
                 .aichat-title p {
                     color: var(--text-soft);
-                    font-size: 0.78rem;
+                    font-size: 0.8rem;
                     margin: 0;
                     font-weight: 500;
                 }
@@ -1265,108 +1246,112 @@ app.get('/', (req, res) => {
                     margin-right: auto;
                     display: flex;
                     align-items: center;
-                    gap: 8px;
-                    padding: 6px 12px;
-                    border-radius: 20px;
-                    background: rgba(74, 222, 128, 0.08);
-                    border: 1px solid rgba(74, 222, 128, 0.3);
+                    gap: 8px; /* مسافة أكبر */
+                    padding: 5px 12px; /* بادينغ أكبر */
+                    border-radius: 16px;
+                    background: var(--success-dim);
+                    border: 1px solid rgba(110, 231, 183, 0.35);
                     color: var(--success);
-                    font-size: 0.78rem;
-                    font-weight: 700;
-                    position: relative;
-                    z-index: 1;
+                    font-size: 0.75rem;
+                    font-weight: 600;
                 }
 
                 .aichat-status .status-dot {
-                    width: 8px;
+                    width: 8px; /* حجم أكبر */
                     height: 8px;
                 }
 
                 .aichat-messages {
                     flex: 1;
-                    min-height: 420px;
-                    max-height: 560px;
+                    min-height: 480px; /* ارتفاع أدنى أكبر */
+                    max-height: 620px; /* ارتفاع أقصى أكبر */
                     overflow-y: auto;
-                    padding: 18px;
+                    padding: 18px; /* بادينغ أكبر */
                     border: 1px solid var(--line);
-                    background:
-                        linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
-                        radial-gradient(ellipse at top, rgba(184, 115, 51, 0.04), transparent 60%);
-                    border-radius: 14px;
+                    background: var(--bg-deep);
+                    border-radius: 10px;
                     display: flex;
                     flex-direction: column;
-                    gap: 14px;
-                    box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.3);
+                    gap: 18px; /* مسافة أكبر */
+                    box-shadow: inset 0 2px 8px var(--shadow-medium);
                 }
 
+                /* Gemini-style: AI left full-width, user right compact */
                 .aichat-msg {
                     display: flex;
-                    gap: 12px;
+                    gap: 12px; /* مسافة أكبر */
                     align-items: flex-start;
+                    width: 100%;
+                }
+
+                .aichat-msg.user {
+                    flex-direction: row-reverse;
+                    max-width: 80%; /* عرض أقل */
+                    margin-right: auto;
+                }
+
+                .aichat-msg.ai {
+                    max-width: 100%;
                 }
 
                 .aichat-msg .msg-avatar {
-                    flex: 0 0 36px;
+                    flex: 0 0 36px; /* حجم أكبر */
                     width: 36px;
                     height: 36px;
                     display: grid;
                     place-items: center;
                     border-radius: 50%;
                     font-size: 1rem;
-                    font-weight: 800;
+                    font-weight: 700;
                 }
 
                 .aichat-msg.user .msg-avatar {
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.3), rgba(184, 115, 51, 0.1));
-                    color: var(--gold-bright);
-                    border: 1px solid var(--gold-dim);
-                    box-shadow: 0 0 10px rgba(184, 115, 51, 0.2);
+                    background: var(--accent-dim);
+                    color: var(--neon);
+                    border: 1px solid var(--accent-soft);
                 }
 
                 .aichat-msg.ai .msg-avatar {
-                    background: linear-gradient(135deg, #d68a3f, #8a5524);
-                    color: #fff;
-                    border: 1px solid var(--gold-bright);
-                    box-shadow: 0 0 14px rgba(184, 115, 51, 0.4);
+                    background: linear-gradient(135deg, var(--accent), var(--bg-elevated));
+                    color: var(--neon-bright);
+                    border: 1px solid var(--neon-dim);
+                    box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.2);
                 }
 
                 .aichat-msg .msg-body {
-                    flex: 1;
                     min-width: 0;
-                    padding: 12px 16px;
-                    border-radius: 12px;
-                    border: 1px solid var(--line);
-                    background: var(--bg-card);
+                    padding: 12px 16px; /* بادينغ أكبر */
+                    border-radius: 14px; /* زوايا مستديرة أكبر */
                     color: var(--text-bright);
-                    font-size: 0.94rem;
+                    font-size: 0.95rem; /* حجم خط أكبر */
                     line-height: 1.7;
                     word-break: break-word;
                     white-space: pre-wrap;
                 }
 
                 .aichat-msg.user .msg-body {
-                    background: linear-gradient(135deg, rgba(184, 115, 51, 0.15), rgba(184, 115, 51, 0.03));
-                    border-color: var(--gold-dim);
-                    box-shadow: 0 4px 14px rgba(184, 115, 51, 0.08);
+                    background: var(--accent-dim);
+                    border: 1px solid var(--accent-soft);
+                    box-shadow: 0 2px 8px var(--shadow-light);
                 }
 
                 .aichat-msg.ai .msg-body {
-                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.95), rgba(17, 20, 26, 0.95));
-                    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+                    background: transparent;
+                    padding-left: 0;
+                    padding-right: 0;
                 }
 
                 .aichat-msg .msg-name {
                     display: block;
-                    font-size: 0.72rem;
+                    font-size: 0.75rem; /* حجم خط أكبر */
                     color: var(--text-sub);
-                    font-weight: 700;
-                    margin-bottom: 6px;
-                    letter-spacing: 0.4px;
-                    text-transform: uppercase;
+                    font-weight: 600;
+                    margin-bottom: 5px;
+                    letter-spacing: 0.3px;
                 }
 
-                .aichat-msg.user .msg-name { color: var(--gold-bright); }
-                .aichat-msg.ai .msg-name { color: var(--gold); }
+                .aichat-msg.user .msg-name { color: var(--neon); }
+                .aichat-msg.ai .msg-name { color: var(--text-soft); }
 
                 .aichat-empty {
                     flex: 1;
@@ -1374,54 +1359,82 @@ app.get('/', (req, res) => {
                     place-items: center;
                     text-align: center;
                     color: var(--text-soft);
-                    font-size: 0.95rem;
-                    padding: 40px 20px;
+                    font-size: 1rem; /* حجم خط أكبر */
+                    padding: 50px 25px;
                 }
 
-                .aichat-empty .big-emoji {
-                    font-size: 3.5rem;
-                    margin-bottom: 14px;
-                    filter: drop-shadow(0 0 18px rgba(184, 115, 51, 0.5));
+                .aichat-greeting {
+                    font-size: 3rem; /* حجم خط أكبر */
+                    font-weight: 800;
+                    font-family: 'Cairo', 'Tajawal', sans-serif;
+                    letter-spacing: 1.5px;
+                    color: var(--neon-bright);
+                    text-shadow:
+                        0 0 10px var(--neon-glow-strong),
+                        0 0 25px var(--neon-glow-strong),
+                        0 0 40px var(--neon-dim);
+                    animation: neonPulse 2.8s ease-in-out infinite; /* أنيميشن أبطأ */
+                }
+
+                @keyframes neonPulse {
+                    0%, 100% {
+                        opacity: 0.6;
+                        text-shadow:
+                            0 0 5px var(--neon-dim),
+                            0 0 15px var(--neon-dim),
+                            0 0 25px transparent;
+                    }
+                    50% {
+                        opacity: 1;
+                        text-shadow:
+                            0 0 10px var(--neon-glow-strong),
+                            0 0 30px var(--neon-glow-strong),
+                            0 0 50px var(--neon-dim);
+                    }
+                }
+
+                .aichat-greeting.fade-out {
+                    animation: fadeOut 0.5s ease-out forwards; /* أنيميشن أبطأ */
+                }
+
+                @keyframes fadeOut {
+                    to { opacity: 0; transform: translateY(-10px); }
                 }
 
                 .aichat-typing {
                     display: inline-flex;
                     align-items: center;
-                    gap: 5px;
-                    padding: 4px 0;
+                    gap: 5px; /* مسافة أكبر */
+                    padding: 5px 0;
                 }
 
                 .aichat-typing span {
-                    width: 8px;
+                    width: 8px; /* حجم أكبر */
                     height: 8px;
                     border-radius: 50%;
-                    background: var(--gold);
+                    background: var(--neon-bright);
                     display: inline-block;
-                    animation: aichatDot 1.2s ease-in-out infinite;
+                    animation: aichatDot 1.2s ease-in-out infinite; /* أنيميشن أبطأ */
+                    opacity: 0.6;
                 }
 
-                .aichat-typing span:nth-child(2) { animation-delay: 0.15s; }
-                .aichat-typing span:nth-child(3) { animation-delay: 0.3s; }
-
-                @keyframes aichatDot {
-                    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-                    30% { transform: translateY(-6px); opacity: 1; box-shadow: 0 0 8px var(--gold); }
-                }
+                .aichat-typing span:nth-child(2) { animation-delay: 0.2s; } /* تأخير أكبر */
+                .aichat-typing span:nth-child(3) { animation-delay: 0.4s; }
 
                 .aichat-input {
                     display: flex;
-                    gap: 10px;
-                    margin-top: 14px;
-                    padding: 6px;
+                    gap: 10px; /* مسافة أكبر */
+                    margin-top: 15px;
+                    padding: 8px; /* بادينغ أكبر */
                     background: var(--bg-card);
-                    border: 1px solid var(--line);
+                    border: 1px solid var(--line-strong);
                     border-radius: 14px;
-                    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                    transition: border-color 0.2s ease;
+                    box-shadow: 0 2px 10px var(--shadow-medium);
                 }
 
                 .aichat-input:focus-within {
-                    border-color: var(--gold);
-                    box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.12), 0 0 24px rgba(184, 115, 51, 0.15);
+                    border-color: var(--accent);
                 }
 
                 .aichat-input input {
@@ -1429,7 +1442,7 @@ app.get('/', (req, res) => {
                     min-width: 0;
                     background: transparent;
                     border: none;
-                    padding: 12px 14px;
+                    padding: 12px 14px; /* بادينغ أكبر */
                     color: var(--text-bright);
                     outline: none;
                     font-size: 0.95rem;
@@ -1447,15 +1460,16 @@ app.get('/', (req, res) => {
 
                 .aichat-input .btn {
                     flex: 0 0 auto;
-                    min-width: 120px;
+                    min-width: 110px; /* عرض أكبر */
                     border-radius: 10px;
                     margin: 0;
+                    font-size: 0.9rem;
                 }
 
                 .aichat-quickbar {
                     display: flex;
                     align-items: center;
-                    gap: 8px;
+                    gap: 8px; /* مسافة أكبر */
                     margin-top: 12px;
                     flex-wrap: wrap;
                 }
@@ -1464,104 +1478,163 @@ app.get('/', (req, res) => {
                     color: var(--text-sub);
                     font-size: 0.75rem;
                     font-weight: 600;
-                    margin-left: 4px;
+                    margin-left: 5px;
                 }
 
                 .aichat-quickbar button {
-                    padding: 7px 14px;
-                    background: rgba(184, 115, 51, 0.06);
-                    border: 1px solid var(--gold-dim);
+                    padding: 7px 14px; /* بادينغ أكبر */
+                    background: var(--bg-surface);
+                    border: 1px solid var(--line);
                     color: var(--text-soft);
-                    border-radius: 18px;
+                    border-radius: 16px;
                     font: inherit;
-                    font-size: 0.78rem;
+                    font-size: 0.8rem;
                     cursor: pointer;
-                    transition: all 0.25s ease;
+                    transition: all 0.2s ease;
+                    box-shadow: 0 1px 5px var(--shadow-light);
                 }
 
                 .aichat-quickbar button:hover {
-                    background: rgba(184, 115, 51, 0.18);
-                    color: var(--gold-bright);
-                    border-color: var(--gold);
-                    transform: translateY(-1px);
+                    background: var(--bg-card-hover);
+                    color: var(--neon);
+                    border-color: var(--neon-dim);
+                    box-shadow: 0 2px 8px var(--shadow-medium);
                 }
 
                 .aichat-error {
                     color: var(--danger);
                     background: var(--danger-dim);
-                    border: 1px solid rgba(248, 113, 113, 0.3);
+                    border: 1px solid rgba(255, 123, 138, 0.35);
+                    padding: 10px 14px;
+                    border-radius: 8px;
+                }
+
+                .aichat-cursor {
+                    display: inline-block;
+                    width: 8px; /* عرض أكبر */
+                    height: 1.1em; /* ارتفاع أكبر */
+                    background: var(--neon-bright);
+                    margin-left: 3px;
+                    vertical-align: text-bottom;
+                    animation: cursorBlink 0.7s step-end infinite; /* أنيميشن أسرع قليلاً */
+                    box-shadow: 0 0 8px var(--neon-glow);
+                }
+
+                @keyframes cursorBlink {
+                    0%, 50% { opacity: 1; }
+                    51%, 100% { opacity: 0; }
                 }
 
                 .aichat-msg .msg-model {
                     display: inline-block;
-                    margin-right: 6px;
-                    padding: 1px 7px;
-                    background: rgba(184, 115, 51, 0.12);
-                    border: 1px solid var(--gold-dim);
-                    border-radius: 10px;
+                    margin-right: 8px;
+                    padding: 2px 9px;
+                    background: var(--accent-dim);
+                    border: 1px solid var(--accent-soft);
+                    border-radius: 12px;
                     font-size: 0.65rem;
-                    color: var(--gold);
+                    color: var(--neon);
                     font-weight: 600;
                     vertical-align: middle;
                 }
 
-                @media (max-width: 768px) {
-                    .page-title h2 { font-size: 1.3rem; }
-                    .topbar { flex-direction: column; align-items: flex-start; padding: 18px 20px; }
-                    .topbar-stats { width: 100%; justify-content: space-between; gap: 12px; }
-                    .topbar-stat { padding: 0; border: none; }
-                    .grid { grid-template-columns: 1fr; gap: 16px; }
+@media (max-width: 768px) {
+                    body { padding: 20px 12px 60px; }
+                    header { padding: 24px 20px; margin-bottom: 24px; }
+                    header h1 { font-size: 1.8rem; }
+                    .grid { grid-template-columns: 1fr; gap: 20px; }
                     .btn-group { flex-direction: column; }
                     .btn { min-width: 100%; }
-                    .task-row { align-items: flex-start; flex-wrap: wrap; padding: 12px; }
-                    .task-state { margin-right: 0; }
+                    .task-row { flex-direction: column; align-items: stretch; gap: 12px; padding: 16px; }
+                    .task-state { margin-right: 0; margin-bottom: 8px; }
                     .task-row .btn { width: 100%; }
+                    .timing-fields { grid-template-columns: 1fr; }
                     .target-title,
                     .target-add,
                     .target-mode { align-items: stretch; flex-direction: column; }
                     .target-add .btn,
                     .target-mode select { width: 100%; }
                     .card { padding: 20px; }
+                    .dashboard-nav { flex-direction: column; border-radius: 12px; }
+                    .dashboard-nav button { border-radius: 8px; padding: 12px; font-size: 1rem; }
+                    .aichat-header { flex-direction: column; text-align: center; gap: 12px; padding: 16px; }
+                    .aichat-status { margin: 0 auto; }
+                    .aichat-msg { max-width: 95%; }
+                    .aichat-msg.user { max-width: 95%; }
+                    .aichat-input-wrapper { padding: 16px; }
+                    .aichat-input { flex-direction: column; }
+                    .aichat-input .btn { width: 100%; }
                 }
             </style>
         </head>
         <body>
             <div class="container">
                 <header>
-                    <h1>◆ لوحة التحكم ◆</h1>
-                    <p>نظام إدارة ديسكورد سيلفبوت المتقدم</p>
-                </header>
+                    <h1>◆ لوحة التحكم الفضائية ◆</h1>
+                    <p>إدارة متقدمة لـ Discord Selfbot والذكاء الاصطناعي</p>
+                    <div class="status-line">
+                        <div class="status-indicator">
+                            <span class="status-dot ${botState.isRunning ? 'active' : 'inactive'}"></span>
+                            <span>البوت: ${botState.isRunning ? 'نشط' : 'متوقف'}</span>
 
-                <nav class="dashboard-nav" aria-label="أقسام لوحة التحكم">
-                    <button type="button" class="active" data-panel-target="overview">⚙️ النظرة العامة</button>
+</div>
+
+<div class="status-indicator">
+                            <span class="status-dot ${botState.isVoiceActive ? 'active' : 'inactive'}"></span>
+                            <span>الصوت: ${botState.isVoiceActive ? 'متصل' : 'مفصول'}</span>
+
+</div>
+
+<div class="status-indicator">
+                            <span class="status-dot ${botState.isPlanBRunning ? 'active' : 'inactive'}"></span>
+                            <span>خطة ب: ${botState.isPlanBRunning ? 'مشغلة' : 'متوقفة'}</span>
+
+</div>
+
+</div>
+
+</header>
+
+<nav class="dashboard-nav" aria-label="أقسام لوحة التحكم">
+                    <button type="button" class="active" data-panel-target="overview">🪐 النظرة العامة</button>
                     <button type="button" data-panel-target="tasks">⚡ إدارة المهام</button>
-                    <button type="button" data-panel-target="channels">🎙️ القنوات والرسائل</button>
-                    <button type="button" data-panel-target="monitor">🛰️ المراقبة</button>
-                    <button type="button" data-panel-target="aichat">🤖 شات الذكاء الاصطناعي</button>
+                    <button type="button" data-panel-target="channels">📡 القنوات والرسائل</button>
+                    <button type="button" data-panel-target="monitor">🔭 المراقبة</button>
+                    <button type="button" data-panel-target="aichat">🧠 شات الذكاء الاصطناعي</button>
                 </nav>
 
-                <div style="display:flex; flex-direction:column; gap:25px;">
+                <div style="display:flex; flex-direction:column; gap:30px;">
                     <div class="grid panel active" data-panel="overview">
                     <div class="card">
                         <h3>⚙️ حالة النظام</h3>
-                        <div class="stat-item">
-                            <span>البوت الرئيسي</span>
+
+<div class="stat-item">
+
+<span>البوت الرئيسي</span>
                             <span class="status-badge ${botState.isRunning ? 'status-on' : 'status-off'}">${botState.isRunning ? 'نشط' : 'متوقف'}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>قناة الصوت</span>
+                            </div>
+
+<div class="stat-item">
+
+<span>قناة الصوت</span>
                             <span class="status-badge ${botState.isVoiceActive ? 'status-on' : 'status-off'}">${botState.isVoiceActive ? 'متصلة' : 'مفصولة'}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>الخطة ب</span>
+                            </div>
+
+<div class="stat-item">
+
+<span>الخطة ب</span>
                             <span class="status-badge ${botState.isPlanBRunning ? 'status-on' : 'status-off'}">${botState.isPlanBRunning ? 'مشغلة' : 'متوقفة'}</span>
-                        </div>
+                            </div>
+
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary" data-action="voice" onclick="toggleAction('voice', this)">${botState.isVoiceActive ? '🔇 إيقاف صوت' : '🔊 تشغيل صوت'}</button>
-                        </div>
-                    </div>
+                            <button type="button" class="btn btn-warning" data-action="bot" onclick="toggleAction('bot', this)">${botState.isRunning ? '🔴 إيقاف البوت' : '🟢 تشغيل البوت'}</button>
 
-                    <!-- إحصائيات النشاط -->
+</div>
+
+</div>
+
+<!-- إحصائيات النشاط -->
                     <div class="card">
                         <h3>📊 إحصائيات النشاط</h3>
                         <div class="stat-item"><span>إجمالي المرسل</span> <span>${s.totalSent || 0}</span></div>
@@ -1571,10 +1644,12 @@ app.get('/', (req, res) => {
                         <div class="stat-item"><span>المهمة الرابعة (هجوم)</span> <span>${s.task4CountLog || 0}</span></div>
                         <div class="stat-item"><span>المهمة الخامسة (كازينو)</span> <span>${s.task5CountLog || 0}</span></div>
                         <div class="stat-item"><span>آخر نشاط</span> <span style="font-size:0.85rem">${s.lastActiveTime || 'لا يوجد'}</span></div>
-                    </div>
-                </div>
 
-                <div class="grid panel" data-panel="tasks">
+</div>
+
+</div>
+
+<div class="grid panel" data-panel="tasks">
                     <div class="card task-manager">
                         <h3>⚡ إدارة المهام</h3>
                         <div class="task-list">
@@ -1592,8 +1667,10 @@ app.get('/', (req, res) => {
                                 <span class="task-name"><span class="task-number">03</span>عمل / جريمة</span>
                                 <span class="task-state">${taskActive('task3') ? 'مفعلة' : 'متوقفة'}</span>
                                 <button type="button" class="btn ${taskActive('task3') ? 'btn-danger' : 'btn-success'}" data-task="task3" onclick="toggleTask('task3', this)">${taskActive('task3') ? '⏹ إيقاف' : '▶ تشغيل'}</button>
-                            </div>
-                            <div class="task-row">
+
+</div>
+
+<div class="task-row">
                                 <span class="task-name"><span class="task-number">04</span>هجوم</span>
                                 <span class="task-state">${taskActive('task4') ? 'مفعلة' : 'متوقفة'}</span>
                                 <button type="button" class="btn ${taskActive('task4') ? 'btn-danger' : 'btn-success'}" data-task="task4" onclick="toggleTask('task4', this)">${taskActive('task4') ? '⏹ إيقاف' : '▶ تشغيل'}</button>
@@ -1602,8 +1679,10 @@ app.get('/', (req, res) => {
                                 <span class="task-name"><span class="task-number">05</span>سوق الكازينو</span>
                                 <span class="task-state">${taskActive('task5') ? 'مفعلة' : 'متوقفة'}</span>
                                 <button type="button" class="btn ${taskActive('task5') ? 'btn-danger' : 'btn-success'}" data-task="task5" onclick="toggleTask('task5', this)">${taskActive('task5') ? '⏹ إيقاف' : '▶ تشغيل'}</button>
-                            </div>
-                        </div>
+
+</div>
+
+</div>
                     </div>
 
                     <div class="card timing-manager">
@@ -1611,59 +1690,144 @@ app.get('/', (req, res) => {
                         <form action="/api/update-tasks-config" method="POST">
                             <div class="timing-group">
                                 <label>المهمة 1 - ذكريات: الفاصل بين الرسائل (ثواني)</label>
-                                <input type="number" name="task1MessageGap" value="${c.task1MessageGap || 5}" min="3" step="0.1" placeholder="مثال: 5">
+                                <div class="num-wrap">
+                                    <input type="number" name="task1MessageGap" value="${c.task1MessageGap || 5}" min="3" step="0.1" placeholder="مثال: 5">
+                                    <div class="num-spin">
+                                        <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                        <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                </div>
+            </div>
                             </div>
                             <div class="timing-group">
                                 <label>المهمة 1 - ذكريات: التكرار (دقائق)</label>
                                 <div class="timing-fields">
-                                    <input type="number" name="task1RepeatMin" value="${c.task1RepeatMin || 30}" min="0.1" step="0.1" placeholder="من">
-                                    <input type="number" name="task1RepeatMax" value="${c.task1RepeatMax || 35}" min="0.1" step="0.1" placeholder="إلى">
+                                    <div class="num-wrap">
+                                        <input type="number" name="task1RepeatMin" value="${c.task1RepeatMin || 30}" min="0.1" step="0.1" placeholder="من">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
+                                    <div class="num-wrap">
+                                        <input type="number" name="task1RepeatMax" value="${c.task1RepeatMax || 35}" min="0.1" step="0.1" placeholder="إلى">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="timing-group">
                                 <label>المهمة 2 - بخشيش: التكرار (دقائق)</label>
                                 <div class="timing-fields">
-                                    <input type="number" name="task2RepeatMin" value="${c.task2RepeatMin || 30}" min="0.1" step="0.1" placeholder="من">
-                                    <input type="number" name="task2RepeatMax" value="${c.task2RepeatMax || 32}" min="0.1" step="0.1" placeholder="إلى">
+                                    <div class="num-wrap">
+                                        <input type="number" name="task2RepeatMin" value="${c.task2RepeatMin || 30}" min="0.1" step="0.1" placeholder="من">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
+                                    <div class="num-wrap">
+                                        <input type="number" name="task2RepeatMax" value="${c.task2RepeatMax || 32}" min="0.1" step="0.1" placeholder="إلى">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="timing-group">
                                 <label>المهمة 3 - عمل/جريمة: التكرار (دقائق)</label>
                                 <div class="timing-fields">
-                                    <input type="number" name="task3RepeatMin" value="${c.task3RepeatMin || 50}" min="0.1" step="0.1" placeholder="من">
-                                    <input type="number" name="task3RepeatMax" value="${c.task3RepeatMax || 52}" min="0.1" step="0.1" placeholder="إلى">
+                                    <div class="num-wrap">
+                                        <input type="number" name="task3RepeatMin" value="${c.task3RepeatMin || 50}" min="0.1" step="0.1" placeholder="من">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
+                                    <div class="num-wrap">
+                                        <input type="number" name="task3RepeatMax" value="${c.task3RepeatMax || 52}" min="0.1" step="0.1" placeholder="إلى">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="timing-group">
                                 <label>المهمة 4 - هجوم: التكرار (دقائق)</label>
                                 <div class="timing-fields">
-                                    <input type="number" name="task4RepeatMin" value="${c.task4RepeatMin || 30}" min="0.1" step="0.1" placeholder="من">
-                                    <input type="number" name="task4RepeatMax" value="${c.task4RepeatMax || 32}" min="0.1" step="0.1" placeholder="إلى">
+                                    <div class="num-wrap">
+                                        <input type="number" name="task4RepeatMin" value="${c.task4RepeatMin || 30}" min="0.1" step="0.1" placeholder="من">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
+                                    <div class="num-wrap">
+                                        <input type="number" name="task4RepeatMax" value="${c.task4RepeatMax || 32}" min="0.1" step="0.1" placeholder="إلى">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="timing-group">
                                 <label>المهمة 5 - كازينو: الفاصل بين الألعاب (ثواني)</label>
                                 <div class="timing-fields">
-                                    <input type="number" name="task5GapMin" value="${c.task5GapMin || 10}" min="0.1" step="0.1" placeholder="من">
-                                    <input type="number" name="task5GapMax" value="${c.task5GapMax || 12}" min="0.1" step="0.1" placeholder="إلى">
+                                    <div class="num-wrap">
+                                        <input type="number" name="task5GapMin" value="${c.task5GapMin || 10}" min="0.1" step="0.1" placeholder="من">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
+                                    <div class="num-wrap">
+                                        <input type="number" name="task5GapMax" value="${c.task5GapMax || 12}" min="0.1" step="0.1" placeholder="إلى">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="timing-group">
                                 <label>المهمة 5 - كازينو: قيمة الرهان (من - إلى)</label>
                                 <div class="timing-fields">
-                                    <input type="number" name="task5BetMin" value="${c.task5BetMin || 5000}" min="1" step="1" placeholder="من">
-                                    <input type="number" name="task5BetMax" value="${c.task5BetMax || 10000}" min="1" step="1" placeholder="إلى">
+                                    <div class="num-wrap">
+                                        <input type="number" name="task5BetMin" value="${c.task5BetMin || 5000}" min="1" step="1" placeholder="من">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
+                                    <div class="num-wrap">
+                                        <input type="number" name="task5BetMax" value="${c.task5BetMax || 10000}" min="1" step="1" placeholder="إلى">
+                                        <div class="num-spin">
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                            <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="timing-group">
                                 <label>خطة ب - جمع النقاط: التكرار (ثواني)</label>
-                                <input type="number" name="planBRepeat" value="${c.planBRepeat || 2.5}" min="0.1" step="0.1" placeholder="مثال: 2.5">
+                                <div class="num-wrap">
+                                    <input type="number" name="planBRepeat" value="${c.planBRepeat || 2.5}" min="0.1" step="0.1" placeholder="مثال: 2.5">
+                                    <div class="num-spin">
+                                        <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                        <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                    </div>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary">💾 حفظ التوقيت</button>
                         </form>
-                    </div>
 
-                    <div class="card planb-card">
+</div>
+
+<div class="card planb-card">
                         <h3>✦ خطة ب - جمع النقاط</h3>
                         <div class="task-row">
                             <span class="task-name"><span class="task-number">ب</span>إرسال الرسائل السريعة</span>
@@ -1698,7 +1862,6 @@ app.get('/', (req, res) => {
                             <button type="submit" class="btn btn-primary target-save">💾 حفظ أهداف الهجوم</button>
                         </form>
                     </div>
-
                 </div>
 
                 <div class="grid panel" data-panel="channels">
@@ -1723,7 +1886,13 @@ app.get('/', (req, res) => {
                         </div>
                         <div class="form-group">
                             <label>📨 عدد الرسائل</label>
-                            <input type="number" id="deleteMessageCount" placeholder="مثال: 50" min="1" max="100" value="50">
+                            <div class="num-wrap">
+                                <input type="number" id="deleteMessageCount" placeholder="مثال: 50" min="1" max="100" value="50">
+                                <div class="num-spin">
+                                    <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepUp()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                                    <button type="button" tabindex="-1" onclick="this.previousElementSibling.stepDown()"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                </div>
+                            </div>
                         </div>
                         <button type="button" class="btn btn-danger" onclick="deleteMessages()" style="width: 100%;">🗑️ حذف الرسائل</button>
                     </div>
@@ -1749,9 +1918,9 @@ app.get('/', (req, res) => {
                         </div>
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary" id="monitorStartBtn" onclick="startMonitor()">🔍 بدء المراقبة</button>
-                            <button type="button" class="btn btn-success" id="monitorStopBtn" onclick="stopMonitor()" style="display:none;">⏹ إيقاف</button>
+                            <button type="button" class="btn btn-danger" id="monitorStopBtn" onclick="stopMonitor()" style="display:none;">⏹ إيقاف</button>
                         </div>
-                        <div id="monitorProgress" style="margin-top:16px; display:none;">
+                        <div id="monitorProgress" style="margin-top:20px; display:none;">
                             <div class="stat-item">
                                 <span>الحالة</span>
                                 <span id="monitorStatus">جاري الفحص...</span>
@@ -1779,13 +1948,13 @@ app.get('/', (req, res) => {
 
                     <div class="card" id="monitorChannelsCard" style="display:none;">
                         <h3>📡 القنوات النشطة <span id="monitorChannelsCount" class="target-count">0</span></h3>
-                        <p style="color:var(--text-sub); font-size:0.85rem; margin-bottom:14px;">اضغط على أي قناة لعرض الرسائل</p>
+                        <p style="color:var(--text-sub); font-size:0.88rem; margin-bottom:16px;">اضغط على أي قناة لعرض الرسائل</p>
                         <div class="target-list" id="monitorChannelsList"></div>
                     </div>
 
                     <div class="card" id="monitorMessagesCard" style="display:none;">
-                        <h3>💬 الرسائل <button type="button" class="btn btn-primary" style="float:left; padding:6px 12px; min-width:auto; font-size:0.8rem;" onclick="closeMessages()">✕ إغلاق</button></h3>
-                        <p style="color:var(--text-sub); font-size:0.85rem; margin-bottom:14px;">القناة: <span id="monitorMessagesChannel" style="color:var(--gold);"></span></p>
+                        <h3>💬 الرسائل <button type="button" class="btn btn-primary" style="float:left; padding:7px 14px; min-width:auto; font-size:0.85rem;" onclick="closeMessages()">✕ إغلاق</button></h3>
+                        <p style="color:var(--text-sub); font-size:0.88rem; margin-bottom:16px;">القناة: <span id="monitorMessagesChannel" style="color:var(--neon);"></span></p>
                         <div class="monitor-messages-list" id="monitorMessagesList"></div>
                     </div>
                 </div>
@@ -1806,9 +1975,7 @@ app.get('/', (req, res) => {
 
                         <div class="aichat-messages" id="aichatMessages">
                             <div class="aichat-empty" id="aichatEmpty">
-                                <div class="big-emoji">✨</div>
-                                <div>ابدأ محادثة جديدة مع الذكاء الاصطناعي</div>
-                                <div style="margin-top:6px; font-size:0.8rem; color:var(--text-sub);">اكتب سؤالك في الأسفل</div>
+                                <div class="aichat-greeting">مرحبا Anas</div>
                             </div>
                         </div>
 
@@ -1917,489 +2084,6 @@ app.get('/', (req, res) => {
                         if (data.success) location.reload();
                     });
                 }
-
-                function syncTargetIds() {
-                    const ids = Array.from(document.querySelectorAll('.target-chip')).map(chip => chip.dataset.targetId);
-                    document.getElementById('task4TargetIds').value = ids.join(',');
-                }
-
-                function updateTargetModeStyle() {
-                    const manager = document.querySelector('.target-manager');
-                    const randomMode = document.getElementById('task4TargetMode').value === 'random';
-                    manager.classList.toggle('random-mode', randomMode);
-                }
-
-                function setPrimaryTarget(chip) {
-                    document.querySelectorAll('.target-chip').forEach(item => {
-                        item.classList.remove('is-primary');
-                        item.querySelector('.primary-label').textContent = '';
-                        item.querySelector('[data-target-action="primary"]').textContent = 'جعله أساسيًا';
-                    });
-                    chip.classList.add('is-primary');
-                    chip.querySelector('.primary-label').textContent = 'أساسي';
-                    chip.querySelector('[data-target-action="primary"]').textContent = 'الأساسي';
-                    document.getElementById('task4TargetId').value = chip.dataset.targetId;
-                    syncTargetIds();
-                }
-
-                function bindTargetActions(chip) {
-                    chip.querySelector('[data-target-action="primary"]').addEventListener('click', () => setPrimaryTarget(chip));
-                    chip.querySelector('[data-target-action="remove"]').addEventListener('click', () => {
-                        const wasPrimary = chip.classList.contains('is-primary');
-                        chip.remove();
-                        const firstTarget = document.querySelector('.target-chip');
-                        if (wasPrimary && firstTarget) setPrimaryTarget(firstTarget);
-                        else syncTargetIds();
-                    });
-                }
-
-                function addTarget() {
-                    const input = document.getElementById('newTargetId');
-                    const id = input.value.trim().replace(/^<@!?/, '').replace(/>$/, '');
-                    if (!id) {
-                        alert('❌ أدخل ID عضو صحيح');
-                        return;
-                    }
-                    if (document.querySelector('[data-target-id="' + id + '"]')) {
-                        alert('⚠️ هذا العضو موجود بالقائمة');
-                        return;
-                    }
-                    const chip = document.createElement('div');
-                    chip.className = 'target-chip';
-                    chip.dataset.targetId = id;
-                    chip.innerHTML = '<span class="target-id">' + id + '</span><span class="primary-label"></span><button type="button" data-target-action="primary">جعله أساسيًا</button><button type="button" data-target-action="remove">حذف</button>';
-                    bindTargetActions(chip);
-                    document.getElementById('targetList').appendChild(chip);
-                    input.value = '';
-                    syncTargetIds();
-                }
-
-                document.querySelectorAll('.target-chip').forEach(bindTargetActions);
-                document.getElementById('task4TargetMode')?.addEventListener('change', updateTargetModeStyle);
-                document.getElementById('targetsForm')?.addEventListener('submit', syncTargetIds);
-
-                let monitorPollInterval = null;
-                let monitorResultCache = null;
-
-                function startMonitor() {
-                    const userId = document.getElementById('monitorUserId').value.trim();
-                    const hours = document.getElementById('monitorHours').value;
-                    if (!userId) {
-                        alert('❌ أدخل ID الشخص');
-                        return;
-                    }
-                    document.getElementById('monitorStatsCard').style.display = 'none';
-                    document.getElementById('monitorChannelsCard').style.display = 'none';
-                    document.getElementById('monitorMessagesCard').style.display = 'none';
-                    document.getElementById('monitorProgress').style.display = 'block';
-                    document.getElementById('monitorStartBtn').style.display = 'none';
-                    document.getElementById('monitorStopBtn').style.display = 'inline-block';
-                    document.getElementById('monitorStatus').textContent = 'جاري البدء...';
-                    document.getElementById('monitorProgressText').textContent = '0 / 0';
-                    document.getElementById('monitorCurrentChannel').textContent = '—';
-
-                    fetch('/api/monitor/start', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId, hoursBack: Number(hours) })
-                    }).then(r => r.json()).then(data => {
-                        if (!data.success) {
-                            alert(data.message);
-                            resetMonitorUI();
-                        } else {
-                            pollMonitorStatus();
-                        }
-                    });
-                }
-
-                function stopMonitor() {
-                    fetch('/api/monitor/stop', { method: 'POST' });
-                    document.getElementById('monitorStatus').textContent = 'جاري الإيقاف...';
-                }
-
-                function pollMonitorStatus() {
-                    if (monitorPollInterval) clearInterval(monitorPollInterval);
-                    monitorPollInterval = setInterval(() => {
-                        fetch('/api/monitor/result').then(r => r.json()).then(data => {
-                            if (!data.success) return;
-                            const active = data.active;
-                            const progress = data.progress || {};
-                            const result = data.result;
-
-                            if (active && progress.total > 0) {
-                                document.getElementById('monitorStatus').textContent = 'جاري الفحص...';
-                                document.getElementById('monitorProgressText').textContent = progress.current + ' / ' + progress.total;
-                                document.getElementById('monitorCurrentChannel').textContent = progress.currentChannel || '—';
-                            }
-
-                            if (!active) {
-                                clearInterval(monitorPollInterval);
-                                monitorPollInterval = null;
-                                if (result) {
-                                    monitorResultCache = result;
-                                    renderMonitorResult(result);
-                                } else {
-                                    document.getElementById('monitorProgress').style.display = 'none';
-                                    document.getElementById('monitorStatsCard').style.display = 'block';
-                                    document.getElementById('monitorChannelsCard').style.display = 'block';
-                                    document.getElementById('monitorTotalMessages').textContent = '0';
-                                    document.getElementById('monitorActiveChannels').textContent = '0';
-                                    document.getElementById('monitorChannelsScanned').textContent = progress.total || 0;
-                                    document.getElementById('monitorFirstTime').textContent = '—';
-                                    document.getElementById('monitorLastTime').textContent = '—';
-                                    document.getElementById('monitorDuration').textContent = '—';
-                                    document.getElementById('monitorChannelsList').innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-sub);">لم يتم العثور على رسائل</div>';
-                                }
-                                resetMonitorUI();
-                            }
-                        }).catch(() => {});
-                    }, 500);
-                }
-
-                function resetMonitorUI() {
-                    document.getElementById('monitorStartBtn').style.display = 'inline-block';
-                    document.getElementById('monitorStopBtn').style.display = 'none';
-                }
-
-                function formatTime(iso) {
-                    if (!iso) return '—';
-                    try {
-                        const d = new Date(iso);
-                        return d.toLocaleString('ar-SA', { dateStyle: 'short', timeStyle: 'short' });
-                    } catch { return iso; }
-                }
-
-                function formatDuration(ms) {
-                    if (!ms) return '—';
-                    const s = Math.floor(ms / 1000);
-                    if (s < 60) return s + ' ثانية';
-                    const m = Math.floor(s / 60);
-                    const rs = s % 60;
-                    if (m < 60) return m + ' د ' + rs + ' ث';
-                    const h = Math.floor(m / 60);
-                    const rm = m % 60;
-                    return h + ' س ' + rm + ' د';
-                }
-
-                function renderMonitorResult(r) {
-                    if (!r) return;
-                    document.getElementById('monitorProgress').style.display = 'none';
-                    document.getElementById('monitorStatsCard').style.display = 'block';
-                    document.getElementById('monitorChannelsCard').style.display = 'block';
-
-                    document.getElementById('monitorTotalMessages').textContent = r.totalMessages || 0;
-                    document.getElementById('monitorActiveChannels').textContent = r.channelsWithActivity || 0;
-                    document.getElementById('monitorChannelsScanned').textContent = r.channelsScanned || 0;
-                    document.getElementById('monitorFirstTime').textContent = formatTime(r.firstMessage);
-                    document.getElementById('monitorLastTime').textContent = formatTime(r.lastMessage);
-                    document.getElementById('monitorDuration').textContent = formatDuration(r.durationMs);
-
-                    const list = document.getElementById('monitorChannelsList');
-                    list.innerHTML = '';
-                    document.getElementById('monitorChannelsCount').textContent = (r.channels || []).length;
-                    (r.channels || []).sort((a, b) => b.count - a.count).forEach(ch => {
-                        const item = document.createElement('div');
-                        item.className = 'monitor-channel-item';
-                        item.innerHTML = '<div><div class="ch-name">#' + escapeHtml(ch.channelName) + '</div><div class="ch-times">من ' + formatTime(ch.firstAt) + ' إلى ' + formatTime(ch.lastAt) + '</div></div><div class="ch-count">' + ch.count + ' رسالة</div>';
-                        item.addEventListener('click', () => showChannelMessages(ch));
-                        list.appendChild(item);
-                    });
-
-                    if ((r.channels || []).length === 0) {
-                        list.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-sub);">لم يتم العثور على رسائل</div>';
-                    }
-                }
-
-                function showChannelMessages(ch) {
-                    const card = document.getElementById('monitorMessagesCard');
-                    card.style.display = 'block';
-                    document.getElementById('monitorMessagesChannel').textContent = '#' + ch.channelName;
-                    const list = document.getElementById('monitorMessagesList');
-                    list.innerHTML = '';
-                    (ch.messages || []).forEach(msg => {
-                        const m = document.createElement('div');
-                        m.className = 'monitor-message';
-                        m.innerHTML = '<div class="msg-time">' + formatTime(msg.time) + '</div><div class="msg-content">' + escapeHtml(msg.content || '(بدون محتوى)') + '</div>';
-                        list.appendChild(m);
-                    });
-                    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-
-                function closeMessages() {
-                    document.getElementById('monitorMessagesCard').style.display = 'none';
-                }
-
-                function escapeHtml(text) {
-                    const div = document.createElement('div');
-                    div.textContent = text;
-                    return div.innerHTML;
-                }
-
-                // ====== AI CHAT ======
-                function useAIPrompt(text) {
-                    const input = document.getElementById('aichatInput');
-                    input.value = text;
-                    input.focus();
-                }
-
-                function aichatClear() {
-                    const wrap = document.getElementById('aichatMessages');
-                    wrap.innerHTML = '';
-                    const empty = document.createElement('div');
-                    empty.className = 'aichat-empty';
-                    empty.id = 'aichatEmpty';
-                    empty.innerHTML = '<div class="big-emoji">✨</div><div>المحادثة فارغة</div><div style="margin-top:6px; font-size:0.8rem; color:var(--text-sub);">اكتب سؤالك في الأسفل</div>';
-                    wrap.appendChild(empty);
-                }
-
-                function aichatAppendMessage(role, text) {
-                    const wrap = document.getElementById('aichatMessages');
-                    const empty = document.getElementById('aichatEmpty');
-                    if (empty && empty.parentNode === wrap) wrap.removeChild(empty);
-
-                    const row = document.createElement('div');
-                    row.className = 'aichat-msg ' + (role === 'user' ? 'user' : 'ai');
-
-                    const avatar = document.createElement('div');
-                    avatar.className = 'msg-avatar';
-                    avatar.textContent = role === 'user' ? 'أنت' : '🤖';
-
-                    const body = document.createElement('div');
-                    body.className = 'msg-body';
-
-                    const name = document.createElement('span');
-                    name.className = 'msg-name';
-                    name.textContent = role === 'user' ? 'أنت' : 'المساعد الذكي';
-
-                    const content = document.createElement('div');
-                    content.className = 'msg-content';
-                    content.textContent = text;
-
-                    body.appendChild(name);
-                    body.appendChild(content);
-                    row.appendChild(avatar);
-                    row.appendChild(body);
-                    wrap.appendChild(row);
-                    wrap.scrollTop = wrap.scrollHeight;
-                    return content;
-                }
-
-                function aichatAppendTyping() {
-                    const wrap = document.getElementById('aichatMessages');
-                    const empty = document.getElementById('aichatEmpty');
-                    if (empty && empty.parentNode === wrap) wrap.removeChild(empty);
-
-                    const row = document.createElement('div');
-                    row.className = 'aichat-msg ai';
-                    row.id = 'aichatTyping';
-
-                    const avatar = document.createElement('div');
-                    avatar.className = 'msg-avatar';
-                    avatar.textContent = '🤖';
-
-                    const body = document.createElement('div');
-                    body.className = 'msg-body';
-
-                    const name = document.createElement('span');
-                    name.className = 'msg-name';
-                    name.textContent = 'المساعد الذكي';
-
-                    const typing = document.createElement('div');
-                    typing.className = 'aichat-typing';
-                    typing.innerHTML = '<span></span><span></span><span></span>';
-
-                    body.appendChild(name);
-                    body.appendChild(typing);
-                    row.appendChild(avatar);
-                    row.appendChild(body);
-                    wrap.appendChild(row);
-                    wrap.scrollTop = wrap.scrollHeight;
-                }
-
-                function aichatRemoveTyping() {
-                    const t = document.getElementById('aichatTyping');
-                    if (t && t.parentNode) t.parentNode.removeChild(t);
-                }
-
-                function aichatSetStatus(connected) {
-                    const s = document.getElementById('aichatStatus');
-                    if (!s) return;
-                    s.innerHTML = '<span class="status-dot ' + (connected ? 'active' : 'inactive') + '"></span><span>' + (connected ? 'متصل' : 'غير متصل') + '</span>';
-                }
-
-                async function sendAIMessage() {
-                    const input = document.getElementById('aichatInput');
-                    const btn = document.getElementById('aichatSendBtn');
-                    const text = (input.value || '').trim();
-                    if (!text) return;
-
-                    aichatAppendMessage('user', text);
-                    input.value = '';
-                    input.disabled = true;
-                    btn.disabled = true;
-                    btn.textContent = '⏳ جاري الإرسال...';
-
-                    let aiContent = null;
-                    let streamed = '';
-
-                    try {
-                        const res = await fetch('/api/ai-chat', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ message: text })
-                        });
-
-                        const ct = (res.headers.get('content-type') || '').toLowerCase();
-
-                        if (ct.includes('application/json')) {
-                            const data = await res.json().catch(() => ({}));
-                            if (data && data.success && data.reply) {
-                                aichatAppendMessage('ai', data.reply);
-                                aichatSetStatus(true);
-                            } else {
-                                const errMsg = (data && data.message) || 'حدث خطأ غير متوقع';
-                                aichatAppendMessage('ai', '❌ ' + errMsg);
-                                aichatSetStatus(false);
-                            }
-                            return;
-                        }
-
-                        if (!res.ok) {
-                            aichatAppendMessage('ai', '❌ خطأ HTTP ' + res.status);
-                            aichatSetStatus(false);
-                            return;
-                        }
-
-                        aiContent = aichatAppendMessage('ai', '');
-
-                        const reader = res.body.getReader();
-                        const decoder = new TextDecoder();
-                        let buffer = '';
-                        let gotError = false;
-
-                        while (true) {
-                            const { done, value } = await reader.read();
-                            if (done) break;
-                            buffer += decoder.decode(value, { stream: true });
-                            const NL2 = String.fromCharCode(10, 10);
-                            const lines = buffer.split(NL2);
-                            buffer = lines.pop() || '';
-                            for (const line of lines) {
-                                if (!line.startsWith('data: ')) continue;
-                                let data;
-                                try { data = JSON.parse(line.slice(6)); } catch (_) { continue; }
-                                if (data && data.error) {
-                                    gotError = true;
-                                    aiContent.textContent = '❌ ' + data.error;
-                                    aiContent.parentNode.classList.add('aichat-error');
-                                    aichatSetStatus(false);
-                                }
-                                if (data && data.delta) {
-                                    streamed += data.delta;
-                                    aiContent.textContent = streamed;
-                                    const wrap = document.getElementById('aichatMessages');
-                                    if (wrap) wrap.scrollTop = wrap.scrollHeight;
-                                }
-                                if (data && data.done && !gotError) {
-                                    aichatSetStatus(true);
-                                }
-                            }
-                        }
-
-                        if (!streamed && !gotError) {
-                            aiContent.textContent = '⚠️ لم يصل رد من النموذج';
-                            aiContent.parentNode.classList.add('aichat-error');
-                            aichatSetStatus(false);
-                        }
-                    } catch (err) {
-                        if (aiContent) {
-                            aiContent.textContent = '❌ تعذر الاتصال بالخادم: ' + (err && err.message ? err.message : 'network error');
-                            aiContent.parentNode.classList.add('aichat-error');
-                        } else {
-                            aichatAppendMessage('ai', '❌ تعذر الاتصال بالخادم: ' + (err && err.message ? err.message : 'network error'));
-                        }
-                        aichatSetStatus(false);
-                    } finally {
-                        input.disabled = false;
-                        btn.disabled = false;
-                        btn.textContent = '🚀 إرسال';
-                        input.focus();
-                    }
-                }
-
-                (function setupNumWraps() {
-                    const upSvg = '<svg viewBox="0 0 24 24"><path d="M12 6l-7 8h14z"/></svg>';
-                    const downSvg = '<svg viewBox="0 0 24 24"><path d="M12 18l-7-8h14z"/></svg>';
-
-                    document.querySelectorAll('input[type="number"]').forEach(input => {
-                        if (input.closest('.num-wrap')) return;
-                        const wrap = document.createElement('div');
-                        wrap.className = 'num-wrap';
-                        input.parentNode.insertBefore(wrap, input);
-                        wrap.appendChild(input);
-
-                        const spin = document.createElement('div');
-                        spin.className = 'num-spin';
-
-                        const step = input.getAttribute('step') ? parseFloat(input.getAttribute('step')) : 1;
-                        const min = input.hasAttribute('min') ? parseFloat(input.getAttribute('min')) : -Infinity;
-                        const max = input.hasAttribute('max') ? parseFloat(input.getAttribute('max')) : Infinity;
-                        const stepStr = input.getAttribute('step') || '1';
-                        const decimals = stepStr.includes('.') ? stepStr.split('.')[1].length : 0;
-
-                        let timer = null;
-                        let initialDelay = null;
-                        let repeatInterval = null;
-
-                        const roundToStep = (n) => {
-                            if (decimals === 0) return Math.round(n).toString();
-                            return n.toFixed(decimals);
-                        };
-
-                        const bump = (dir) => {
-                            const cur = parseFloat(input.value) || 0;
-                            const next = dir === 'up' ? cur + step : cur - step;
-                            if (next < min || next > max) return;
-                            input.value = roundToStep(next);
-                            input.dispatchEvent(new Event('input', { bubbles: true }));
-                            input.dispatchEvent(new Event('change', { bubbles: true }));
-                        };
-
-                        const startHold = (dir) => {
-                            bump(dir);
-                            initialDelay = setTimeout(() => {
-                                repeatInterval = setInterval(() => bump(dir), 60);
-                            }, 400);
-                        };
-
-                        const stopHold = () => {
-                            if (initialDelay) { clearTimeout(initialDelay); initialDelay = null; }
-                            if (repeatInterval) { clearInterval(repeatInterval); repeatInterval = null; }
-                        };
-
-                        const makeBtn = (cls, dir, svg) => {
-                            const b = document.createElement('button');
-                            b.type = 'button';
-                            b.className = cls;
-                            b.innerHTML = svg;
-                            b.addEventListener('mousedown', e => { e.preventDefault(); startHold(dir); });
-                            b.addEventListener('touchstart', e => { e.preventDefault(); startHold(dir); }, { passive: false });
-                            b.addEventListener('mouseup', stopHold);
-                            b.addEventListener('mouseleave', stopHold);
-                            b.addEventListener('touchend', stopHold);
-                            b.addEventListener('touchcancel', stopHold);
-                            b.addEventListener('click', e => { e.preventDefault(); });
-                            return b;
-                        };
-
-                        const up = makeBtn('up', 'up', upSvg);
-                        const down = makeBtn('down', 'down', downSvg);
-                        spin.appendChild(up);
-                        spin.appendChild(down);
-                        wrap.appendChild(spin);
-                    });
-                })();
-
             </script>
         </html>
     `);
