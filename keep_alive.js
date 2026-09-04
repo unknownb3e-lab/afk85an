@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -41,167 +41,1797 @@ app.get('/', (req, res) => {
             '<button type="button" data-target-action="remove">حذف</button>' +
         '</div>'
     ).join('');
-    const tplHtml = "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>The Card Table · AFK</title>\n    <link href=\"https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap\" rel=\"stylesheet\">\n    <style>\n        :root {\n            /* Dark coffee / leather / wood */\n            --felt: #0e3a2e;          /* green felt table */\n            --felt-dark: #082018;\n            --leather: #1a0f08;       /* dark leather */\n            --leather-light: #2a1a10;\n            --wood: #3a2418;\n            --wood-light: #4a3020;\n            --cream: #e8b860;         /* warm amber gold for text */\n            --cream-dark: #c89a3e;\n            --ink: #1c0e06;\n\n            /* Card suits */\n            --spade: #0a0a0a;\n            --heart: #c41e3a;\n            --diamond: #c41e3a;\n            --club: #0a0a0a;\n\n            /* Gold accents (joker / royal) */\n            --gold: #d4af37;\n            --gold-deep: #a8861f;\n            --gold-glow: rgba(212, 175, 55, 0.35);\n\n            /* Steam / smoke */\n            --steam: rgba(240, 228, 196, 0.08);\n\n            --line: rgba(212, 175, 55, 0.18);\n            --line-strong: rgba(212, 175, 55, 0.4);\n            --shadow: 0 18px 50px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.4);\n        }\n\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n        html, body { height: 100%; }\n        body {\n            font-family: 'Playfair Display', 'Times New Roman', serif;\n            background:\n                /* felt texture vignette */\n                radial-gradient(ellipse at center, #0e3a2e 0%, #082018 70%, #020807 100%),\n                --felt;\n            background-blend-mode: multiply;\n            color: var(--cream);\n            min-height: 100vh;\n            letter-spacing: 0.3px;\n            overflow-x: hidden;\n            position: relative;\n        }\n\n        /* ====== Floating card suits in background ====== */\n        body::before {\n            content: '♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣';\n            position: fixed;\n            top: 0; left: 0; right: 0; bottom: 0;\n            font-size: 110px;\n            line-height: 130px;\n            word-spacing: 30px;\n            color: rgba(212, 175, 55, 0.025);\n            pointer-events: none;\n            z-index: 0;\n            user-select: none;\n            transform: rotate(-12deg) scale(1.2);\n            letter-spacing: 0;\n        }\n\n        /* ====== Wood table edge at top ====== */\n        body::after {\n            content: '';\n            position: fixed;\n            top: 0; left: 0; right: 0;\n            height: 6px;\n            background: linear-gradient(90deg, #1a0f08, #3a2418, #5a3825, #3a2418, #1a0f08);\n            z-index: 100;\n            box-shadow: 0 2px 12px rgba(0,0,0,0.6);\n        }\n\n        /* ====== Layout ====== */\n        .shell {\n            display: grid;\n            grid-template-columns: 280px 1fr;\n            min-height: 100vh;\n            position: relative;\n            z-index: 1;\n        }\n\n        /* ====== Sidebar (like a card player's hand rest) ====== */\n        .sidebar {\n            background: linear-gradient(180deg, var(--leather) 0%, #0d0703 100%);\n            color: var(--cream);\n            padding: 0;\n            border-left: 2px solid var(--gold-deep);\n            box-shadow:\n                inset -10px 0 30px rgba(0,0,0,0.5),\n                8px 0 24px rgba(0,0,0,0.6);\n            position: sticky;\n            top: 0;\n            height: 100vh;\n            overflow-y: auto;\n            position: relative;\n        }\n        .sidebar::before {\n            content: '';\n            position: absolute;\n            top: 0; left: 0; right: 0; bottom: 0;\n            background:\n                repeating-linear-gradient(45deg, transparent 0, transparent 20px, rgba(212, 175, 55, 0.02) 20px, rgba(212, 175, 55, 0.02) 21px),\n                repeating-linear-gradient(-45deg, transparent 0, transparent 20px, rgba(212, 175, 55, 0.02) 20px, rgba(212, 175, 55, 0.02) 21px);\n            pointer-events: none;\n        }\n\n        .brand {\n            text-align: center;\n            padding: 40px 24px 28px;\n            border-bottom: 1px solid var(--line-strong);\n            margin-bottom: 24px;\n            background:\n                radial-gradient(ellipse at center top, rgba(212, 175, 55, 0.08) 0%, transparent 60%);\n            position: relative;\n        }\n        .brand-suit {\n            font-size: 2.4rem;\n            color: var(--gold);\n            margin-bottom: 8px;\n            text-shadow: 0 0 20px var(--gold-glow);\n            letter-spacing: 6px;\n        }\n        .brand-mark {\n            font-family: 'Cinzel', serif;\n            font-size: 1.4rem;\n            font-weight: 900;\n            letter-spacing: 8px;\n            color: var(--gold);\n            text-shadow: 0 0 14px var(--gold-glow), 0 2px 4px rgba(0,0,0,0.8);\n            margin-bottom: 4px;\n        }\n        .brand-sub {\n            font-family: 'Special Elite', monospace;\n            font-size: 0.65rem;\n            letter-spacing: 4px;\n            color: var(--cream-dark);\n            text-transform: uppercase;\n            opacity: 0.7;\n        }\n        .brand-line {\n            color: var(--gold-deep);\n            margin: 12px 0;\n            letter-spacing: 10px;\n            font-size: 0.7rem;\n        }\n\n        .menu { list-style: none; padding: 0 12px; }\n        .menu li { margin: 3px 0; }\n        .menu a {\n            display: flex;\n            align-items: center;\n            gap: 14px;\n            padding: 13px 18px;\n            color: var(--cream-dark);\n            text-decoration: none;\n            font-family: 'Cinzel', serif;\n            font-size: 0.92rem;\n            font-weight: 500;\n            letter-spacing: 2px;\n            border: 1px solid transparent;\n            border-radius: 2px;\n            transition: all 0.25s ease;\n            cursor: pointer;\n            position: relative;\n            background: rgba(0,0,0,0.2);\n        }\n        .menu a .suit {\n            font-size: 1.1rem;\n            color: var(--gold);\n            width: 22px;\n            text-align: center;\n            text-shadow: 0 0 8px var(--gold-glow);\n        }\n        .menu a:hover {\n            color: var(--cream);\n            background: rgba(212, 175, 55, 0.1);\n            border-color: var(--line-strong);\n            transform: translateX(-3px);\n        }\n        .menu a.active {\n            color: var(--gold);\n            background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.18) 50%, transparent 100%);\n            border-color: var(--gold);\n            box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.1);\n        }\n        .menu a.active::before {\n            content: '♠';\n            position: absolute;\n            right: -4px;\n            top: 50%;\n            transform: translateY(-50%);\n            color: var(--gold);\n            font-size: 1.4rem;\n            text-shadow: 0 0 10px var(--gold-glow);\n        }\n\n        .sidebar-footer {\n            padding: 24px;\n            margin-top: 32px;\n            border-top: 1px solid var(--line);\n            text-align: center;\n            font-family: 'Special Elite', monospace;\n            font-size: 0.65rem;\n            letter-spacing: 2px;\n            color: var(--cream-dark);\n            opacity: 0.4;\n            text-transform: uppercase;\n            position: relative;\n            z-index: 1;\n        }\n        .sidebar-footer .suit-row {\n            color: var(--gold);\n            font-size: 0.9rem;\n            letter-spacing: 8px;\n            margin-bottom: 8px;\n            opacity: 0.5;\n        }\n\n        /* ====== Main content ====== */\n        .main {\n            padding: 36px 48px 60px;\n            overflow-x: hidden;\n            position: relative;\n        }\n\n        .page-header {\n            display: flex;\n            align-items: flex-end;\n            justify-content: space-between;\n            margin-bottom: 32px;\n            padding-bottom: 20px;\n            border-bottom: 1px solid var(--line);\n            position: relative;\n        }\n        .page-header::after {\n            content: '';\n            position: absolute;\n            bottom: -2px;\n            left: 0;\n            width: 80px;\n            height: 3px;\n            background: var(--gold);\n            box-shadow: 0 0 12px var(--gold-glow);\n        }\n        .page-title {\n            font-family: 'Cinzel', serif;\n            font-size: 2rem;\n            font-weight: 700;\n            color: var(--gold);\n            letter-spacing: 4px;\n            text-shadow: 0 0 20px var(--gold-glow), 0 2px 4px rgba(0,0,0,0.8);\n        }\n        .page-subtitle {\n            font-family: 'Special Elite', monospace;\n            font-size: 0.75rem;\n            letter-spacing: 3px;\n            color: var(--cream-dark);\n            margin-top: 4px;\n            opacity: 0.6;\n            text-transform: uppercase;\n        }\n        .est-mark {\n            font-family: 'Cinzel', serif;\n            color: var(--gold-deep);\n            font-size: 0.75rem;\n            letter-spacing: 4px;\n            text-transform: uppercase;\n            opacity: 0.6;\n        }\n\n        /* ====== Panels ====== */\n        .panel { display: none; animation: fadeUp 0.4s ease; }\n        .panel.active { display: block; }\n        @keyframes fadeUp {\n            from { opacity: 0; transform: translateY(10px); }\n            to { opacity: 1; transform: translateY(0); }\n        }\n\n        /* ====== Cards (estates) — styled as playing cards / coasters ====== */\n        .estate {\n            background: linear-gradient(135deg, #1a0f08 0%, #0d0703 100%);\n            border: 1px solid var(--line-strong);\n            border-radius: 4px;\n            padding: 26px 30px;\n            margin-bottom: 24px;\n            box-shadow: var(--shadow);\n            position: relative;\n            overflow: hidden;\n        }\n        .estate::before {\n            content: '';\n            position: absolute;\n            top: 0; left: 0; right: 0; bottom: 0;\n            background: radial-gradient(ellipse at top right, rgba(212, 175, 55, 0.06) 0%, transparent 60%);\n            pointer-events: none;\n        }\n        .estate::after {\n            content: '';\n            position: absolute;\n            top: 6px; left: 6px; right: 6px; bottom: 6px;\n            border: 1px solid var(--line);\n            border-radius: 2px;\n            pointer-events: none;\n        }\n        .estate h3 {\n            font-family: 'Cinzel', serif;\n            font-size: 1.25rem;\n            color: var(--gold);\n            margin-bottom: 18px;\n            letter-spacing: 3px;\n            padding-bottom: 12px;\n            border-bottom: 1px solid var(--line);\n            text-transform: uppercase;\n            text-shadow: 0 0 12px var(--gold-glow);\n            position: relative;\n        }\n        .estate h3 .pip {\n            color: var(--cream-dark);\n            margin: 0 8px;\n            opacity: 0.5;\n        }\n\n        .estate-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n            gap: 22px;\n        }\n\n        /* ====== Form elements ====== */\n        label {\n            display: block;\n            font-family: 'Special Elite', monospace;\n            font-size: 0.7rem;\n            letter-spacing: 3px;\n            text-transform: uppercase;\n            color: var(--gold);\n            margin-bottom: 8px;\n            opacity: 0.85;\n        }\n        input[type=\"text\"], input[type=\"number\"], select, textarea {\n            width: 100%;\n            padding: 12px 14px;\n            background: rgba(0,0,0,0.4);\n            border: 1px solid var(--line-strong);\n            font-family: 'Special Elite', monospace;\n            font-size: 0.95rem;\n            color: var(--cream);\n            border-radius: 2px;\n            transition: all 0.2s;\n        }\n        input::placeholder { color: rgba(240, 228, 196, 0.3); }\n        input:focus, select:focus, textarea:focus {\n            outline: none;\n            border-color: var(--gold);\n            background: rgba(0,0,0,0.6);\n            box-shadow: 0 0 0 2px var(--gold-glow), inset 0 0 12px rgba(212, 175, 55, 0.08);\n        }\n        select option { background: var(--leather); color: var(--cream); }\n        .form-row { margin-bottom: 16px; }\n        .form-row.two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }\n\n        /* ====== Buttons (as chips) ====== */\n        .btn {\n            display: inline-flex;\n            align-items: center;\n            justify-content: center;\n            gap: 8px;\n            padding: 11px 22px;\n            font-family: 'Cinzel', serif;\n            font-size: 0.78rem;\n            letter-spacing: 3px;\n            text-transform: uppercase;\n            border: 1px solid var(--gold-deep);\n            background: linear-gradient(180deg, var(--leather-light) 0%, var(--leather) 100%);\n            color: var(--cream);\n            cursor: pointer;\n            border-radius: 2px;\n            transition: all 0.25s ease;\n            font-weight: 600;\n            text-shadow: 0 1px 2px rgba(0,0,0,0.6);\n            box-shadow: 0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(212, 175, 55, 0.1);\n            position: relative;\n        }\n        .btn:hover {\n            background: linear-gradient(180deg, var(--gold-deep) 0%, #6a4f15 100%);\n            color: var(--cream);\n            border-color: var(--gold);\n            box-shadow: 0 0 20px var(--gold-glow), 0 3px 8px rgba(0,0,0,0.4);\n        }\n        .btn-primary {\n            background: linear-gradient(180deg, var(--gold) 0%, var(--gold-deep) 100%);\n            color: var(--ink);\n            border-color: var(--gold);\n            text-shadow: none;\n        }\n        .btn-primary:hover {\n            background: linear-gradient(180deg, #e8c44a 0%, var(--gold) 100%);\n            color: var(--ink);\n        }\n        .btn-danger {\n            background: linear-gradient(180deg, #8b1a2b 0%, #4a0e15 100%);\n            color: var(--cream);\n            border-color: #c41e3a;\n        }\n        .btn-danger:hover {\n            background: linear-gradient(180deg, #c41e3a 0%, #8b1a2b 100%);\n            box-shadow: 0 0 20px rgba(196, 30, 58, 0.4);\n        }\n        .btn-ghost {\n            border-color: var(--line-strong);\n            background: transparent;\n            color: var(--cream-dark);\n        }\n        .btn-ghost:hover {\n            border-color: var(--gold);\n            color: var(--gold);\n            background: transparent;\n            box-shadow: 0 0 12px var(--gold-glow);\n        }\n        .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }\n\n        /* ====== Stats / status ====== */\n        .status-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));\n            gap: 14px;\n            margin-bottom: 24px;\n        }\n        .status-card {\n            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(0,0,0,0.4) 100%);\n            border: 1px solid var(--line-strong);\n            padding: 18px 20px;\n            position: relative;\n            border-radius: 2px;\n        }\n        .status-card .lbl {\n            font-family: 'Special Elite', monospace;\n            font-size: 0.65rem;\n            letter-spacing: 3px;\n            text-transform: uppercase;\n            color: var(--gold);\n            margin-bottom: 8px;\n            opacity: 0.75;\n        }\n        .status-card .val {\n            font-family: 'Cinzel', serif;\n            font-size: 1.5rem;\n            color: var(--cream);\n            font-weight: 700;\n            text-shadow: 0 0 12px rgba(240, 228, 196, 0.2);\n        }\n        .status-card .corner {\n            position: absolute;\n            top: 6px;\n            right: 8px;\n            color: var(--gold);\n            font-size: 0.9rem;\n            opacity: 0.4;\n        }\n\n        /* ====== Tasks (card row style) ====== */\n        .task-list { display: flex; flex-direction: column; gap: 10px; }\n        .task-row {\n            display: grid;\n            grid-template-columns: 50px 1fr auto auto;\n            gap: 16px;\n            align-items: center;\n            padding: 14px 18px;\n            background: linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(26, 15, 8, 0.6) 100%);\n            border: 1px solid var(--line);\n            border-right: 3px solid var(--gold-deep);\n            transition: all 0.2s;\n        }\n        .task-row:hover {\n            border-color: var(--gold);\n            border-right-color: var(--gold);\n            background: linear-gradient(90deg, rgba(212, 175, 55, 0.08) 0%, rgba(0,0,0,0.4) 100%);\n        }\n        .task-num {\n            font-family: 'Cinzel', serif;\n            font-size: 1.6rem;\n            font-weight: 700;\n            color: var(--gold);\n            text-align: center;\n            text-shadow: 0 0 10px var(--gold-glow);\n        }\n        .task-name {\n            font-family: 'Cinzel', serif;\n            font-size: 1rem;\n            color: var(--cream);\n            font-weight: 600;\n            letter-spacing: 1px;\n        }\n        .task-desc {\n            font-family: 'Special Elite', monospace;\n            font-size: 0.75rem;\n            color: var(--cream-dark);\n            margin-top: 3px;\n            opacity: 0.7;\n        }\n        .task-state {\n            font-family: 'Special Elite', monospace;\n            font-size: 0.68rem;\n            letter-spacing: 2px;\n            text-transform: uppercase;\n        }\n        .task-state.on { color: var(--gold); }\n        .task-state.off { color: var(--cream-dark); opacity: 0.5; }\n\n        /* ====== Target chips ====== */\n        .target-list { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }\n        .target-chip {\n            display: flex;\n            align-items: center;\n            gap: 14px;\n            padding: 10px 16px;\n            background: rgba(0,0,0,0.3);\n            border: 1px solid var(--line);\n            border-radius: 2px;\n        }\n        .target-chip.is-primary {\n            border-color: var(--gold);\n            background: linear-gradient(90deg, rgba(212, 175, 55, 0.12) 0%, transparent 100%);\n            box-shadow: inset 0 0 16px rgba(212, 175, 55, 0.1);\n        }\n        .target-id {\n            font-family: 'Cinzel', serif;\n            font-size: 1.05rem;\n            color: var(--cream);\n            min-width: 180px;\n        }\n        .primary-label {\n            font-family: 'Special Elite', monospace;\n            font-size: 0.65rem;\n            letter-spacing: 2px;\n            color: var(--gold);\n            text-transform: uppercase;\n        }\n        .target-chip button { margin-right: auto; padding: 6px 14px; font-size: 0.7rem; }\n        .target-chip button + button { margin-right: 0; }\n        .target-add { display: flex; gap: 10px; margin-bottom: 16px; }\n        .target-add input { flex: 1; }\n\n        /* ====== AI Chat ====== */\n        .aichat-wrap {\n            background: linear-gradient(135deg, #1a0f08 0%, #0d0703 100%);\n            border: 1px solid var(--line-strong);\n            box-shadow: var(--shadow);\n            position: relative;\n            min-height: 540px;\n            display: flex;\n            flex-direction: column;\n            overflow: hidden;\n        }\n        .aichat-head {\n            padding: 20px 28px;\n            background: linear-gradient(90deg, #0a0502 0%, var(--leather) 50%, #0a0502 100%);\n            border-bottom: 1px solid var(--gold-deep);\n            position: relative;\n        }\n        .aichat-head::after {\n            content: '♠ ♥ ♦ ♣';\n            position: absolute;\n            top: 50%;\n            left: 28px;\n            transform: translateY(-50%);\n            color: var(--gold);\n            opacity: 0.4;\n            letter-spacing: 4px;\n            font-size: 0.9rem;\n        }\n        .aichat-head .h-title {\n            font-family: 'Cinzel', serif;\n            font-size: 1.3rem;\n            letter-spacing: 4px;\n            color: var(--gold);\n            text-shadow: 0 0 12px var(--gold-glow);\n            text-align: center;\n            text-transform: uppercase;\n        }\n        .aichat-head .h-sub {\n            font-family: 'Special Elite', monospace;\n            font-size: 0.65rem;\n            letter-spacing: 3px;\n            color: var(--cream-dark);\n            text-transform: uppercase;\n            margin-top: 4px;\n            text-align: center;\n            opacity: 0.6;\n        }\n        .aichat-msgs {\n            flex: 1;\n            overflow-y: auto;\n            padding: 24px 28px;\n            max-height: 480px;\n            background:\n                radial-gradient(ellipse at center, rgba(14, 58, 46, 0.15) 0%, transparent 70%),\n                rgba(0,0,0,0.3);\n        }\n        .aichat-empty {\n            text-align: center;\n            color: var(--cream-dark);\n            padding: 50px 0;\n            opacity: 0.6;\n        }\n        .aichat-empty .greet {\n            font-family: 'Cinzel', serif;\n            font-size: 1.4rem;\n            color: var(--gold);\n            margin-bottom: 12px;\n            text-shadow: 0 0 12px var(--gold-glow);\n        }\n        .aichat-empty .suit-row {\n            color: var(--gold);\n            font-size: 1.4rem;\n            letter-spacing: 12px;\n            opacity: 0.5;\n        }\n        .aichat-msg {\n            display: flex;\n            gap: 14px;\n            margin-bottom: 20px;\n            align-items: flex-start;\n        }\n        .aichat-msg .av {\n            width: 38px; height: 38px;\n            border-radius: 50%;\n            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-deep) 100%);\n            color: var(--ink);\n            display: flex; align-items: center; justify-content: center;\n            font-family: 'Cinzel', serif;\n            font-size: 0.85rem;\n            font-weight: 700;\n            flex-shrink: 0;\n            border: 1px solid var(--gold);\n            box-shadow: 0 0 12px var(--gold-glow);\n        }\n        .aichat-msg.user .av {\n            background: linear-gradient(135deg, var(--leather-light) 0%, var(--leather) 100%);\n            color: var(--gold);\n            border-color: var(--gold-deep);\n        }\n        .aichat-msg .body { flex: 1; }\n        .aichat-msg .nm {\n            font-family: 'Special Elite', monospace;\n            font-size: 0.65rem;\n            letter-spacing: 2px;\n            text-transform: uppercase;\n            color: var(--gold);\n            margin-bottom: 4px;\n            opacity: 0.8;\n        }\n        .aichat-msg .ct {\n            font-family: 'Playfair Display', serif;\n            font-size: 1.05rem;\n            line-height: 1.55;\n            color: var(--cream);\n            white-space: pre-wrap;\n        }\n        .aichat-input {\n            display: flex;\n            border-top: 1px solid var(--gold-deep);\n        }\n        .aichat-input input {\n            flex: 1;\n            border: none;\n            border-radius: 0;\n            padding: 16px 22px;\n            font-size: 1rem;\n            background: rgba(0,0,0,0.5);\n        }\n        .aichat-input input:focus { box-shadow: none; }\n        .aichat-input button {\n            border-radius: 0;\n            padding: 0 30px;\n            background: linear-gradient(180deg, var(--gold) 0%, var(--gold-deep) 100%);\n            color: var(--ink);\n            border: none;\n            border-left: 1px solid var(--gold);\n            font-family: 'Cinzel', serif;\n            font-size: 0.78rem;\n            letter-spacing: 3px;\n            text-transform: uppercase;\n            font-weight: 700;\n        }\n        .aichat-input button:hover { background: linear-gradient(180deg, #e8c44a 0%, var(--gold) 100%); }\n        .aichat-input button:disabled { opacity: 0.5; cursor: not-allowed; }\n        .aichat-quickbar {\n            padding: 12px 28px;\n            background: rgba(0,0,0,0.4);\n            border-top: 1px solid var(--line);\n            display: flex;\n            gap: 8px;\n            flex-wrap: wrap;\n            align-items: center;\n        }\n        .aichat-quickbar .qbl {\n            font-family: 'Special Elite', monospace;\n            font-size: 0.65rem;\n            letter-spacing: 2px;\n            color: var(--gold);\n            text-transform: uppercase;\n            margin-left: 8px;\n            opacity: 0.6;\n        }\n        .aichat-quickbar button {\n            padding: 5px 12px;\n            font-family: 'Cinzel', serif;\n            font-size: 0.78rem;\n            background: transparent;\n            border: 1px solid var(--line-strong);\n            color: var(--cream-dark);\n            cursor: pointer;\n            border-radius: 2px;\n            letter-spacing: 1px;\n        }\n        .aichat-quickbar button:hover { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }\n\n        /* ====== Monitor ====== */\n        .monitor-list { display: flex; flex-direction: column; gap: 8px; }\n        .monitor-ch {\n            padding: 14px 18px;\n            background: rgba(0,0,0,0.3);\n            border: 1px solid var(--line);\n            cursor: pointer;\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            border-right: 3px solid var(--gold-deep);\n        }\n        .monitor-ch:hover {\n            border-color: var(--gold);\n            border-right-color: var(--gold);\n        }\n        .monitor-ch .cn { font-family: 'Cinzel', serif; font-size: 1.05rem; color: var(--cream); }\n        .monitor-ch .cc { font-family: 'Special Elite', monospace; font-size: 0.68rem; color: var(--gold); letter-spacing: 2px; opacity: 0.7; }\n\n        .stat-line { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dotted var(--line); }\n        .stat-line:last-child { border-bottom: none; }\n        .stat-line .k { font-family: 'Special Elite', monospace; font-size: 0.7rem; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; opacity: 0.7; }\n        .stat-line .v { font-family: 'Cinzel', serif; font-size: 1.05rem; color: var(--cream); }\n\n        /* ====== Pulse ====== */\n        @keyframes goldpulse {\n            0% { box-shadow: 0 0 0 0 var(--gold-glow); }\n            50% { box-shadow: 0 0 0 8px transparent; }\n            100% { box-shadow: 0 0 0 0 transparent; }\n        }\n        .pulse { animation: goldpulse 0.6s ease-out; }\n\n        /* ====== Scrollbar ====== */\n        ::-webkit-scrollbar { width: 10px; height: 10px; }\n        ::-webkit-scrollbar-track { background: var(--leather); }\n        ::-webkit-scrollbar-thumb {\n            background: linear-gradient(180deg, var(--gold-deep) 0%, #5a4012 100%);\n            border-radius: 0;\n            border: 1px solid var(--gold);\n        }\n        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }\n\n        /* ====== Responsive ====== */\n        @media (max-width: 900px) {\n            .shell { grid-template-columns: 1fr; }\n            .sidebar { position: relative; height: auto; }\n            .main { padding: 24px 18px; }\n            .form-row.two { grid-template-columns: 1fr; }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"shell\">\n        <aside class=\"sidebar\">\n            <div class=\"brand\">\n                <div class=\"brand-suit\">♠ ♥ ♦ ♣</div>\n                <div class=\"brand-mark\">AFK</div>\n                <div class=\"brand-line\">━━━━━</div>\n                <div class=\"brand-sub\">The Card Table</div>\n            </div>\n            <ul class=\"menu\">\n                <li><a class=\"active\" data-menu=\"dashboard\"><span class=\"suit\">♠</span>اللوحة الرئيسية</a></li>\n                <li><a data-menu=\"tasks\"><span class=\"suit\">♥</span>المهام</a></li>\n                <li><a data-menu=\"targets\"><span class=\"suit\">♦</span>أهداف الهجوم</a></li>\n                <li><a data-menu=\"timing\"><span class=\"suit\">♣</span>التوقيتات</a></li>\n                <li><a data-menu=\"channels\"><span class=\"suit\">♠</span>القنوات</a></li>\n                <li><a data-menu=\"monitor\"><span class=\"suit\">♥</span>المراقبة</a></li>\n                <li><a data-menu=\"aichat\"><span class=\"suit\">♦</span>المساعد الذكي</a></li>\n            </ul>\n            <div class=\"sidebar-footer\">\n                <div class=\"suit-row\">♠ ♥ ♦ ♣</div>\n                House of AFK · MMXXVI\n            </div>\n        </aside>\n\n        <main class=\"main\">\n\n            <section class=\"panel active\" data-panel=\"dashboard\">\n                <div class=\"page-header\">\n                    <div>\n                        <div class=\"page-title\">اللوحة الرئيسية</div>\n                        <div class=\"page-subtitle\">The Main Saloon</div>\n                    </div>\n                    <div class=\"est-mark\">— AFK · MMXXVI —</div>\n                </div>\n\n                <div class=\"status-grid\">\n                    <div class=\"status-card\">\n                        <div class=\"corner\">♠</div>\n                        <div class=\"lbl\">إجمالي الرسائل</div>\n                        <div class=\"val\">__TOTALSENT__</div>\n                    </div>\n                    <div class=\"status-card\">\n                        <div class=\"corner\">♥</div>\n                        <div class=\"lbl\">قناة الصوت</div>\n                        <div class=\"val\">__VOICESTATE__</div>\n                    </div>\n                    <div class=\"status-card\">\n                        <div class=\"corner\">♦</div>\n                        <div class=\"lbl\">الخطة ب</div>\n                        <div class=\"val\">__PLANBSTATE__</div>\n                    </div>\n                    <div class=\"status-card\">\n                        <div class=\"corner\">♣</div>\n                        <div class=\"lbl\">آخر نشاط</div>\n                        <div class=\"val\" style=\"font-size:1rem\">__LASTACTIVE__</div>\n                    </div>\n                </div>\n\n                <div class=\"estate\">\n                    <h3>♠ <span class=\"pip\">·</span> التحكم بالصوت <span class=\"pip\">·</span> ♠</h3>\n                    <p style=\"font-family:'Special Elite',monospace; font-size:0.85rem; color:var(--cream-dark); margin-bottom:18px; opacity:0.7;\">\n                        تحكم بدخول وخروج البوت من روم الـ AFK الصوتي.\n                    </p>\n                    <div class=\"btn-row\">\n                        <button type=\"button\" class=\"btn btn-primary\" data-action=\"voice\" onclick=\"toggleAction('voice', this)\">__VOICEBTN__</button>\n                    </div>\n                </div>\n\n                <div class=\"estate\">\n                    <h3>♥ <span class=\"pip\">·</span> الخطة ب — جمع النقاط <span class=\"pip\">·</span> ♥</h3>\n                    <p style=\"font-family:'Special Elite',monospace; font-size:0.85rem; color:var(--cream-dark); margin-bottom:18px; opacity:0.7;\">\n                        إرسال رسالة متكررة في الروم المخصص كل __PLANBREPEAT__ ثانية.\n                    </p>\n                    <div class=\"btn-row\">\n                        <button type=\"button\" class=\"btn __PLANBBTNCLASS__\" data-planb=\"1\" onclick=\"togglePlanB(this)\">__PLANBBTN__</button>\n                    </div>\n                </div>\n            </section>\n\n            <section class=\"panel\" data-panel=\"tasks\">\n                <div class=\"page-header\">\n                    <div>\n                        <div class=\"page-title\">المهام</div>\n                        <div class=\"page-subtitle\">The Daily Hands</div>\n                    </div>\n                </div>\n                <div class=\"estate\">\n                    <h3>♦ <span class=\"pip\">·</span> قائمة المهام <span class=\"pip\">·</span> ♦</h3>\n                    <div class=\"task-list\">\n                        <div class=\"task-row\">\n                            <div class=\"task-num\">I</div>\n                            <div>\n                                <div class=\"task-name\">الذكريات</div>\n                                <div class=\"task-desc\">إرسال \"__T1MSG__\" __T1COUNT__ مرة في روم مخصص</div>\n                            </div>\n                            <div class=\"task-state __T1STATECLASS__\">__T1STATE__</div>\n                            <button type=\"button\" class=\"btn __T1BTNCLASS__\" data-task=\"task1\" onclick=\"toggleTask('task1', this)\">__T1BTN__</button>\n                        </div>\n                        <div class=\"task-row\">\n                            <div class=\"task-num\">II</div>\n                            <div>\n                                <div class=\"task-name\">البخشيش</div>\n                                <div class=\"task-desc\">إرسال \"__T2MSG__\" بشكل متكرر</div>\n                            </div>\n                            <div class=\"task-state __T2STATECLASS__\">__T2STATE__</div>\n                            <button type=\"button\" class=\"btn __T2BTNCLASS__\" data-task=\"task2\" onclick=\"toggleTask('task2', this)\">__T2BTN__</button>\n                        </div>\n                        <div class=\"task-row\">\n                            <div class=\"task-num\">III</div>\n                            <div>\n                                <div class=\"task-name\">الأعمال</div>\n                                <div class=\"task-desc\">__T3MSGS__</div>\n                            </div>\n                            <div class=\"task-state __T3STATECLASS__\">__T3STATE__</div>\n                            <button type=\"button\" class=\"btn __T3BTNCLASS__\" data-task=\"task3\" onclick=\"toggleTask('task3', this)\">__T3BTN__</button>\n                        </div>\n                        <div class=\"task-row\">\n                            <div class=\"task-num\">IV</div>\n                            <div>\n                                <div class=\"task-name\">الهجوم</div>\n                                <div class=\"task-desc\">هجوم على الهدف الأساسي (__T4MODE__)</div>\n                            </div>\n                            <div class=\"task-state __T4STATECLASS__\">__T4STATE__</div>\n                            <button type=\"button\" class=\"btn __T4BTNCLASS__\" data-task=\"task4\" onclick=\"toggleTask('task4', this)\">__T4BTN__</button>\n                        </div>\n                        <div class=\"task-row\">\n                            <div class=\"task-num\">V</div>\n                            <div>\n                                <div class=\"task-name\">الكازينو</div>\n                                <div class=\"task-desc\">__T5GAMES__</div>\n                            </div>\n                            <div class=\"task-state __T5STATECLASS__\">__T5STATE__</div>\n                            <button type=\"button\" class=\"btn __T5BTNCLASS__\" data-task=\"task5\" onclick=\"toggleTask('task5', this)\">__T5BTN__</button>\n                        </div>\n                    </div>\n                </div>\n            </section>\n\n            <section class=\"panel\" data-panel=\"targets\">\n                <div class=\"page-header\">\n                    <div>\n                        <div class=\"page-title\">أهداف الهجوم</div>\n                        <div class=\"page-subtitle\">The Targets</div>\n                    </div>\n                </div>\n                <div class=\"estate\">\n                    <h3>♣ <span class=\"pip\">·</span> إدارة الأهداف <span class=\"pip\">·</span> ♣</h3>\n                    <p style=\"font-family:'Special Elite',monospace; font-size:0.85rem; color:var(--cream-dark); margin-bottom:18px; opacity:0.7;\">\n                        أضف الأعضاء وحدد عضوًا أساسيًا للهجوم.\n                    </p>\n                    <form id=\"targetsForm\" action=\"/api/update-tasks-config\" method=\"POST\">\n                        <input type=\"hidden\" name=\"task4TargetIds\" id=\"task4TargetIds\">\n                        <input type=\"hidden\" name=\"task4TargetId\" id=\"task4TargetId\" value=\"__PRIMARYTARGETID__\">\n                        <div class=\"target-add\">\n                            <input type=\"text\" id=\"newTargetId\" placeholder=\"أدخل ID عضو جديد\">\n                            <button type=\"button\" class=\"btn btn-primary\" onclick=\"addTarget()\">+ إضافة</button>\n                        </div>\n                        <div class=\"target-list\" id=\"targetList\">__TARGETROWS__</div>\n                        <div class=\"form-row\" style=\"margin-top:18px;\">\n                            <label>طريقة الهجوم</label>\n                            <select id=\"task4TargetMode\" name=\"task4TargetMode\">\n                                <option value=\"fixed\" __T4MODEFIXED__>الهدف الأساسي كل دورة</option>\n                                <option value=\"random\" __T4MODERANDOM__>هدف عشوائي من القائمة</option>\n                            </select>\n                        </div>\n                        <div class=\"btn-row\">\n                            <button type=\"submit\" class=\"btn btn-primary\">♠ حفظ الأهداف ♠</button>\n                        </div>\n                    </form>\n                </div>\n            </section>\n\n            <section class=\"panel\" data-panel=\"timing\">\n                <div class=\"page-header\">\n                    <div>\n                        <div class=\"page-title\">التوقيتات</div>\n                        <div class=\"page-subtitle\">The Schedule</div>\n                    </div>\n                </div>\n                <div class=\"estate\">\n                    <h3>♠ <span class=\"pip\">·</span> ضبط التوقيتات <span class=\"pip\">·</span> ♠</h3>\n                    <form action=\"/api/update-tasks-config\" method=\"POST\">\n                        <div class=\"form-row two\">\n                            <div>\n                                <label>المهمة 1 — الفاصل بين الرسائل (ث)</label>\n                                <input type=\"number\" name=\"task1MessageGap\" value=\"__T1GAP__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                            <div>\n                                <label>المهمة 1 — عدد الرسائل</label>\n                                <input type=\"number\" name=\"task1Count\" value=\"__T1COUNT2__\" min=\"1\">\n                            </div>\n                        </div>\n                        <div class=\"form-row two\">\n                            <div>\n                                <label>المهمة 1 — تكرار (دقيقة من)</label>\n                                <input type=\"number\" name=\"task1RepeatMin\" value=\"__T1RMIN__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                            <div>\n                                <label>المهمة 1 — تكرار (دقيقة إلى)</label>\n                                <input type=\"number\" name=\"task1RepeatMax\" value=\"__T1RMAX__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                        </div>\n                        <div class=\"form-row two\">\n                            <div>\n                                <label>المهمة 2 — تكرار (دقيقة من)</label>\n                                <input type=\"number\" name=\"task2RepeatMin\" value=\"__T2RMIN__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                            <div>\n                                <label>المهمة 2 — تكرار (دقيقة إلى)</label>\n                                <input type=\"number\" name=\"task2RepeatMax\" value=\"__T2RMAX__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                        </div>\n                        <div class=\"form-row two\">\n                            <div>\n                                <label>المهمة 3 — تكرار (دقيقة من)</label>\n                                <input type=\"number\" name=\"task3RepeatMin\" value=\"__T3RMIN__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                            <div>\n                                <label>المهمة 3 — تكرار (دقيقة إلى)</label>\n                                <input type=\"number\" name=\"task3RepeatMax\" value=\"__T3RMAX__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                        </div>\n                        <div class=\"form-row two\">\n                            <div>\n                                <label>المهمة 4 — تكرار (دقيقة من)</label>\n                                <input type=\"number\" name=\"task4RepeatMin\" value=\"__T4RMIN__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                            <div>\n                                <label>المهمة 4 — تكرار (دقيقة إلى)</label>\n                                <input type=\"number\" name=\"task4RepeatMax\" value=\"__T4RMAX__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                        </div>\n                        <div class=\"form-row two\">\n                            <div>\n                                <label>المهمة 5 — رهان من</label>\n                                <input type=\"number\" name=\"task5BetMin\" value=\"__T5BMIN__\" min=\"1\">\n                            </div>\n                            <div>\n                                <label>المهمة 5 — رهان إلى</label>\n                                <input type=\"number\" name=\"task5BetMax\" value=\"__T5BMAX__\" min=\"1\">\n                            </div>\n                        </div>\n                        <div class=\"form-row two\">\n                            <div>\n                                <label>المهمة 5 — فاصل (ث من)</label>\n                                <input type=\"number\" name=\"task5GapMin\" value=\"__T5GMIN__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                            <div>\n                                <label>المهمة 5 — فاصل (ث إلى)</label>\n                                <input type=\"number\" name=\"task5GapMax\" value=\"__T5GMAX__\" min=\"0.1\" step=\"0.1\">\n                            </div>\n                        </div>\n                        <div class=\"form-row\">\n                            <label>خطة ب — تكرار (ث)</label>\n                            <input type=\"number\" name=\"planBRepeat\" value=\"__PLANBREPEAT2__\" min=\"0.1\" step=\"0.1\">\n                        </div>\n                        <div class=\"btn-row\">\n                            <button type=\"submit\" class=\"btn btn-primary\">♠ حفظ التوقيتات ♠</button>\n                        </div>\n                    </form>\n                </div>\n            </section>\n\n            <section class=\"panel\" data-panel=\"channels\">\n                <div class=\"page-header\">\n                    <div>\n                        <div class=\"page-title\">القنوات</div>\n                        <div class=\"page-subtitle\">The Channels</div>\n                    </div>\n                </div>\n                <div class=\"estate-grid\">\n                    <div class=\"estate\">\n                        <h3>♠ <span class=\"pip\">·</span> روم الـ AFK <span class=\"pip\">·</span> ♠</h3>\n                        <form action=\"/api/update-tasks-config\" method=\"POST\">\n                            <div class=\"form-row\">\n                                <label>ID القناة الصوتية للانتظار</label>\n                                <input type=\"text\" name=\"afkChannelId\" value=\"__AFKCHAN__\" placeholder=\"أدخل رقم القناة\">\n                            </div>\n                            <div class=\"btn-row\">\n                                <button type=\"submit\" class=\"btn btn-primary\">♠ حفظ ♠</button>\n                            </div>\n                        </form>\n                    </div>\n                    <div class=\"estate\">\n                        <h3>♦ <span class=\"pip\">·</span> حذف الرسائل <span class=\"pip\">·</span> ♦</h3>\n                        <div class=\"form-row\">\n                            <label>ID الروم</label>\n                            <input type=\"text\" id=\"deleteChannelId\" placeholder=\"أدخل ID الروم\">\n                        </div>\n                        <div class=\"form-row\">\n                            <label>عدد الرسائل (1-100)</label>\n                            <input type=\"number\" id=\"deleteMessageCount\" value=\"50\" min=\"1\" max=\"100\">\n                        </div>\n                        <div class=\"btn-row\">\n                            <button type=\"button\" class=\"btn btn-danger\" onclick=\"deleteMessages()\">✕ حذف الرسائل</button>\n                        </div>\n                    </div>\n                </div>\n            </section>\n\n            <section class=\"panel\" data-panel=\"monitor\">\n                <div class=\"page-header\">\n                    <div>\n                        <div class=\"page-title\">المراقبة</div>\n                        <div class=\"page-subtitle\">The Watcher</div>\n                    </div>\n                </div>\n                <div class=\"estate\">\n                    <h3>♥ <span class=\"pip\">·</span> مراقبة نشاط المستخدم <span class=\"pip\">·</span> ♥</h3>\n                    <div class=\"form-row two\">\n                        <div>\n                            <label>ID الشخص</label>\n                            <input type=\"text\" id=\"monitorUserId\" placeholder=\"أدخل ID الشخص\">\n                        </div>\n                        <div>\n                            <label>الفترة الزمنية</label>\n                            <select id=\"monitorHours\">\n                                <option value=\"1\">آخر ساعة</option>\n                                <option value=\"6\">آخر 6 ساعات</option>\n                                <option value=\"24\" selected>آخر 24 ساعة</option>\n                                <option value=\"72\">آخر 3 أيام</option>\n                                <option value=\"168\">آخر أسبوع</option>\n                                <option value=\"720\">آخر شهر</option>\n                            </select>\n                        </div>\n                    </div>\n                    <div class=\"btn-row\">\n                        <button type=\"button\" class=\"btn btn-primary\" id=\"monitorStartBtn\" onclick=\"startMonitor()\">♠ بدء المراقبة ♠</button>\n                        <button type=\"button\" class=\"btn btn-danger\" id=\"monitorStopBtn\" onclick=\"stopMonitor()\" style=\"display:none;\">◼ إيقاف</button>\n                    </div>\n                </div>\n\n                <div class=\"estate\" id=\"monitorStatsCard\" style=\"display:none;\">\n                    <h3>♦ <span class=\"pip\">·</span> ملخص المراقبة <span class=\"pip\">·</span> ♦</h3>\n                    <div class=\"stat-line\"><span class=\"k\">إجمالي الرسائل</span><span class=\"v\" id=\"monitorTotalMessages\">0</span></div>\n                    <div class=\"stat-line\"><span class=\"k\">القنوات النشطة</span><span class=\"v\" id=\"monitorActiveChannels\">0</span></div>\n                    <div class=\"stat-line\"><span class=\"k\">القنوات المفحوصة</span><span class=\"v\" id=\"monitorChannelsScanned\">0</span></div>\n                    <div class=\"stat-line\"><span class=\"k\">من</span><span class=\"v\" id=\"monitorFirstTime\">—</span></div>\n                    <div class=\"stat-line\"><span class=\"k\">إلى</span><span class=\"v\" id=\"monitorLastTime\">—</span></div>\n                    <div class=\"stat-line\"><span class=\"k\">المدة</span><span class=\"v\" id=\"monitorDuration\">—</span></div>\n                </div>\n\n                <div class=\"estate\" id=\"monitorChannelsCard\" style=\"display:none;\">\n                    <h3>♣ <span class=\"pip\">·</span> القنوات النشطة <span class=\"pip\">·</span> ♣</h3>\n                    <div class=\"monitor-list\" id=\"monitorChannelsList\"></div>\n                </div>\n            </section>\n\n            <section class=\"panel\" data-panel=\"aichat\">\n                <div class=\"page-header\">\n                    <div>\n                        <div class=\"page-title\">المساعد الذكي</div>\n                        <div class=\"page-subtitle\">The Counsel</div>\n                    </div>\n                </div>\n                <div class=\"aichat-wrap\">\n                    <div class=\"aichat-head\">\n                        <div class=\"h-title\">♠ The Counsel ♠</div>\n                        <div class=\"h-sub\">نماذج متعددة · رد فوري</div>\n                    </div>\n                    <div class=\"aichat-msgs\" id=\"aichatMsgs\">\n                        <div class=\"aichat-empty\" id=\"aichatEmpty\">\n                            <div class=\"greet\">The Counsel في خدمتك</div>\n                            <div class=\"suit-row\">♠ ♥ ♦ ♣</div>\n                            <div style=\"margin-top:16px; font-family:'Special Elite',monospace; font-size:0.7rem; letter-spacing:2px; color:var(--gold); opacity:0.6;\">\n                                يمكنني تعديل الموقع فعلياً — جرّب: \"غيّر لون العنوان\" أو \"أضف زر للصفحة الرئيسية\"\n                            </div>\n                        </div>\n                    </div>\n                    <div class=\"aichat-quickbar\">\n                        <span class=\"qbl\">اختصارات</span>\n                        <button type=\"button\" onclick=\"aiSet('لخص هذا النص: ')\">♠ تلخيص</button>\n                        <button type=\"button\" onclick=\"aiSet('ترجم للإنجليزية: ')\">♥ ترجمة</button>\n                        <button type=\"button\" onclick=\"aiSet('اشرح ببساطة: ')\">♦ شرح</button>\n                        <button type=\"button\" onclick=\"aiSet('حلل هذا الكود: ')\">♣ تحليل كود</button>\n                        <button type=\"button\" onclick=\"aiSet('غيّر ثيم الموقع إلى ocean')\">♠ ثيم</button>\n                        <button type=\"button\" id=\"aiUndoBtn\" onclick=\"undoLast()\" style=\"display:none;\" title=\"تراجع عن آخر تعديل\">↺ تراجع</button>\n                        <button type=\"button\" onclick=\"aiClear()\">✕ مسح</button>\n                    </div>\n                    <form class=\"aichat-input\" id=\"aichatForm\" onsubmit=\"event.preventDefault(); return false;\">\n                        <input type=\"text\" id=\"aichatInput\" placeholder=\"اكتب رسالتك...\" autocomplete=\"off\" maxlength=\"4000\">\n                        <button type=\"button\" id=\"aichatSendBtn\" onclick=\"sendAIMessage()\">إرسال ♠</button>\n                    </form>\n                </div>\n            </section>\n\n        </main>\n    </div>\n\n    <script>\n        document.querySelectorAll('.menu a').forEach(a => {\n            a.addEventListener('click', function(e) {\n                e.preventDefault();\n                const target = this.dataset.menu;\n                document.querySelectorAll('.menu a').forEach(x => x.classList.remove('active'));\n                this.classList.add('active');\n                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));\n                const panel = document.querySelector('[data-panel=\"' + target + '\"]');\n                if (panel) panel.classList.add('active');\n            });\n        });\n\n        function pulse(el) {\n            el.classList.remove('pulse');\n            void el.offsetWidth;\n            el.classList.add('pulse');\n        }\n        function toggleTask(name, btn) {\n            pulse(btn);\n            fetch('/api/toggle-task/' + name, { method: 'GET' });\n        }\n        function togglePlanB(btn) {\n            pulse(btn);\n            fetch('/api/toggle-planb', { method: 'GET' });\n        }\n        function toggleAction(action, btn) {\n            pulse(btn);\n            fetch('/api/toggle/' + action, { method: 'GET' });\n        }\n        function isTaskActive(state, name) {\n            return state.isRunning && state.isChatActive && state.isTaskRunning && state.taskStates && state.taskStates[name];\n        }\n        function applyBtn(btn, on, onText, offText) {\n            btn.textContent = on ? onText : offText;\n            btn.classList.toggle('btn-danger', on);\n            btn.classList.toggle('btn-primary', !on);\n        }\n\n        function refreshState() {\n            fetch('/api/state').then(r => r.json()).then(data => {\n                if (!data.success) return;\n                const s = data.state;\n                const t = s.taskStates || {};\n                document.querySelectorAll('[data-task]').forEach(btn => {\n                    applyBtn(btn, isTaskActive(s, btn.dataset.task), '◼ إيقاف', '▶ تشغيل');\n                });\n                const planb = document.querySelector('[data-planb]');\n                if (planb) applyBtn(planb, !!s.isPlanBRunning, '◼ إيقاف الخطة', '▶ تشغيل الخطة');\n                const voice = document.querySelector('[data-action=\"voice\"]');\n                if (voice) voice.textContent = s.isVoiceActive ? '◼ إيقاف الصوت' : '▶ تشغيل الصوت';\n            }).catch(() => {});\n        }\n        setInterval(refreshState, 1000);\n        refreshState();\n\n        function syncTargetIds() {\n            const ids = Array.from(document.querySelectorAll('.target-chip')).map(c => c.dataset.targetId);\n            document.getElementById('task4TargetIds').value = ids.join(',');\n        }\n        function setPrimaryTarget(chip) {\n            document.querySelectorAll('.target-chip').forEach(c => {\n                c.classList.remove('is-primary');\n                const lbl = c.querySelector('.primary-label');\n                if (lbl) lbl.textContent = '';\n                const btn = c.querySelector('[data-target-action=\"primary\"]');\n                if (btn) btn.textContent = 'جعله أساسيًا';\n            });\n            chip.classList.add('is-primary');\n            const lbl = chip.querySelector('.primary-label');\n            if (lbl) lbl.textContent = 'أساسي';\n            const btn = chip.querySelector('[data-target-action=\"primary\"]');\n            if (btn) btn.textContent = 'الأساسي';\n            document.getElementById('task4TargetId').value = chip.dataset.targetId;\n            syncTargetIds();\n        }\n        function bindTarget(chip) {\n            const p = chip.querySelector('[data-target-action=\"primary\"]');\n            if (p) p.addEventListener('click', () => setPrimaryTarget(chip));\n            const r = chip.querySelector('[data-target-action=\"remove\"]');\n            if (r) r.addEventListener('click', () => {\n                const wasPrimary = chip.classList.contains('is-primary');\n                chip.remove();\n                const first = document.querySelector('.target-chip');\n                if (wasPrimary && first) setPrimaryTarget(first);\n                else syncTargetIds();\n            });\n        }\n        function addTarget() {\n            const input = document.getElementById('newTargetId');\n            const id = input.value.trim().replace(/^<@!?/, '').replace(/>$/, '');\n            if (!id) { alert('❌ أدخل ID عضو صحيح'); return; }\n            if (document.querySelector('[data-target-id=\"' + id + '\"]')) { alert('⚠️ هذا العضو موجود'); return; }\n            const chip = document.createElement('div');\n            chip.className = 'target-chip';\n            chip.dataset.targetId = id;\n            chip.innerHTML = '<span class=\"target-id\">' + id + '</span><span class=\"primary-label\"></span><button type=\"button\" class=\"btn btn-ghost\" data-target-action=\"primary\">جعله أساسيًا</button><button type=\"button\" class=\"btn btn-ghost\" data-target-action=\"remove\">حذف</button>';\n            bindTarget(chip);\n            document.getElementById('targetList').appendChild(chip);\n            input.value = '';\n            syncTargetIds();\n        }\n        document.querySelectorAll('.target-chip').forEach(bindTarget);\n        const tf = document.getElementById('targetsForm');\n        if (tf) tf.addEventListener('submit', syncTargetIds);\n\n        function deleteMessages() {\n            const channelId = document.getElementById('deleteChannelId').value.trim();\n            const count = document.getElementById('deleteMessageCount').value.trim();\n            if (!channelId) { alert('❌ أدخل ID الروم أولاً'); return; }\n            fetch('/api/delete-messages', {\n                method: 'POST',\n                headers: { 'Content-Type': 'application/json' },\n                body: JSON.stringify({ channelId, count: Number(count || 50) })\n            }).then(async (res) => {\n                const data = await res.json();\n                alert(data.message || '✅ تم الحذف');\n                if (data.success) location.reload();\n            });\n        }\n\n        let monitorPoll = null;\n        function startMonitor() {\n            const userId = document.getElementById('monitorUserId').value.trim();\n            const hours = document.getElementById('monitorHours').value;\n            if (!userId) { alert('❌ أدخل ID الشخص'); return; }\n            document.getElementById('monitorStatsCard').style.display = 'none';\n            document.getElementById('monitorChannelsCard').style.display = 'none';\n            document.getElementById('monitorStartBtn').style.display = 'none';\n            document.getElementById('monitorStopBtn').style.display = 'inline-flex';\n            fetch('/api/monitor/start', {\n                method: 'POST',\n                headers: { 'Content-Type': 'application/json' },\n                body: JSON.stringify({ userId, hoursBack: Number(hours) })\n            }).then(r => r.json()).then(d => { if (!d.success) { alert(d.message); resetMonitorUI(); } else pollMonitor(); });\n        }\n        function stopMonitor() {\n            fetch('/api/monitor/stop', { method: 'POST' });\n        }\n        function pollMonitor() {\n            if (monitorPoll) clearInterval(monitorPoll);\n            monitorPoll = setInterval(() => {\n                fetch('/api/monitor/result').then(r => r.json()).then(d => {\n                    if (!d.success) return;\n                    if (!d.active) {\n                        clearInterval(monitorPoll);\n                        monitorPoll = null;\n                        if (d.result) renderMonitor(d.result);\n                        resetMonitorUI();\n                    }\n                }).catch(() => {});\n            }, 600);\n        }\n        function resetMonitorUI() {\n            document.getElementById('monitorStartBtn').style.display = 'inline-flex';\n            document.getElementById('monitorStopBtn').style.display = 'none';\n        }\n        function fmtTime(iso) {\n            if (!iso) return '—';\n            try { return new Date(iso).toLocaleString('ar-SA', { dateStyle: 'short', timeStyle: 'short' }); } catch (e) { return iso; }\n        }\n        function fmtDur(ms) {\n            if (!ms) return '—';\n            const s = Math.floor(ms / 1000);\n            if (s < 60) return s + ' ث';\n            const m = Math.floor(s / 60); const rs = s % 60;\n            if (m < 60) return m + ' د ' + rs + ' ث';\n            const h = Math.floor(m / 60); const rm = m % 60;\n            return h + ' س ' + rm + ' د';\n        }\n        function renderMonitor(r) {\n            document.getElementById('monitorStatsCard').style.display = 'block';\n            document.getElementById('monitorChannelsCard').style.display = 'block';\n            document.getElementById('monitorTotalMessages').textContent = r.totalMessages || 0;\n            document.getElementById('monitorActiveChannels').textContent = r.channelsWithActivity || 0;\n            document.getElementById('monitorChannelsScanned').textContent = r.channelsScanned || 0;\n            document.getElementById('monitorFirstTime').textContent = fmtTime(r.firstMessage);\n            document.getElementById('monitorLastTime').textContent = fmtTime(r.lastMessage);\n            document.getElementById('monitorDuration').textContent = fmtDur(r.durationMs);\n            const list = document.getElementById('monitorChannelsList');\n            list.innerHTML = '';\n            (r.channels || []).sort((a, b) => b.count - a.count).forEach(ch => {\n                const item = document.createElement('div');\n                item.className = 'monitor-ch';\n                item.innerHTML = '<div><div class=\"cn\">#' + escapeHtml(ch.channelName) + '</div><div class=\"cc\">من ' + fmtTime(ch.firstAt) + ' إلى ' + fmtTime(ch.lastAt) + '</div></div><div class=\"cc\">' + ch.count + ' رسالة</div>';\n                list.appendChild(item);\n            });\n            if ((r.channels || []).length === 0) {\n                list.innerHTML = '<div style=\"text-align:center; padding:30px; color:var(--cream-dark); font-style:italic;\">لم يتم العثور على رسائل</div>';\n            }\n        }\n        function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }\n\n        const aiMsgs = document.getElementById('aichatMsgs');\n        const aiEmpty = document.getElementById('aichatEmpty');\n        const aiInput = document.getElementById('aichatInput');\n        const aiBtn = document.getElementById('aichatSendBtn');\n\n        function aiSet(text) {\n            aiInput.value = text;\n            aiInput.focus();\n        }\n        function aiClear() {\n            aiMsgs.innerHTML = '';\n            const e = document.createElement('div');\n            e.className = 'aichat-empty';\n            e.id = 'aichatEmpty';\n            e.innerHTML = '<div class=\"greet\">The Counsel في خدمتك</div><div class=\"suit-row\">♠ ♥ ♦ ♣</div><div style=\"margin-top:16px; font-family:&quot;Special Elite&quot;,monospace; font-size:0.7rem; letter-spacing:2px; color:var(--gold); opacity:0.6;\">يمكنني تعديل الموقع فعلياً — جرّب: \"غيّر لون العنوان\" أو \"أضف زر للصفحة الرئيسية\"</div>';\n            aiMsgs.appendChild(e);\n        }\n        function aiAppend(role, text) {\n            if (aiEmpty && aiEmpty.parentNode) aiEmpty.parentNode.removeChild(aiEmpty);\n            const row = document.createElement('div');\n            row.className = 'aichat-msg ' + role;\n            const av = document.createElement('div');\n            av.className = 'av';\n            av.textContent = role === 'user' ? '♠' : 'AI';\n            const body = document.createElement('div');\n            body.className = 'body';\n            const nm = document.createElement('div');\n            nm.className = 'nm';\n            nm.textContent = role === 'user' ? 'أنت' : 'The Counsel';\n            const ct = document.createElement('div');\n            ct.className = 'ct';\n            ct.textContent = text;\n            body.appendChild(nm); body.appendChild(ct);\n            row.appendChild(av); row.appendChild(body);\n            aiMsgs.appendChild(row);\n            aiMsgs.scrollTop = aiMsgs.scrollHeight;\n            return ct;\n        }\n\n        aiInput.addEventListener('keydown', function(e) {\n            if (e.key === 'Enter' && !e.shiftKey) {\n                e.preventDefault();\n                sendAIMessage();\n            }\n        });\n\n        async function sendAIMessage() {\n            const text = (aiInput.value || '').trim();\n            if (!text) return;\n            aiAppend('user', text);\n            aiInput.value = '';\n            aiInput.disabled = true;\n            aiBtn.disabled = true;\n            aiBtn.textContent = '... جاري';\n\n            let aiContent = null;\n            let streamed = '';\n            try {\n                const sysPrompt = [\n                    'أنت \"The Counsel\" — مساعد ذكي بداخل موقع \"The Card Table\" (لوحة تحكم بوت ديسكورد بثيم قهوة/جواكر طرنيب).',\n                    'الموقع فيه: سايدبار بقائمة، بطاقات (estates)، أزرار، حقول إدخال، شات AI، شاشة مراقبة، ألوان (ذهبي/أخضر/بني).',\n                    'تستطيع تعديل الموقع فعلياً عبر إرجاع JSON في نهاية ردك بالشكل التالي:',\n                    '```json',\n                    '{\"reply\": \"نص ردك للمستخدم\", \"actions\": [{\"type\":\"css\",\"selector\":\".menu a.active\",\"property\":\"color\",\"value\":\"#ff0\"}, ...]}',\n                    '```',\n                    '',\n                    'أنواع العمليات المتاحة:',\n                    '1) css: غيّر ستايل CSS — {type:\"css\", selector, property, value}',\n                    '2) text: غيّر نص عنصر — {type:\"text\", selector, value}',\n                    '3) addClass / removeClass: {type:\"addClass\"|\"removeClass\", selector, value (اسم class)}',\n                    '4) html: استبدل HTML لعنصر — {type:\"html\", selector, value}',\n                    '5) attr: غيّر attribute — {type:\"attr\", selector, name, value}',\n                    '6) remove: احذف عنصر — {type:\"remove\", selector}',\n                    '7) append / prepend: أضف HTML — {type:\"append\"|\"prepend\", selector, value}',\n                    '8) alert: اعرض رسالة — {type:\"alert\", value}',\n                    '9) theme: غيّر ثيم كامل — {type:\"theme\", value: \"dark\"|\"light\"|\"ocean\"|\"ruby\"}',\n                    '',\n                    'السلِكْتورات الشائعة: .sidebar, .menu a, .estate, .btn, .page-title, body, .aichat-wrap, .status-card, .task-row, .monitor-ch, input, select, label, h3',\n                    '',\n                    'إذا طلب المستخدم تعديل بصري أو إضافة زر أو تغيير لون أو نص، نفّذ عبر actions.',\n                    'إذا كان سؤال عام، أرجع reply فقط بدون actions.',\n                    'لا تضع ```json إلا إذا فعلاً فيه عمليات تريد تنفيذها. اجعل reply بالعربية بشكل مختصر.'\n                ].join(String.fromCharCode(10));\n\n                const res = await fetch('/api/ai-chat', {\n                    method: 'POST',\n                    headers: { 'Content-Type': 'application/json' },\n                    body: JSON.stringify({ message: text, systemPrompt: sysPrompt })\n                });\n                const ct = (res.headers.get('content-type') || '').toLowerCase();\n                if (ct.includes('application/json')) {\n                    const data = await res.json().catch(() => ({}));\n                    if (data && data.success && data.reply) {\n                        aiAppend('ai', data.reply);\n                    } else {\n                        aiAppend('ai', '❌ ' + ((data && data.message) || 'خطأ غير متوقع'));\n                    }\n                    return;\n                }\n                if (!res.ok) {\n                    aiAppend('ai', '❌ خطأ HTTP ' + res.status);\n                    return;\n                }\n                aiContent = aiAppend('ai', '');\n                const reader = res.body.getReader();\n                const decoder = new TextDecoder();\n                let buffer = '';\n                let actions = [];\n                let finalReply = null;\n                while (true) {\n                    const { done, value } = await reader.read();\n                    if (done) break;\n                    buffer += decoder.decode(value, { stream: true });\n                    const NL2 = String.fromCharCode(10, 10);\n                    const lines = buffer.split(NL2);\n                    buffer = lines.pop() || '';\n                    for (const line of lines) {\n                        if (!line.startsWith('data: ')) continue;\n                        let data;\n                        try { data = JSON.parse(line.slice(6)); } catch (_) { continue; }\n                        if (data && data.error) {\n                            aiContent.textContent = '❌ ' + data.error;\n                        }\n                        if (data && data.delta) {\n                            streamed += data.delta;\n                            aiContent.textContent = streamed;\n                            aiMsgs.scrollTop = aiMsgs.scrollHeight;\n                        }\n                        if (data && data.done) {\n                            if (Array.isArray(data.actions)) actions = data.actions;\n                            if (typeof data.fullReply === 'string' && data.fullReply) finalReply = data.fullReply;\n                        }\n                    }\n                }\n                // Use parsed finalReply if present, else streamed\n                if (finalReply) {\n                    aiContent.textContent = finalReply;\n                } else if (!streamed) {\n                    aiContent.textContent = '⚠️ لم يصل رد';\n                }\n                // Execute actions\n                if (actions.length > 0) {\n                    pushHistory();\n                    for (const a of actions) {\n                        try { executeAction(a); } catch (e) { console.warn('action fail', a, e); }\n                    }\n                    showUndo();\n                }\n            } catch (err) {\n                if (aiContent) aiContent.textContent = '❌ ' + (err.message || 'خطأ شبكة');\n                else aiAppend('ai', '❌ ' + (err.message || 'خطأ شبكة'));\n            } finally {\n                aiInput.disabled = false;\n                aiBtn.disabled = false;\n                aiBtn.textContent = 'إرسال ♠';\n                aiInput.focus();\n            }\n        }\n\n        // ====== DOM Action Executor ======\n        const domHistory = [];\n        function snapshot() {\n            // Lightweight: just store current style/class for affected nodes\n            return {\n                styles: Array.from(document.querySelectorAll('[data-ai-touched]')).map(el => ({\n                    el, style: el.getAttribute('style') || '', classes: el.getAttribute('class') || '', html: el.innerHTML\n                }))\n            };\n        }\n        function pushHistory() {\n            domHistory.push(snapshot());\n            if (domHistory.length > 20) domHistory.shift();\n        }\n        function undoLast() {\n            const snap = domHistory.pop();\n            if (!snap) return;\n            for (const s of snap.styles) {\n                if (s.style) s.el.setAttribute('style', s.style);\n                else s.el.removeAttribute('style');\n                if (s.classes) s.el.setAttribute('class', s.classes);\n                else s.el.removeAttribute('class');\n                s.el.innerHTML = s.html;\n                s.el.removeAttribute('data-ai-touched');\n            }\n            hideUndo();\n        }\n        function showUndo() {\n            const b = document.getElementById('aiUndoBtn');\n            if (b) b.style.display = 'inline-flex';\n        }\n        function hideUndo() {\n            const b = document.getElementById('aiUndoBtn');\n            if (b) b.style.display = 'none';\n        }\n        function markTouched(el) { el.setAttribute('data-ai-touched', '1'); }\n        function executeAction(a) {\n            if (!a || !a.type) return;\n            const sel = a.selector;\n            if (a.type === 'css') {\n                if (!sel || !a.property) return;\n                document.querySelectorAll(sel).forEach(el => {\n                    el.style[a.property] = a.value;\n                    markTouched(el);\n                });\n            } else if (a.type === 'text') {\n                if (!sel) return;\n                document.querySelectorAll(sel).forEach(el => { el.textContent = a.value; markTouched(el); });\n            } else if (a.type === 'html') {\n                if (!sel) return;\n                document.querySelectorAll(sel).forEach(el => { el.innerHTML = a.value; markTouched(el); });\n            } else if (a.type === 'addClass') {\n                if (!sel) return;\n                document.querySelectorAll(sel).forEach(el => { el.classList.add(a.value); markTouched(el); });\n            } else if (a.type === 'removeClass') {\n                if (!sel) return;\n                document.querySelectorAll(sel).forEach(el => { el.classList.remove(a.value); markTouched(el); });\n            } else if (a.type === 'attr') {\n                if (!sel) return;\n                document.querySelectorAll(sel).forEach(el => { el.setAttribute(a.name, a.value); markTouched(el); });\n            } else if (a.type === 'remove') {\n                if (!sel) return;\n                document.querySelectorAll(sel).forEach(el => el.remove());\n            } else if (a.type === 'append' || a.type === 'prepend') {\n                if (!sel) return;\n                document.querySelectorAll(sel).forEach(el => {\n                    el[a.type === 'append' ? 'insertAdjacentHTML' : 'insertAdjacentHTML'](a.type === 'append' ? 'beforeend' : 'afterbegin', a.value);\n                    markTouched(el);\n                });\n            } else if (a.type === 'alert') {\n                alert(a.value);\n            } else if (a.type === 'theme') {\n                applyTheme(a.value);\n            }\n        }\n        function applyTheme(name) {\n            const themes = {\n                dark: { felt:'#0e3a2e', leather:'#1a0f08', gold:'#d4af37', bg:'#0a1f17' },\n                light: { felt:'#f5efe1', leather:'#fff8e7', gold:'#a8861f', bg:'#fdf6e3' },\n                ocean: { felt:'#0a3a5c', leather:'#062235', gold:'#7dd3fc', bg:'#051826' },\n                ruby: { felt:'#3a0a14', leather:'#1a0508', gold:'#f87171', bg:'#0f0306' }\n            };\n            const t = themes[name];\n            if (!t) return;\n            const root = document.documentElement;\n            root.style.setProperty('--felt', t.felt);\n            root.style.setProperty('--leather', t.leather);\n            root.style.setProperty('--gold', t.gold);\n            root.style.setProperty('--leather-light', t.leather);\n            document.body.style.background = 'radial-gradient(ellipse at center, ' + t.felt + ' 0%, ' + t.bg + ' 70%, ' + t.bg + ' 100%)';\n            markTouched(document.body);\n        }\n    </script>\n</body>\n</html>\n";
-    const replacements = {
-        '__TOTALSENT__': s.totalSent || 0,
-        '__VOICESTATE__': botState.isVoiceActive ? 'متصلة' : 'مفصولة',
-        '__PLANBSTATE__': planBActive ? 'مشغلة' : 'متوقفة',
-        '__LASTACTIVE__': s.lastActiveTime || '—',
-        '__VOICEBTN__': botState.isVoiceActive ? '◼ إيقاف الصوت' : '▶ تشغيل الصوت',
-        '__PLANBREPEAT__': c.planBRepeat || 2.5,
-        '__PLANBREPEAT2__': c.planBRepeat || 2.5,
-        '__PLANBBTN__': planBActive ? '◼ إيقاف الخطة' : '▶ تشغيل الخطة',
-        '__PLANBBTNCLASS__': planBActive ? 'btn-danger' : 'btn-primary',
-        '__T1MSG__': c.task1Msg || '!ذكريات',
-        '__T1COUNT__': c.task1Count || 10,
-        '__T1STATE__': taskActive('task1') ? 'مفعلة' : 'متوقفة',
-        '__T1STATECLASS__': taskActive('task1') ? 'on' : 'off',
-        '__T1BTN__': taskActive('task1') ? '◼ إيقاف' : '▶ تشغيل',
-        '__T1BTNCLASS__': taskActive('task1') ? 'btn-danger' : 'btn-primary',
-        '__T2MSG__': c.task2Msg || 'بخشيش',
-        '__T2STATE__': taskActive('task2') ? 'مفعلة' : 'متوقفة',
-        '__T2STATECLASS__': taskActive('task2') ? 'on' : 'off',
-        '__T2BTN__': taskActive('task2') ? '◼ إيقاف' : '▶ تشغيل',
-        '__T2BTNCLASS__': taskActive('task2') ? 'btn-danger' : 'btn-primary',
-        '__T3MSGS__': Array.isArray(c.task3Msgs) ? c.task3Msgs.join(' · ') : '!عمل · !جريمة · !رصيد',
-        '__T3STATE__': taskActive('task3') ? 'مفعلة' : 'متوقفة',
-        '__T3STATECLASS__': taskActive('task3') ? 'on' : 'off',
-        '__T3BTN__': taskActive('task3') ? '◼ إيقاف' : '▶ تشغيل',
-        '__T3BTNCLASS__': taskActive('task3') ? 'btn-danger' : 'btn-primary',
-        '__T4MODE__': c.task4TargetMode === 'random' ? 'عشوائي' : 'ثابت',
-        '__T4STATE__': taskActive('task4') ? 'مفعلة' : 'متوقفة',
-        '__T4STATECLASS__': taskActive('task4') ? 'on' : 'off',
-        '__T4BTN__': taskActive('task4') ? '◼ إيقاف' : '▶ تشغيل',
-        '__T4BTNCLASS__': taskActive('task4') ? 'btn-danger' : 'btn-primary',
-        '__T5GAMES__': Array.isArray(c.task5Games) ? c.task5Games.join(' · ') : 'بلاكجاك · روليت · سلوت',
-        '__T5STATE__': taskActive('task5') ? 'مفعلة' : 'متوقفة',
-        '__T5STATECLASS__': taskActive('task5') ? 'on' : 'off',
-        '__T5BTN__': taskActive('task5') ? '◼ إيقاف' : '▶ تشغيل',
-        '__T5BTNCLASS__': taskActive('task5') ? 'btn-danger' : 'btn-primary',
-        '__PRIMARYTARGETID__': primaryTargetId,
-        '__TARGETROWS__': targetRows,
-        '__T4MODEFIXED__': c.task4TargetMode !== 'random' ? 'selected' : '',
-        '__T4MODERANDOM__': c.task4TargetMode === 'random' ? 'selected' : '',
-        '__T1GAP__': c.task1MessageGap || 5,
-        '__T1COUNT2__': c.task1Count || 10,
-        '__T1RMIN__': c.task1RepeatMin || 30,
-        '__T1RMAX__': c.task1RepeatMax || 35,
-        '__T2RMIN__': c.task2RepeatMin || 30,
-        '__T2RMAX__': c.task2RepeatMax || 32,
-        '__T3RMIN__': c.task3RepeatMin || 50,
-        '__T3RMAX__': c.task3RepeatMax || 52,
-        '__T4RMIN__': c.task4RepeatMin || 30,
-        '__T4RMAX__': c.task4RepeatMax || 32,
-        '__T5BMIN__': c.task5BetMin || 5000,
-        '__T5BMAX__': c.task5BetMax || 10000,
-        '__T5GMIN__': c.task5GapMin || 10,
-        '__T5GMAX__': c.task5GapMax || 12,
-        '__AFKCHAN__': c.afkChannelId || ''
-    };
-    let outHtml = tplHtml;
-    for (const k in replacements) {
-        outHtml = outHtml.split(k).join(String(replacements[k]));
-    }
-    res.send(outHtml);
-});
-// ====== AI CHAT API (Proxy to MCP server) ======
-const MCP_SERVER_URL = process.env.MCP_SERVER_URL || '';
-const MCP_SECRET_KEY = process.env.MCP_SECRET_KEY || '';
+    res.send(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>🎮 لوحة التحكم النيون | Discord Selfbot</title>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Orbitron:wght@400;700;900&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+            <style>
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
 
-app.post('/api/ai-chat', async (req, res) => {
-    try {
-        const message = String((req.body && req.body.message) || '').trim();
-        const history = Array.isArray(req.body && req.body.history) ? req.body.history : [];
-        const systemPrompt = String((req.body && req.body.systemPrompt) || 'أنت مساعد ذكي ودود اسمه "المساعد الذكي". أجب بالعربية بشكل مختصر وواضح، واستخدم تنسيق Markdown عند الحاجة.');
+                @keyframes slideInFade {
+                    from {
+                        opacity: 0;
+                        transform: translateY(25px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
 
-        if (!message) {
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(400).end(JSON.stringify({ success: false, message: '⚠️ اكتب رسالة أولاً' }));
-        }
-        if (message.length > 4000) {
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(400).end(JSON.stringify({ success: false, message: '⚠️ الرسالة طويلة جداً (الحد 4000 حرف)' }));
-        }
-        if (!MCP_SERVER_URL || !MCP_SECRET_KEY) {
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(500).end(JSON.stringify({ success: false, message: '⚠️ MCP_SERVER_URL أو MCP_SECRET_KEY غير معيّن في متغيرات البيئة' }));
-        }
+                @keyframes goldPulse {
+                    0%, 100% { box-shadow: 0 0 4px rgba(214, 170, 72, 0.2), inset 0 0 0 1px rgba(214, 170, 72, 0.3); }
+                    50% { box-shadow: 0 0 18px rgba(214, 170, 72, 0.55), inset 0 0 0 1px rgba(214, 170, 72, 0.5); }
+                }
 
-        const messages = [...history, { role: 'user', content: message }];
+                @keyframes shimmer {
+                    0% { background-position: -200% 0; }
+                    100% { background-position: 200% 0; }
+                }
 
-        const upstream = await fetch(MCP_SERVER_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-mcp-secret': MCP_SECRET_KEY
-            },
-            body: JSON.stringify({ messages, systemPrompt })
-        });
+                @keyframes borderGlow {
+                    0%, 100% { border-color: rgba(214, 170, 72, 0.4); }
+                    50% { border-color: rgba(214, 170, 72, 0.9); }
+                }
 
-        if (!upstream.ok || !upstream.body) {
-            const errText = await upstream.text().catch(() => '');
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(502).end(JSON.stringify({ success: false, message: '⚠️ MCP server غير متاح: ' + (errText || ('HTTP ' + upstream.status)) }));
-        }
+                @keyframes goldShine {
+                    0% { background-position: 0% 50%; }
+                    100% { background-position: 200% 50%; }
+                }
 
-        res.setHeader('Content-Type', 'text/event-stream');
-        res.setHeader('Cache-Control', 'no-cache');
-        res.setHeader('Connection', 'keep-alive');
-        res.setHeader('X-Accel-Buffering', 'no');
-        res.flushHeaders();
+                @keyframes floatGlow {
+                    0%, 100% { transform: translateY(0); box-shadow: 0 0 8px rgba(214, 170, 72, 0.3); }
+                    50% { transform: translateY(-2px); box-shadow: 0 0 18px rgba(214, 170, 72, 0.5); }
+                }
 
-        const reader = upstream.body.getReader();
-        const decoder = new TextDecoder();
-        let fullReply = '';
-        let hasError = false;
+                @keyframes pulseAnim {
+                    0% { background-color: rgba(255, 255, 255, 0.03); }
+                    50% { background-color: rgba(255, 255, 255, 0.12); }
+                    100% { background-color: rgba(255, 255, 255, 0.03); }
+                }
 
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            const chunk = decoder.decode(value, { stream: true });
-            res.write(chunk);
-            for (const line of chunk.split(String.fromCharCode(10))) {
-                if (!line.startsWith('data: ')) continue;
-                try {
-                    const data = JSON.parse(line.slice(6));
-                    if (data && data.delta) fullReply += data.delta;
-                    if (data && data.error) hasError = true;
-                } catch (_) {}
-            }
-        }
+                .pulse-anim {
+                    animation: pulseAnim 0.5s ease-out;
+                }
 
-        // Extract JSON actions block from the AI reply
-        let actions = [];
-        let displayReply = fullReply;
-        const jsonMatch = fullReply.match(/```json\s*([\s\S]*?)\s*```/);
-        if (jsonMatch) {
-            try {
-                const parsed = JSON.parse(jsonMatch[1]);
-                if (Array.isArray(parsed.actions)) actions = parsed.actions;
-                if (typeof parsed.reply === 'string') displayReply = parsed.reply;
-                else displayReply = fullReply.replace(/```json\s*[\s\S]*?\s*```/, '').trim();
-            } catch (_) {
-                displayReply = fullReply.replace(/```json\s*[\s\S]*?\s*```/, '').trim();
-            }
-        }
+                :root {
+                    --bg-deep: #050608;
+                    --bg-base: #0a0c10;
+                    --bg-surface: #11141a;
+                    --bg-card: #161a22;
+                    --bg-card-hover: #1c2129;
+                    --bg-elevated: #1f242d;
+                    --line-soft: rgba(255, 255, 255, 0.04);
+                    --line: rgba(255, 255, 255, 0.07);
+                    --line-strong: rgba(255, 255, 255, 0.12);
+                    --text-bright: #f8f9fb;
+                    --text-main: #e8eaed;
+                    --text-soft: #a8afb7;
+                    --text-sub: #6b7280;
+                    --gold: #d6aa48;
+                    --gold-bright: #e8c46b;
+                    --gold-dim: #8f702f;
+                    --gold-glow: rgba(214, 170, 72, 0.35);
+                    --gold-glow-strong: rgba(214, 170, 72, 0.6);
+                    --success: #4ade80;
+                    --success-dim: rgba(74, 222, 128, 0.15);
+                    --danger: #f87171;
+                    --danger-dim: rgba(248, 113, 113, 0.15);
+                }
 
-        const NL_NL = String.fromCharCode(10, 10);
-        res.write('data: ' + JSON.stringify({ fullReply: displayReply, hasError, actions, done: true }) + NL_NL);
-        res.end();
-    } catch (err) {
-        const msg = err && err.message ? err.message : 'unknown';
-        if (!res.headersSent) {
-            res.setHeader('Content-Type', 'application/json');
-            res.status(500).end(JSON.stringify({ success: false, message: '⚠️ خطأ في الاتصال بـ MCP: ' + msg }));
-        } else {
-            try { res.write('data: ' + JSON.stringify({ error: msg }) + String.fromCharCode(10, 10)); res.end(); } catch (_) {}
-        }
-    }
-});
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                    font-family: 'Tajawal', 'Cairo', sans-serif;
+                }
 
-app.post('/api/ai-actions', (req, res) => {
-    // Just acknowledge - actions are applied client-side
-    res.json({ success: true });
+                body {
+                    --account-accent: var(--gold);
+                    --account-accent-soft: var(--gold-glow);
+                    background-color: var(--bg-deep);
+                    background-image:
+                        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(214, 170, 72, 0.08), transparent 60%),
+                        radial-gradient(ellipse 60% 50% at 90% 100%, rgba(214, 170, 72, 0.05), transparent 60%),
+                        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+                    background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+                    color: var(--text-main);
+                    min-height: 100vh;
+                    padding: 32px 18px 60px;
+                    overflow-x: hidden;
+                    position: relative;
+                    letter-spacing: 0.2px;
+                }
+
+                body::before {
+                    content: '';
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 1px;
+                    background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+                    z-index: 100;
+                }
+
+                .container {
+                    max-width: 1280px;
+                    margin: 0 auto;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                header {
+                    text-align: right;
+                    margin-bottom: 32px;
+                    padding: 32px 36px;
+                    border: 1px solid var(--line);
+                    background:
+                        linear-gradient(135deg, rgba(214, 170, 72, 0.04), transparent 50%),
+                        rgba(17, 20, 26, 0.85);
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                    box-shadow:
+                        0 20px 60px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                header::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 200px;
+                    height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(214, 170, 72, 0.08));
+                    pointer-events: none;
+                }
+
+                header::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 2px;
+                    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-bright), var(--gold), transparent);
+                    background-size: 200% 100%;
+                    animation: goldShine 6s linear infinite;
+                }
+
+                header h1 {
+                    font-size: 2.4rem;
+                    font-weight: 900;
+                    font-family: 'Orbitron', monospace;
+                    letter-spacing: 2px;
+                    background: linear-gradient(135deg, var(--text-bright) 0%, var(--gold) 50%, var(--gold-bright) 100%);
+                    background-size: 200% 200%;
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    color: transparent;
+                    margin-bottom: 8px;
+                    text-shadow: 0 0 30px rgba(214, 170, 72, 0.3);
+                }
+
+                header p {
+                    color: var(--text-soft);
+                    font-size: 0.95rem;
+                    font-weight: 400;
+                    letter-spacing: 0.5px;
+                }
+
+                .status-line {
+                    display: flex;
+                    justify-content: flex-start;
+                    gap: 12px;
+                    margin-top: 22px;
+                    flex-wrap: wrap;
+                }
+
+                .status-indicator {
+                    display: flex;
+                    align-items: center;
+                    gap: 9px;
+                    padding: 9px 16px;
+                    border: 1px solid var(--line);
+                    border-radius: 6px;
+                    background: rgba(255, 255, 255, 0.02);
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
+                    font-weight: 600;
+                    font-size: 0.88rem;
+                    transition: all 0.5s ease;
+                }
+
+                .status-indicator:hover {
+                    border-color: var(--gold-dim);
+                    background: rgba(214, 170, 72, 0.05);
+                }
+
+                .status-dot {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    box-shadow: 0 0 8px currentColor;
+                }
+
+                .status-dot.active { background: var(--success); color: var(--success); }
+                .status-dot.inactive { background: var(--danger); color: var(--danger); }
+
+                .grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+                    gap: 20px;
+                    margin-bottom: 30px;
+                }
+
+                .dashboard-nav {
+                    display: flex;
+                    gap: 6px;
+                    padding: 6px;
+                    margin-bottom: 30px;
+                    border: 1px solid var(--line);
+                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.95), rgba(13, 15, 20, 0.95));
+                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(16px);
+                    overflow-x: auto;
+                    box-shadow:
+                        0 10px 30px rgba(0, 0, 0, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+                    border-radius: 12px;
+                    position: relative;
+                }
+
+                .dashboard-nav::before {
+                    content: '';
+                    position: absolute;
+                    top: -1px;
+                    left: 10%;
+                    right: 10%;
+                    height: 1px;
+                    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+                    opacity: 0.6;
+                }
+
+                .dashboard-nav button {
+                    flex: 1;
+                    min-width: 160px;
+                    padding: 14px 22px;
+                    border: 1px solid transparent;
+                    border-radius: 8px;
+                    background: transparent;
+                    color: var(--text-sub);
+                    cursor: pointer;
+                    font: inherit;
+                    font-weight: 700;
+                    font-size: 0.92rem;
+                    white-space: nowrap;
+                    transition: all 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+                    position: relative;
+                    overflow: hidden;
+                    letter-spacing: 0.3px;
+                }
+
+                .dashboard-nav button::before {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 0;
+                    height: 0;
+                    background: radial-gradient(circle, rgba(214, 170, 72, 0.3), transparent 70%);
+                    border-radius: 50%;
+                    transform: translate(-50%, -50%);
+                    transition: width 0.5s ease, height 0.5s ease;
+                    pointer-events: none;
+                }
+
+                .dashboard-nav button:hover {
+                    color: var(--text-bright);
+                    background: rgba(255, 255, 255, 0.04);
+                    border-color: rgba(255, 255, 255, 0.08);
+                }
+
+                .dashboard-nav button:hover::before {
+                    width: 200px;
+                    height: 200px;
+                }
+
+                .dashboard-nav button.active {
+                    color: var(--gold-bright);
+                    background: linear-gradient(135deg, rgba(214, 170, 72, 0.18), rgba(214, 170, 72, 0.06));
+                    border-color: var(--gold-dim);
+                    box-shadow:
+                        0 6px 20px rgba(214, 170, 72, 0.25),
+                        inset 0 1px 0 rgba(214, 170, 72, 0.15),
+                        inset 0 0 0 1px rgba(214, 170, 72, 0.1);
+                }
+
+                .dashboard-nav button.active::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 4px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 30%;
+                    height: 2px;
+                    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-bright), var(--gold), transparent);
+                    background-size: 200% 100%;
+                    border-radius: 2px;
+                    animation: goldShine 2s linear infinite;
+                    box-shadow: 0 0 8px var(--gold);
+                }
+
+                .dashboard-panel {
+                    display: none;
+                    animation: slideInFade 0.4s ease-out both;
+                }
+
+                .dashboard-panel.active {
+                    display: grid;
+                }
+
+                .task-manager,
+                .timing-manager {
+                    min-height: 100%;
+                }
+
+                .task-list {
+                    display: grid;
+                    gap: 10px;
+                }
+
+                .task-row {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 14px;
+                    padding: 15px 16px;
+                    border: 1px solid var(--line);
+                    border-right: 3px solid var(--line-strong);
+                    background: rgba(255, 255, 255, 0.015);
+                    border-radius: 6px;
+                    transition: all 0.5s ease;
+                }
+
+                .task-row:hover {
+                    background: rgba(214, 170, 72, 0.04);
+                    border-color: var(--gold-dim);
+                    border-right-color: var(--gold);
+                    transform: translateX(-3px);
+                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+                }
+
+                .task-name {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    min-width: 0;
+                    color: var(--text-bright);
+                    font-weight: 700;
+                }
+
+                .task-number {
+                    display: grid;
+                    place-items: center;
+                    width: 32px;
+                    height: 32px;
+                    flex: 0 0 32px;
+                    border: 1px solid var(--gold-dim);
+                    background: linear-gradient(135deg, rgba(214, 170, 72, 0.2), rgba(214, 170, 72, 0.05));
+                    color: var(--gold);
+                    font-size: 0.8rem;
+                    font-weight: 800;
+                    border-radius: 6px;
+                    box-shadow: 0 0 8px rgba(214, 170, 72, 0.15);
+                }
+
+                .task-state {
+                    margin-right: auto;
+                    color: var(--text-sub);
+                    font-size: 0.8rem;
+                    white-space: nowrap;
+                    font-weight: 500;
+                }
+
+                .task-row .btn {
+                    flex: 0 0 auto;
+                    min-width: 110px;
+                    padding: 9px 14px;
+                    border-radius: 6px;
+                }
+
+                .timing-manager form {
+                    gap: 12px;
+                }
+
+                .planb-card {
+                    border: 1px solid var(--gold-dim);
+                    background: linear-gradient(135deg, rgba(214, 170, 72, 0.05), rgba(17, 20, 26, 0.6));
+                    animation: slideInFade 0.6s ease-out both, goldPulse 3s ease-in-out infinite;
+                }
+
+                .planb-card h3 {
+                    color: var(--gold-bright);
+                    border-bottom-color: rgba(214, 170, 72, 0.3);
+                }
+
+                .planb-card .task-row {
+                    border-color: rgba(214, 170, 72, 0.3);
+                    border-right-color: var(--gold);
+                    background: rgba(214, 170, 72, 0.04);
+                }
+
+                .timing-group {
+                    padding: 14px 16px;
+                    border: 1px solid var(--line);
+                    background: rgba(255, 255, 255, 0.015);
+                    border-radius: 8px;
+                    transition: all 0.5s ease;
+                }
+
+                .timing-group:hover {
+                    border-color: var(--gold-dim);
+                    background: rgba(214, 170, 72, 0.025);
+                }
+
+                .timing-group label {
+                    display: block;
+                    margin-bottom: 10px;
+                    color: var(--text-bright);
+                    font-size: 0.88rem;
+                    font-weight: 600;
+                }
+
+                .timing-fields {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 10px;
+                }
+
+                .timing-fields input {
+                    min-width: 0;
+                }
+
+                .target-list {
+                    display: grid;
+                    gap: 8px;
+                    margin-top: 14px;
+                    padding: 10px;
+                    min-height: 60px;
+                    border: 1px solid var(--line);
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 8px;
+                }
+
+                .target-title {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 12px;
+                    margin-bottom: 18px;
+                    padding-bottom: 16px;
+                    border-bottom: 1px solid var(--line);
+                }
+
+                .target-title h3 {
+                    margin-bottom: 4px;
+                    border-bottom: 0;
+                    padding-bottom: 0;
+                    color: var(--gold-bright);
+                }
+
+                .target-title p {
+                    color: var(--text-sub);
+                    font-size: 0.78rem;
+                }
+
+                .target-count {
+                    padding: 7px 12px;
+                    border: 1px solid var(--gold-dim);
+                    background: rgba(214, 170, 72, 0.1);
+                    color: var(--gold);
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                    white-space: nowrap;
+                    border-radius: 4px;
+                }
+
+                .target-add {
+                    display: flex;
+                    align-items: stretch;
+                    gap: 10px;
+                }
+
+                .target-add input {
+                    flex: 1;
+                }
+
+                .target-add .btn {
+                    flex: 0 0 auto;
+                    min-width: 130px;
+                }
+
+                .target-mode {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 12px;
+                    margin-top: 14px;
+                    padding: 14px;
+                    border: 1px solid var(--line);
+                    background: rgba(255, 255, 255, 0.015);
+                    border-radius: 8px;
+                }
+
+                .target-mode select {
+                    width: min(58%, 260px);
+                }
+
+                .target-save {
+                    width: 100%;
+                    margin-top: 16px;
+                }
+
+                .target-chip {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 11px 14px;
+                    border: 1px solid var(--line);
+                    border-right: 3px solid var(--line-strong);
+                    background: var(--bg-card);
+                    color: var(--text-bright);
+                    font-size: 0.85rem;
+                    border-radius: 6px;
+                    transition: all 0.5s ease;
+                }
+
+                .target-chip:hover {
+                    background: var(--bg-card-hover);
+                    border-right-color: var(--text-soft);
+                }
+
+                .target-chip.is-primary {
+                    border-color: var(--gold-dim);
+                    border-right-color: var(--gold);
+                    background: linear-gradient(90deg, rgba(214, 170, 72, 0.18), rgba(214, 170, 72, 0.04));
+                    box-shadow: 0 0 12px rgba(214, 170, 72, 0.15);
+                }
+
+                .target-manager.random-mode .target-chip.is-primary {
+                    border-color: var(--line-strong);
+                    border-right-color: var(--line-strong);
+                    background: var(--bg-card-hover);
+                    box-shadow: none;
+                }
+
+                .target-manager.random-mode .primary-label {
+                    color: var(--text-sub);
+                }
+
+                .target-chip .target-id {
+                    margin-right: auto;
+                    font-weight: 600;
+                }
+
+                .target-chip .primary-label {
+                    color: var(--gold);
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                }
+
+                .target-chip button {
+                    border: 1px solid var(--line-strong);
+                    background: rgba(0, 0, 0, 0.3);
+                    color: var(--text-soft);
+                    cursor: pointer;
+                    padding: 6px 11px;
+                    font: inherit;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    border-radius: 4px;
+                    transition: all 0.4s ease;
+                }
+
+                .target-chip button:hover {
+                    color: var(--text-bright);
+                    border-color: var(--gold);
+                    background: rgba(214, 170, 72, 0.1);
+                }
+
+                .monitor-channel-item {
+                    padding: 12px 14px;
+                    border: 1px solid var(--line);
+                    border-right: 3px solid var(--line-strong);
+                    background: var(--bg-card);
+                    color: var(--text-bright);
+                    font-size: 0.9rem;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.4s ease;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 12px;
+                }
+
+                .monitor-channel-item:hover {
+                    background: var(--bg-card-hover);
+                    border-right-color: var(--gold);
+                    border-color: var(--gold-dim);
+                    transform: translateX(-3px);
+                }
+
+                .monitor-channel-item .ch-name {
+                    font-weight: 600;
+                }
+
+                .monitor-channel-item .ch-count {
+                    padding: 4px 10px;
+                    background: rgba(214, 170, 72, 0.15);
+                    color: var(--gold);
+                    border: 1px solid var(--gold-dim);
+                    border-radius: 4px;
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                }
+
+                .monitor-channel-item .ch-times {
+                    font-size: 0.72rem;
+                    color: var(--text-sub);
+                    margin-top: 4px;
+                }
+
+                .monitor-messages-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    max-height: 600px;
+                    overflow-y: auto;
+                    padding: 4px;
+                }
+
+                .monitor-message {
+                    padding: 12px 14px;
+                    border: 1px solid var(--line);
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 6px;
+                    transition: all 0.4s ease;
+                }
+
+                .monitor-message:hover {
+                    border-color: var(--gold-dim);
+                    background: rgba(214, 170, 72, 0.04);
+                }
+
+                .monitor-message .msg-time {
+                    font-size: 0.72rem;
+                    color: var(--text-sub);
+                    font-family: 'Orbitron', monospace;
+                    margin-bottom: 6px;
+                }
+
+                .monitor-message .msg-content {
+                    color: var(--text-bright);
+                    font-size: 0.9rem;
+                    line-height: 1.5;
+                    word-break: break-word;
+                    white-space: pre-wrap;
+                }
+
+
+                .card {
+                    background: linear-gradient(180deg, rgba(22, 26, 34, 0.95), rgba(17, 20, 26, 0.95));
+                    border: 1px solid var(--line);
+                    border-radius: 10px;
+                    padding: 26px;
+                    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.025);
+                    animation: slideInFade 0.7s ease-out both;
+                    position: relative;
+                    transition: all 0.5s ease;
+                    overflow: hidden;
+                }
+
+                .card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 2px;
+                    background: linear-gradient(90deg, transparent, var(--account-accent), transparent);
+                }
+
+                .card::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 80px;
+                    height: 80px;
+                    background: radial-gradient(circle, var(--account-accent-soft), transparent 70%);
+                    pointer-events: none;
+                }
+
+                .card:nth-child(1) { animation-delay: 0.05s; }
+                .card:nth-child(2) { animation-delay: 0.1s; }
+                .card:nth-child(3) { animation-delay: 0.15s; }
+                .card:nth-child(4) { animation-delay: 0.2s; }
+
+                .card:hover {
+                    border-color: var(--line-strong);
+                    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+                    transform: translateY(-2px);
+                }
+
+                .card h3 {
+                    font-size: 1.2rem;
+                    margin-bottom: 22px;
+                    border-bottom: 1px solid var(--line);
+                    padding-bottom: 16px;
+                    color: var(--text-bright);
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-weight: 700;
+                    letter-spacing: 0.3px;
+                    position: relative;
+                    z-index: 1;
+                }
+
+                .status-badge {
+                    display: inline-block;
+                    padding: 5px 14px;
+                    border-radius: 20px;
+                    font-weight: 700;
+                    font-size: 0.78rem;
+                    border: 1px solid;
+                    transition: all 0.5s ease;
+                    letter-spacing: 0.3px;
+                }
+
+                .status-on {
+                    background: rgba(214, 170, 72, 0.1);
+                    color: var(--gold-bright);
+                    border-color: rgba(214, 170, 72, 0.4);
+                    box-shadow: 0 0 10px rgba(214, 170, 72, 0.15);
+                }
+
+                .status-off {
+                    background: rgba(255, 255, 255, 0.04);
+                    color: var(--text-sub);
+                    border-color: var(--line-strong);
+                    box-shadow: none;
+                }
+
+                .stat-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 13px 12px;
+                    border-bottom: 1px solid var(--line-soft);
+                    font-size: 0.95rem;
+                    transition: all 0.5s ease;
+                    color: var(--text-soft);
+                    border-radius: 6px;
+                }
+
+                .stat-item:hover {
+                    background: rgba(214, 170, 72, 0.04);
+                    padding-left: 16px;
+                    color: var(--text-bright);
+                }
+
+                .stat-item span:last-child {
+                    font-weight: 700;
+                    color: var(--gold);
+                    font-family: 'Orbitron', monospace;
+                    letter-spacing: 0.5px;
+                }
+
+                .btn-group {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 12px;
+                    margin-top: 22px;
+                }
+
+                .btn {
+                    flex: 1;
+                    min-width: 130px;
+                    padding: 12px 20px;
+                    border: 1px solid var(--line-strong);
+                    border-radius: 8px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.5s ease;
+                    text-decoration: none;
+                    text-align: center;
+                    color: var(--text-bright);
+                    display: inline-block;
+                    font-size: 0.88rem;
+                    position: relative;
+                    letter-spacing: 0.3px;
+                    overflow: hidden;
+                    font-family: inherit;
+                    background: rgba(255, 255, 255, 0.03);
+                }
+
+                .btn::before {
+                    display: none;
+                }
+
+                .btn:hover {
+                    transform: none;
+                    background: rgba(255, 255, 255, 0.06);
+                    border-color: var(--line-strong);
+                }
+
+                .btn-primary {
+                    background: rgba(255, 255, 255, 0.04);
+                    border-color: var(--line-strong);
+                    color: var(--text-bright);
+                }
+
+                .btn-primary:hover {
+                    box-shadow: none;
+                    border-color: var(--line-strong);
+                    background: rgba(255, 255, 255, 0.07);
+                }
+
+                .btn-success {
+                    background: rgba(255, 255, 255, 0.03);
+                    border-color: var(--line-strong);
+                    color: var(--text-bright);
+                }
+
+                .btn-success:hover {
+                    box-shadow: none;
+                    border-color: var(--line-strong);
+                    background: rgba(255, 255, 255, 0.06);
+                }
+
+                .btn-danger {
+                    background: rgba(255, 255, 255, 0.03);
+                    border-color: var(--line-strong);
+                    color: var(--text-bright);
+                }
+
+                .btn-danger:hover {
+                    box-shadow: none;
+                    border-color: var(--line-strong);
+                    background: rgba(255, 255, 255, 0.06);
+                }
+
+                .btn-warning {
+                    background: linear-gradient(135deg, rgba(214, 170, 72, 0.18), rgba(214, 170, 72, 0.06));
+                    border-color: var(--gold-dim);
+                    color: var(--gold);
+                }
+
+                .btn-warning:hover {
+                    box-shadow: 0 8px 24px rgba(214, 170, 72, 0.25);
+                    border-color: var(--gold);
+                }
+
+                form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                    position: relative;
+                    z-index: 1;
+                }
+
+                .form-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                label {
+                    font-size: 0.85rem;
+                    color: var(--text-soft);
+                    font-weight: 600;
+                    letter-spacing: 0.3px;
+                }
+
+                input[type="text"],
+                input[type="number"],
+                select {
+                    width: 100%;
+                    background: rgba(0, 0, 0, 0.3);
+                    border: 1px solid var(--line);
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    color: var(--text-bright);
+                    outline: none;
+                    font-size: 0.92rem;
+                    font-family: inherit;
+                    transition: all 0.5s ease;
+                }
+
+                input:hover,
+                select:hover {
+                    border-color: var(--line-strong);
+                    background: rgba(0, 0, 0, 0.4);
+                }
+
+                input:focus,
+                select:focus {
+                    border-color: var(--gold);
+                    box-shadow: 0 0 0 3px rgba(214, 170, 72, 0.15);
+                    background: rgba(0, 0, 0, 0.5);
+                }
+
+                input::placeholder {
+                    color: var(--text-sub);
+                }
+
+                input[type="number"] {
+                    direction: ltr;
+                    text-align: left;
+                    padding-right: 26px !important;
+                }
+
+                input[type="number"]::-webkit-outer-spin-button,
+                input[type="number"]::-webkit-inner-spin-button {
+                    -webkit-appearance: none !important;
+                    appearance: none !important;
+                    margin: 0;
+                    display: none;
+                }
+
+                input[type="number"] {
+                    -moz-appearance: textfield;
+                }
+
+                .num-wrap {
+                    position: relative;
+                    display: block;
+                }
+
+                .num-wrap .num-spin {
+                    position: absolute;
+                    right: 1px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 22px;
+                    height: calc(100% - 8px);
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1px;
+                    pointer-events: none;
+                }
+
+                .num-wrap .num-spin button {
+                    flex: 1;
+                    background: transparent;
+                    border: none;
+                    color: var(--text-soft);
+                    cursor: pointer;
+                    font: inherit;
+                    line-height: 1;
+                    padding: 0;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    pointer-events: auto;
+                    opacity: 0.7;
+                }
+
+                .num-wrap .num-spin button:hover {
+                    color: var(--gold);
+                    opacity: 1;
+                }
+
+                .num-wrap .num-spin button svg {
+                    width: 8px;
+                    height: 8px;
+                    fill: currentColor;
+                }
+
+                select {
+                    appearance: none;
+                    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8afb7' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+                    background-repeat: no-repeat;
+                    background-position: left 14px center;
+                    background-size: 16px;
+                    padding-left: 40px;
+                }
+
+                form button {
+                    margin-top: 6px;
+                }
+
+                .accordion-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .accordion-item {
+                    background: rgba(0, 0, 0, 0.2);
+                    border: 1px solid var(--line);
+                    border-radius: 8px;
+                    overflow: hidden;
+                    transition: all 0.5s ease;
+                }
+
+                .accordion-item:hover {
+                    border-color: var(--line-strong);
+                    background: rgba(214, 170, 72, 0.04);
+                }
+
+                .accordion-header {
+                    padding: 14px 18px;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-weight: 700;
+                    color: var(--text-bright);
+                    transition: all 0.5s ease;
+                    user-select: none;
+                }
+
+                .accordion-header:hover {
+                    color: var(--gold);
+                }
+
+                .accordion-icon {
+                    font-size: 1.2rem;
+                    transition: transform 0.5s ease;
+                    color: var(--gold);
+                }
+
+                .accordion-item.active .accordion-icon {
+                    transform: rotate(180deg);
+                }
+
+                .accordion-content {
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.5s ease;
+                    padding: 0 18px;
+                }
+
+                .accordion-item.active .accordion-content {
+                    max-height: 500px;
+                    padding: 18px;
+                }
+
+                .accordion-content-inner {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 14px;
+                }
+
+                .panel {
+                    display: none;
+                    animation: slideInFade 0.55s ease-out both;
+                }
+
+                .panel.active {
+                    display: grid;
+                }
+
+                /* ====== SCROLLBAR (ثيم الموقع) ====== */
+                ::-webkit-scrollbar {
+                    width: 10px;
+                    height: 10px;
+                }
+
+                ::-webkit-scrollbar-track {
+                    background: var(--bg-deep);
+                    border-radius: 5px;
+                }
+
+                ::-webkit-scrollbar-thumb {
+                    background: linear-gradient(180deg, var(--gold-dim), rgba(143, 112, 47, 0.6));
+                    border-radius: 5px;
+                    border: 2px solid var(--bg-deep);
+                    transition: all 0.4s ease;
+                }
+
+                ::-webkit-scrollbar-thumb:hover {
+                    background: linear-gradient(180deg, var(--gold), var(--gold-bright));
+                    box-shadow: 0 0 10px rgba(214, 170, 72, 0.4);
+                }
+
+                ::-webkit-scrollbar-thumb:active {
+                    background: var(--gold-bright);
+                }
+
+                ::-webkit-scrollbar-corner {
+                    background: var(--bg-deep);
+                }
+
+                * {
+                    scrollbar-width: thin;
+                    scrollbar-color: var(--gold-dim) var(--bg-deep);
+                }
+
+                @media (max-width: 768px) {
+                    .page-title h2 { font-size: 1.3rem; }
+                    .topbar { flex-direction: column; align-items: flex-start; padding: 18px 20px; }
+                    .topbar-stats { width: 100%; justify-content: space-between; gap: 12px; }
+                    .topbar-stat { padding: 0; border: none; }
+                    .grid { grid-template-columns: 1fr; gap: 16px; }
+                    .btn-group { flex-direction: column; }
+                    .btn { min-width: 100%; }
+                    .task-row { align-items: flex-start; flex-wrap: wrap; padding: 12px; }
+                    .task-state { margin-right: 0; }
+                    .task-row .btn { width: 100%; }
+                    .target-title,
+                    .target-add,
+                    .target-mode { align-items: stretch; flex-direction: column; }
+                    .target-add .btn,
+                    .target-mode select { width: 100%; }
+                    .card { padding: 20px; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <header>
+                    <h1>◆ لوحة التحكم ◆</h1>
+                    <p>نظام إدارة ديسكورد سيلفبوت المتقدم</p>
+                </header>
+
+                <nav class="dashboard-nav" aria-label="أقسام لوحة التحكم">
+                    <button type="button" class="active" data-panel-target="overview">⚙️ النظرة العامة</button>
+                    <button type="button" data-panel-target="tasks">⚡ إدارة المهام</button>
+                    <button type="button" data-panel-target="channels">🎙️ القنوات والرسائل</button>
+                    <button type="button" data-panel-target="monitor">🛰️ المراقبة</button>
+                </nav>
+
+                <div style="display:flex; flex-direction:column; gap:25px;">
+                    <div class="grid panel active" data-panel="overview">
+                    <div class="card">
+                        <h3>⚙️ حالة النظام</h3>
+                        <div class="stat-item">
+                            <span>البوت الرئيسي</span>
+                            <span class="status-badge ${botState.isRunning ? 'status-on' : 'status-off'}">${botState.isRunning ? 'نشط' : 'متوقف'}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>قناة الصوت</span>
+                            <span class="status-badge ${botState.isVoiceActive ? 'status-on' : 'status-off'}">${botState.isVoiceActive ? 'متصلة' : 'مفصولة'}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>الخطة ب</span>
+                            <span class="status-badge ${botState.isPlanBRunning ? 'status-on' : 'status-off'}">${botState.isPlanBRunning ? 'مشغلة' : 'متوقفة'}</span>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" data-action="voice" onclick="toggleAction('voice', this)">${botState.isVoiceActive ? '🔇 إيقاف صوت' : '🔊 تشغيل صوت'}</button>
+                        </div>
+                    </div>
+
+                    <!-- إحصائيات النشاط -->
+                    <div class="card">
+                        <h3>📊 إحصائيات النشاط</h3>
+                        <div class="stat-item"><span>إجمالي المرسل</span> <span>${s.totalSent || 0}</span></div>
+                        <div class="stat-item"><span>المهمة الأولى (ذكريات)</span> <span>${s.task1CountLog || 0}</span></div>
+                        <div class="stat-item"><span>المهمة الثانية (بخشيش)</span> <span>${s.task2CountLog || 0}</span></div>
+                        <div class="stat-item"><span>المهمة الثالثة (عمل/جريمة)</span> <span>${s.task3CountLog || 0}</span></div>
+                        <div class="stat-item"><span>المهمة الرابعة (هجوم)</span> <span>${s.task4CountLog || 0}</span></div>
+                        <div class="stat-item"><span>المهمة الخامسة (كازينو)</span> <span>${s.task5CountLog || 0}</span></div>
+                        <div class="stat-item"><span>آخر نشاط</span> <span style="font-size:0.85rem">${s.lastActiveTime || 'لا يوجد'}</span></div>
+                    </div>
+                </div>
+
+                <div class="grid panel" data-panel="tasks">
+                    <div class="card task-manager">
+                        <h3>⚡ إدارة المهام</h3>
+                        <div class="task-list">
+                            <div class="task-row">
+                                <span class="task-name"><span class="task-number">01</span>ذكريات</span>
+                                <span class="task-state">${taskActive('task1') ? 'مفعلة' : 'متوقفة'}</span>
+                                <button type="button" class="btn ${taskActive('task1') ? 'btn-danger' : 'btn-success'}" data-task="task1" onclick="toggleTask('task1', this)">${taskActive('task1') ? '⏹ إيقاف' : '▶ تشغيل'}</button>
+                            </div>
+                            <div class="task-row">
+                                <span class="task-name"><span class="task-number">02</span>بخشيش</span>
+                                <span class="task-state">${taskActive('task2') ? 'مفعلة' : 'متوقفة'}</span>
+                                <button type="button" class="btn ${taskActive('task2') ? 'btn-danger' : 'btn-success'}" data-task="task2" onclick="toggleTask('task2', this)">${taskActive('task2') ? '⏹ إيقاف' : '▶ تشغيل'}</button>
+                            </div>
+                            <div class="task-row">
+                                <span class="task-name"><span class="task-number">03</span>عمل / جريمة</span>
+                                <span class="task-state">${taskActive('task3') ? 'مفعلة' : 'متوقفة'}</span>
+                                <button type="button" class="btn ${taskActive('task3') ? 'btn-danger' : 'btn-success'}" data-task="task3" onclick="toggleTask('task3', this)">${taskActive('task3') ? '⏹ إيقاف' : '▶ تشغيل'}</button>
+                            </div>
+                            <div class="task-row">
+                                <span class="task-name"><span class="task-number">04</span>هجوم</span>
+                                <span class="task-state">${taskActive('task4') ? 'مفعلة' : 'متوقفة'}</span>
+                                <button type="button" class="btn ${taskActive('task4') ? 'btn-danger' : 'btn-success'}" data-task="task4" onclick="toggleTask('task4', this)">${taskActive('task4') ? '⏹ إيقاف' : '▶ تشغيل'}</button>
+                            </div>
+                            <div class="task-row">
+                                <span class="task-name"><span class="task-number">05</span>سوق الكازينو</span>
+                                <span class="task-state">${taskActive('task5') ? 'مفعلة' : 'متوقفة'}</span>
+                                <button type="button" class="btn ${taskActive('task5') ? 'btn-danger' : 'btn-success'}" data-task="task5" onclick="toggleTask('task5', this)">${taskActive('task5') ? '⏹ إيقاف' : '▶ تشغيل'}</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card timing-manager">
+                        <h3>⏱️ توقيت المهام</h3>
+                        <form action="/api/update-tasks-config" method="POST">
+                            <div class="timing-group">
+                                <label>المهمة 1 - ذكريات: الفاصل بين الرسائل (ثواني)</label>
+                                <input type="number" name="task1MessageGap" value="${c.task1MessageGap || 5}" min="3" step="0.1" placeholder="مثال: 5">
+                            </div>
+                            <div class="timing-group">
+                                <label>المهمة 1 - ذكريات: التكرار (دقائق)</label>
+                                <div class="timing-fields">
+                                    <input type="number" name="task1RepeatMin" value="${c.task1RepeatMin || 30}" min="0.1" step="0.1" placeholder="من">
+                                    <input type="number" name="task1RepeatMax" value="${c.task1RepeatMax || 35}" min="0.1" step="0.1" placeholder="إلى">
+                                </div>
+                            </div>
+                            <div class="timing-group">
+                                <label>المهمة 2 - بخشيش: التكرار (دقائق)</label>
+                                <div class="timing-fields">
+                                    <input type="number" name="task2RepeatMin" value="${c.task2RepeatMin || 30}" min="0.1" step="0.1" placeholder="من">
+                                    <input type="number" name="task2RepeatMax" value="${c.task2RepeatMax || 32}" min="0.1" step="0.1" placeholder="إلى">
+                                </div>
+                            </div>
+                            <div class="timing-group">
+                                <label>المهمة 3 - عمل/جريمة: التكرار (دقائق)</label>
+                                <div class="timing-fields">
+                                    <input type="number" name="task3RepeatMin" value="${c.task3RepeatMin || 50}" min="0.1" step="0.1" placeholder="من">
+                                    <input type="number" name="task3RepeatMax" value="${c.task3RepeatMax || 52}" min="0.1" step="0.1" placeholder="إلى">
+                                </div>
+                            </div>
+                            <div class="timing-group">
+                                <label>المهمة 4 - هجوم: التكرار (دقائق)</label>
+                                <div class="timing-fields">
+                                    <input type="number" name="task4RepeatMin" value="${c.task4RepeatMin || 30}" min="0.1" step="0.1" placeholder="من">
+                                    <input type="number" name="task4RepeatMax" value="${c.task4RepeatMax || 32}" min="0.1" step="0.1" placeholder="إلى">
+                                </div>
+                            </div>
+                            <div class="timing-group">
+                                <label>المهمة 5 - كازينو: الفاصل بين الألعاب (ثواني)</label>
+                                <div class="timing-fields">
+                                    <input type="number" name="task5GapMin" value="${c.task5GapMin || 10}" min="0.1" step="0.1" placeholder="من">
+                                    <input type="number" name="task5GapMax" value="${c.task5GapMax || 12}" min="0.1" step="0.1" placeholder="إلى">
+                                </div>
+                            </div>
+                            <div class="timing-group">
+                                <label>المهمة 5 - كازينو: قيمة الرهان (من - إلى)</label>
+                                <div class="timing-fields">
+                                    <input type="number" name="task5BetMin" value="${c.task5BetMin || 5000}" min="1" step="1" placeholder="من">
+                                    <input type="number" name="task5BetMax" value="${c.task5BetMax || 10000}" min="1" step="1" placeholder="إلى">
+                                </div>
+                            </div>
+                            <div class="timing-group">
+                                <label>خطة ب - جمع النقاط: التكرار (ثواني)</label>
+                                <input type="number" name="planBRepeat" value="${c.planBRepeat || 2.5}" min="0.1" step="0.1" placeholder="مثال: 2.5">
+                            </div>
+                            <button type="submit" class="btn btn-primary">💾 حفظ التوقيت</button>
+                        </form>
+                    </div>
+
+                    <div class="card planb-card">
+                        <h3>✦ خطة ب - جمع النقاط</h3>
+                        <div class="task-row">
+                            <span class="task-name"><span class="task-number">ب</span>إرسال الرسائل السريعة</span>
+                            <span class="task-state">${planBActive ? 'مفعلة' : 'متوقفة'}</span>
+                            <button type="button" class="btn ${planBActive ? 'btn-danger' : 'btn-success'}" data-planb="1" onclick="togglePlanB(this)">${planBActive ? '⏹ إيقاف' : '▶ تشغيل'}</button>
+                        </div>
+                    </div>
+
+                    <div class="card target-manager ${c.task4TargetMode === 'random' ? 'random-mode' : ''}">
+                        <div class="target-title">
+                            <div>
+                                <h3>🎯 أهداف الهجوم - المهمة 4</h3>
+                                <p>أضف الأعضاء وحدد عضوًا أساسيًا واحدًا</p>
+                            </div>
+                            <span class="target-count">${targetIds.length} أهداف</span>
+                        </div>
+                        <form id="targetsForm" action="/api/update-tasks-config" method="POST">
+                            <input type="hidden" name="task4TargetIds" id="task4TargetIds">
+                            <input type="hidden" name="task4TargetId" id="task4TargetId" value="${primaryTargetId}">
+                            <div class="target-add">
+                                <input type="text" id="newTargetId" placeholder="أدخل ID عضو جديد">
+                                <button type="button" class="btn btn-primary" onclick="addTarget()">➕ إضافة عضو</button>
+                            </div>
+                            <div class="target-list" id="targetList">${targetRows}</div>
+                            <div class="target-mode">
+                                <label for="task4TargetMode">طريقة الهجوم</label>
+                                <select id="task4TargetMode" name="task4TargetMode">
+                                    <option value="fixed" ${c.task4TargetMode !== 'random' ? 'selected' : ''}>الهدف الأساسي كل دورة</option>
+                                    <option value="random" ${c.task4TargetMode === 'random' ? 'selected' : ''}>هدف عشوائي من القائمة</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary target-save">💾 حفظ أهداف الهجوم</button>
+                        </form>
+                    </div>
+
+                </div>
+
+                <div class="grid panel" data-panel="channels">
+                    <!-- إدارة القنوات الصوتية -->
+                    <div class="card">
+                        <h3>🎙️ إدارة القنوات الصوتية</h3>
+                        <form action="/api/update-tasks-config" method="POST">
+                            <div class="form-group">
+                                <label>🔴 قناة ال AFK (الانتظار)</label>
+                                <input type="text" name="afkChannelId" value="${c.afkChannelId || ''}" placeholder="أدخل رقم القناة">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="margin-top: 15px;">💾 حفظ</button>
+                        </form>
+                    </div>
+
+                    <!-- حذف الرسائل -->
+                    <div class="card">
+                        <h3>🗑️ حذف الرسائل</h3>
+                        <div class="form-group">
+                            <label>🔧 ID الروم</label>
+                            <input type="text" id="deleteChannelId" placeholder="أدخل ID الروم" required>
+                        </div>
+                        <div class="form-group">
+                            <label>📨 عدد الرسائل</label>
+                            <input type="number" id="deleteMessageCount" placeholder="مثال: 50" min="1" max="100" value="50">
+                        </div>
+                        <button type="button" class="btn btn-danger" onclick="deleteMessages()" style="width: 100%;">🗑️ حذف الرسائل</button>
+                    </div>
+                </div>
+
+                <div class="grid panel" data-panel="monitor">
+                    <div class="card">
+                        <h3>🛰️ مراقبة نشاط المستخدم</h3>
+                        <div class="form-group">
+                            <label>👤 ID الشخص (المستخدم)</label>
+                            <input type="text" id="monitorUserId" placeholder="أدخل ID الشخص">
+                        </div>
+                        <div class="form-group">
+                            <label>⏰ الفترة الزمنية</label>
+                            <select id="monitorHours">
+                                <option value="1">آخر ساعة</option>
+                                <option value="6">آخر 6 ساعات</option>
+                                <option value="24" selected>آخر 24 ساعة</option>
+                                <option value="72">آخر 3 أيام</option>
+                                <option value="168">آخر أسبوع</option>
+                                <option value="720">آخر شهر</option>
+                            </select>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" id="monitorStartBtn" onclick="startMonitor()">🔍 بدء المراقبة</button>
+                            <button type="button" class="btn btn-success" id="monitorStopBtn" onclick="stopMonitor()" style="display:none;">⏹ إيقاف</button>
+                        </div>
+                        <div id="monitorProgress" style="margin-top:16px; display:none;">
+                            <div class="stat-item">
+                                <span>الحالة</span>
+                                <span id="monitorStatus">جاري الفحص...</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>القنوات المفحوصة</span>
+                                <span id="monitorProgressText">0 / 0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>القناة الحالية</span>
+                                <span id="monitorCurrentChannel" style="font-size:0.85rem;">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="monitorStatsCard" style="display:none;">
+                        <h3>📊 ملخص المراقبة</h3>
+                        <div class="stat-item"><span>إجمالي الرسائل</span> <span id="monitorTotalMessages">0</span></div>
+                        <div class="stat-item"><span>القنوات النشطة</span> <span id="monitorActiveChannels">0</span></div>
+                        <div class="stat-item"><span>القنوات المفحوصة</span> <span id="monitorChannelsScanned">0</span></div>
+                        <div class="stat-item"><span>من</span> <span id="monitorFirstTime" style="font-size:0.85rem">—</span></div>
+                        <div class="stat-item"><span>إلى</span> <span id="monitorLastTime" style="font-size:0.85rem">—</span></div>
+                        <div class="stat-item"><span>المدة</span> <span id="monitorDuration" style="font-size:0.85rem">—</span></div>
+                    </div>
+
+                    <div class="card" id="monitorChannelsCard" style="display:none;">
+                        <h3>📡 القنوات النشطة <span id="monitorChannelsCount" class="target-count">0</span></h3>
+                        <p style="color:var(--text-sub); font-size:0.85rem; margin-bottom:14px;">اضغط على أي قناة لعرض الرسائل</p>
+                        <div class="target-list" id="monitorChannelsList"></div>
+                    </div>
+
+                    <div class="card" id="monitorMessagesCard" style="display:none;">
+                        <h3>💬 الرسائل <button type="button" class="btn btn-primary" style="float:left; padding:6px 12px; min-width:auto; font-size:0.8rem;" onclick="closeMessages()">✕ إغلاق</button></h3>
+                        <p style="color:var(--text-sub); font-size:0.85rem; margin-bottom:14px;">القناة: <span id="monitorMessagesChannel" style="color:var(--gold);"></span></p>
+                        <div class="monitor-messages-list" id="monitorMessagesList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function pulseButton(btn) {
+                    btn.classList.remove('pulse-anim');
+                    void btn.offsetWidth;
+                    btn.classList.add('pulse-anim');
+                }
+
+                function toggleTask(taskName, btn) {
+                    pulseButton(btn);
+                    fetch('/api/toggle-task/' + taskName, { method: 'GET' });
+                }
+
+                function togglePlanB(btn) {
+                    pulseButton(btn);
+                    fetch('/api/toggle-planb', { method: 'GET' });
+                }
+
+                function toggleAction(action, btn) {
+                    pulseButton(btn);
+                    fetch('/api/toggle/' + action, { method: 'GET' });
+                }
+
+                function isTaskActive(state, name) {
+                    return state.isRunning && state.isChatActive && state.isTaskRunning && state.taskStates && state.taskStates[name];
+                }
+
+                function applyBtnState(btn, isActive, onText, offText) {
+                    btn.textContent = isActive ? onText : offText;
+                    btn.classList.toggle('btn-danger', isActive);
+                    btn.classList.toggle('btn-success', !isActive);
+                }
+
+                function refreshState() {
+                    fetch('/api/state').then(r => r.json()).then(data => {
+                        if (!data.success) return;
+                        const s = data.state;
+                        document.querySelectorAll('[data-task]').forEach(btn => {
+                            applyBtnState(btn, isTaskActive(s, btn.dataset.task), '⏹ إيقاف', '▶ تشغيل');
+                        });
+                        const planbBtn = document.querySelector('[data-planb]');
+                        if (planbBtn) {
+                            applyBtnState(planbBtn, !!s.isPlanBRunning, '⏹ إيقاف', '▶ تشغيل');
+                        }
+                        const voiceBtn = document.querySelector('[data-action="voice"]');
+                        if (voiceBtn) {
+                            voiceBtn.textContent = s.isVoiceActive ? '🔇 إيقاف صوت' : '🔊 تشغيل صوت';
+                        }
+                    }).catch(() => {});
+                }
+
+                setInterval(refreshState, 300);
+                refreshState();
+                document.querySelectorAll('[data-panel-target]').forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        const target = this.getAttribute('data-panel-target');
+                        document.querySelectorAll('[data-panel-target]').forEach(item => item.classList.remove('active'));
+                        document.querySelectorAll('.panel').forEach(panel => {
+                            panel.classList.toggle('active', panel.getAttribute('data-panel') === target);
+                        });
+                        this.classList.add('active');
+                    });
+                });
+
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', function() {
+                        const item = this.parentElement;
+                        item.classList.toggle('active');
+                    });
+                });
+
+                function deleteMessages() {
+                    const channelId = document.getElementById('deleteChannelId').value.trim();
+                    const count = document.getElementById('deleteMessageCount').value.trim();
+                    if (!channelId) {
+                        alert('❌ أدخل ID الروم أولاً');
+                        return;
+                    }
+                    fetch('/api/delete-messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ channelId, count: Number(count || 50) })
+                    }).then(async (res) => {
+                        const data = await res.json();
+                        alert(data.message || '✅ تم الحذف');
+                        if (data.success) location.reload();
+                    });
+                }
+
+                function syncTargetIds() {
+                    const ids = Array.from(document.querySelectorAll('.target-chip')).map(chip => chip.dataset.targetId);
+                    document.getElementById('task4TargetIds').value = ids.join(',');
+                }
+
+                function updateTargetModeStyle() {
+                    const manager = document.querySelector('.target-manager');
+                    const randomMode = document.getElementById('task4TargetMode').value === 'random';
+                    manager.classList.toggle('random-mode', randomMode);
+                }
+
+                function setPrimaryTarget(chip) {
+                    document.querySelectorAll('.target-chip').forEach(item => {
+                        item.classList.remove('is-primary');
+                        item.querySelector('.primary-label').textContent = '';
+                        item.querySelector('[data-target-action="primary"]').textContent = 'جعله أساسيًا';
+                    });
+                    chip.classList.add('is-primary');
+                    chip.querySelector('.primary-label').textContent = 'أساسي';
+                    chip.querySelector('[data-target-action="primary"]').textContent = 'الأساسي';
+                    document.getElementById('task4TargetId').value = chip.dataset.targetId;
+                    syncTargetIds();
+                }
+
+                function bindTargetActions(chip) {
+                    chip.querySelector('[data-target-action="primary"]').addEventListener('click', () => setPrimaryTarget(chip));
+                    chip.querySelector('[data-target-action="remove"]').addEventListener('click', () => {
+                        const wasPrimary = chip.classList.contains('is-primary');
+                        chip.remove();
+                        const firstTarget = document.querySelector('.target-chip');
+                        if (wasPrimary && firstTarget) setPrimaryTarget(firstTarget);
+                        else syncTargetIds();
+                    });
+                }
+
+                function addTarget() {
+                    const input = document.getElementById('newTargetId');
+                    const id = input.value.trim().replace(/^<@!?/, '').replace(/>$/, '');
+                    if (!id) {
+                        alert('❌ أدخل ID عضو صحيح');
+                        return;
+                    }
+                    if (document.querySelector('[data-target-id="' + id + '"]')) {
+                        alert('⚠️ هذا العضو موجود بالقائمة');
+                        return;
+                    }
+                    const chip = document.createElement('div');
+                    chip.className = 'target-chip';
+                    chip.dataset.targetId = id;
+                    chip.innerHTML = '<span class="target-id">' + id + '</span><span class="primary-label"></span><button type="button" data-target-action="primary">جعله أساسيًا</button><button type="button" data-target-action="remove">حذف</button>';
+                    bindTargetActions(chip);
+                    document.getElementById('targetList').appendChild(chip);
+                    input.value = '';
+                    syncTargetIds();
+                }
+
+                document.querySelectorAll('.target-chip').forEach(bindTargetActions);
+                document.getElementById('task4TargetMode')?.addEventListener('change', updateTargetModeStyle);
+                document.getElementById('targetsForm')?.addEventListener('submit', syncTargetIds);
+
+                let monitorPollInterval = null;
+                let monitorResultCache = null;
+
+                function startMonitor() {
+                    const userId = document.getElementById('monitorUserId').value.trim();
+                    const hours = document.getElementById('monitorHours').value;
+                    if (!userId) {
+                        alert('❌ أدخل ID الشخص');
+                        return;
+                    }
+                    document.getElementById('monitorStatsCard').style.display = 'none';
+                    document.getElementById('monitorChannelsCard').style.display = 'none';
+                    document.getElementById('monitorMessagesCard').style.display = 'none';
+                    document.getElementById('monitorProgress').style.display = 'block';
+                    document.getElementById('monitorStartBtn').style.display = 'none';
+                    document.getElementById('monitorStopBtn').style.display = 'inline-block';
+                    document.getElementById('monitorStatus').textContent = 'جاري البدء...';
+                    document.getElementById('monitorProgressText').textContent = '0 / 0';
+                    document.getElementById('monitorCurrentChannel').textContent = '—';
+
+                    fetch('/api/monitor/start', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId, hoursBack: Number(hours) })
+                    }).then(r => r.json()).then(data => {
+                        if (!data.success) {
+                            alert(data.message);
+                            resetMonitorUI();
+                        } else {
+                            pollMonitorStatus();
+                        }
+                    });
+                }
+
+                function stopMonitor() {
+                    fetch('/api/monitor/stop', { method: 'POST' });
+                    document.getElementById('monitorStatus').textContent = 'جاري الإيقاف...';
+                }
+
+                function pollMonitorStatus() {
+                    if (monitorPollInterval) clearInterval(monitorPollInterval);
+                    monitorPollInterval = setInterval(() => {
+                        fetch('/api/monitor/result').then(r => r.json()).then(data => {
+                            if (!data.success) return;
+                            const active = data.active;
+                            const progress = data.progress || {};
+                            const result = data.result;
+
+                            if (active && progress.total > 0) {
+                                document.getElementById('monitorStatus').textContent = 'جاري الفحص...';
+                                document.getElementById('monitorProgressText').textContent = progress.current + ' / ' + progress.total;
+                                document.getElementById('monitorCurrentChannel').textContent = progress.currentChannel || '—';
+                            }
+
+                            if (!active) {
+                                clearInterval(monitorPollInterval);
+                                monitorPollInterval = null;
+                                if (result) {
+                                    monitorResultCache = result;
+                                    renderMonitorResult(result);
+                                } else {
+                                    document.getElementById('monitorProgress').style.display = 'none';
+                                    document.getElementById('monitorStatsCard').style.display = 'block';
+                                    document.getElementById('monitorChannelsCard').style.display = 'block';
+                                    document.getElementById('monitorTotalMessages').textContent = '0';
+                                    document.getElementById('monitorActiveChannels').textContent = '0';
+                                    document.getElementById('monitorChannelsScanned').textContent = progress.total || 0;
+                                    document.getElementById('monitorFirstTime').textContent = '—';
+                                    document.getElementById('monitorLastTime').textContent = '—';
+                                    document.getElementById('monitorDuration').textContent = '—';
+                                    document.getElementById('monitorChannelsList').innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-sub);">لم يتم العثور على رسائل</div>';
+                                }
+                                resetMonitorUI();
+                            }
+                        }).catch(() => {});
+                    }, 500);
+                }
+
+                function resetMonitorUI() {
+                    document.getElementById('monitorStartBtn').style.display = 'inline-block';
+                    document.getElementById('monitorStopBtn').style.display = 'none';
+                }
+
+                function formatTime(iso) {
+                    if (!iso) return '—';
+                    try {
+                        const d = new Date(iso);
+                        return d.toLocaleString('ar-SA', { dateStyle: 'short', timeStyle: 'short' });
+                    } catch { return iso; }
+                }
+
+                function formatDuration(ms) {
+                    if (!ms) return '—';
+                    const s = Math.floor(ms / 1000);
+                    if (s < 60) return s + ' ثانية';
+                    const m = Math.floor(s / 60);
+                    const rs = s % 60;
+                    if (m < 60) return m + ' د ' + rs + ' ث';
+                    const h = Math.floor(m / 60);
+                    const rm = m % 60;
+                    return h + ' س ' + rm + ' د';
+                }
+
+                function renderMonitorResult(r) {
+                    if (!r) return;
+                    document.getElementById('monitorProgress').style.display = 'none';
+                    document.getElementById('monitorStatsCard').style.display = 'block';
+                    document.getElementById('monitorChannelsCard').style.display = 'block';
+
+                    document.getElementById('monitorTotalMessages').textContent = r.totalMessages || 0;
+                    document.getElementById('monitorActiveChannels').textContent = r.channelsWithActivity || 0;
+                    document.getElementById('monitorChannelsScanned').textContent = r.channelsScanned || 0;
+                    document.getElementById('monitorFirstTime').textContent = formatTime(r.firstMessage);
+                    document.getElementById('monitorLastTime').textContent = formatTime(r.lastMessage);
+                    document.getElementById('monitorDuration').textContent = formatDuration(r.durationMs);
+
+                    const list = document.getElementById('monitorChannelsList');
+                    list.innerHTML = '';
+                    document.getElementById('monitorChannelsCount').textContent = (r.channels || []).length;
+                    (r.channels || []).sort((a, b) => b.count - a.count).forEach(ch => {
+                        const item = document.createElement('div');
+                        item.className = 'monitor-channel-item';
+                        item.innerHTML = '<div><div class="ch-name">#' + escapeHtml(ch.channelName) + '</div><div class="ch-times">من ' + formatTime(ch.firstAt) + ' إلى ' + formatTime(ch.lastAt) + '</div></div><div class="ch-count">' + ch.count + ' رسالة</div>';
+                        item.addEventListener('click', () => showChannelMessages(ch));
+                        list.appendChild(item);
+                    });
+
+                    if ((r.channels || []).length === 0) {
+                        list.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-sub);">لم يتم العثور على رسائل</div>';
+                    }
+                }
+
+                function showChannelMessages(ch) {
+                    const card = document.getElementById('monitorMessagesCard');
+                    card.style.display = 'block';
+                    document.getElementById('monitorMessagesChannel').textContent = '#' + ch.channelName;
+                    const list = document.getElementById('monitorMessagesList');
+                    list.innerHTML = '';
+                    (ch.messages || []).forEach(msg => {
+                        const m = document.createElement('div');
+                        m.className = 'monitor-message';
+                        m.innerHTML = '<div class="msg-time">' + formatTime(msg.time) + '</div><div class="msg-content">' + escapeHtml(msg.content || '(بدون محتوى)') + '</div>';
+                        list.appendChild(m);
+                    });
+                    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                function closeMessages() {
+                    document.getElementById('monitorMessagesCard').style.display = 'none';
+                }
+
+                function escapeHtml(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
+
+                (function setupNumWraps() {
+                    const upSvg = '<svg viewBox="0 0 24 24"><path d="M12 6l-7 8h14z"/></svg>';
+                    const downSvg = '<svg viewBox="0 0 24 24"><path d="M12 18l-7-8h14z"/></svg>';
+
+                    document.querySelectorAll('input[type="number"]').forEach(input => {
+                        if (input.closest('.num-wrap')) return;
+                        const wrap = document.createElement('div');
+                        wrap.className = 'num-wrap';
+                        input.parentNode.insertBefore(wrap, input);
+                        wrap.appendChild(input);
+
+                        const spin = document.createElement('div');
+                        spin.className = 'num-spin';
+
+                        const step = input.getAttribute('step') ? parseFloat(input.getAttribute('step')) : 1;
+                        const min = input.hasAttribute('min') ? parseFloat(input.getAttribute('min')) : -Infinity;
+                        const max = input.hasAttribute('max') ? parseFloat(input.getAttribute('max')) : Infinity;
+                        const stepStr = input.getAttribute('step') || '1';
+                        const decimals = stepStr.includes('.') ? stepStr.split('.')[1].length : 0;
+
+                        let timer = null;
+                        let initialDelay = null;
+                        let repeatInterval = null;
+
+                        const roundToStep = (n) => {
+                            if (decimals === 0) return Math.round(n).toString();
+                            return n.toFixed(decimals);
+                        };
+
+                        const bump = (dir) => {
+                            const cur = parseFloat(input.value) || 0;
+                            const next = dir === 'up' ? cur + step : cur - step;
+                            if (next < min || next > max) return;
+                            input.value = roundToStep(next);
+                            input.dispatchEvent(new Event('input', { bubbles: true }));
+                            input.dispatchEvent(new Event('change', { bubbles: true }));
+                        };
+
+                        const startHold = (dir) => {
+                            bump(dir);
+                            initialDelay = setTimeout(() => {
+                                repeatInterval = setInterval(() => bump(dir), 60);
+                            }, 400);
+                        };
+
+                        const stopHold = () => {
+                            if (initialDelay) { clearTimeout(initialDelay); initialDelay = null; }
+                            if (repeatInterval) { clearInterval(repeatInterval); repeatInterval = null; }
+                        };
+
+                        const makeBtn = (cls, dir, svg) => {
+                            const b = document.createElement('button');
+                            b.type = 'button';
+                            b.className = cls;
+                            b.innerHTML = svg;
+                            b.addEventListener('mousedown', e => { e.preventDefault(); startHold(dir); });
+                            b.addEventListener('touchstart', e => { e.preventDefault(); startHold(dir); }, { passive: false });
+                            b.addEventListener('mouseup', stopHold);
+                            b.addEventListener('mouseleave', stopHold);
+                            b.addEventListener('touchend', stopHold);
+                            b.addEventListener('touchcancel', stopHold);
+                            b.addEventListener('click', e => { e.preventDefault(); });
+                            return b;
+                        };
+
+                        const up = makeBtn('up', 'up', upSvg);
+                        const down = makeBtn('down', 'down', downSvg);
+                        spin.appendChild(up);
+                        spin.appendChild(down);
+                        wrap.appendChild(spin);
+                    });
+                })();
+
+            </script>
+        </html>
+    `);
 });
 
 // APIs التحكم

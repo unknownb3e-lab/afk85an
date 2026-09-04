@@ -84,14 +84,7 @@ let isTaskRunning = true;
 const taskStates = { task1: false, task2: false, task3: false, task4: false, task5: false };
 let planBInterval = null;
 let isPlanBRunning = false;
-let task5Stopped = true;
-const taskTimers = { task1: null, task2: null, task3: null, task4: null, task5: null };
-const MESSAGE_THROTTLE_MS = 5000;
-let lastMessageSentAt = 0;
-let messageQueue = Promise.resolve();
-let taskQueue = Promise.resolve();
-let globalRateLimitedUntil = 0;
-let taskFunctions = {};
+let task3Index = 0;
 
 let stats = {
     totalSent: 0,
@@ -195,7 +188,7 @@ global.botEmitter.on('toggleTask', (taskName) => {
     const taskFn = taskFunctions[taskName];
     if (taskStates[taskName] && taskFn && isBotRunning && isChatActive && isTaskRunning) {
         if (taskName === 'task5') {
-            runTask5();
+            runTaskInOrder(taskName, taskFn);
         } else {
             runTaskInOrder(taskName, taskFn);
             scheduleSingleTask(taskName, taskFn);
@@ -483,17 +476,25 @@ global.botEmitter.on('monitorStop', () => {
     global.sharedMonitorState.active = false;
 });
 
+const replyChatStatus = () => {
+    return [
+        `🔹 البوت: ${isBotRunning ? 'مفعّل' : 'موقف'}`,
+        `🔹 الصوت: ${isVoiceActive ? 'مفعّل' : 'موقف'}`,
+        `🔹 الكتابة: ${isChatActive ? 'مفعّلة' : 'موقفة'}`,
+        `🔹 المهام: ${isTaskRunning ? 'مفعّلة' : 'موقفة'}`,
+        `🔹 الخطة ب: ${isPlanBRunning ? 'مفعّلة' : 'موقفة'}`
+    ].join('\n');
+};
+
+const MESSAGE_THROTTLE_MS = 2000;
+let lastMessageSentAt = 0;
+let messageQueue = Promise.resolve();
+let taskQueue = Promise.resolve();
+
 const sendChannelMessage = async (channelId, messageText, label, skipThrottle = false) => {
     if (!channelId || !messageText) return false;
     const send = messageQueue.then(async () => {
         try {
-            const now = Date.now();
-            if (now < globalRateLimitedUntil) {
-                const wait = globalRateLimitedUntil - now;
-                console.log(`⏸️ ${label}: انتظار ${Math.ceil(wait/1000)}ث بسبب rate limit`);
-                await new Promise(resolve => setTimeout(resolve, wait));
-            }
-
             if (!skipThrottle) {
                 const elapsed = Date.now() - lastMessageSentAt;
                 if (elapsed < MESSAGE_THROTTLE_MS) {
@@ -510,18 +511,7 @@ const sendChannelMessage = async (channelId, messageText, label, skipThrottle = 
             );
             if (!isTextChannel) return false;
 
-            try {
-                await channel.send(messageText);
-            } catch (sendErr) {
-                if (sendErr && (sendErr.status === 429 || sendErr.code === 429)) {
-                    const retryAfter = (sendErr.retry_after || sendErr.rateLimit?.timeout || 5) * 1000;
-                    globalRateLimitedUntil = Date.now() + retryAfter + 1000;
-                    console.warn(`⚠️ ${label}: rate limit - انتظار ${Math.ceil(retryAfter/1000)}ث`);
-                    return false;
-                }
-                throw sendErr;
-            }
-
+            await channel.send(messageText);
             lastMessageSentAt = Date.now();
             stats.totalSent += 1;
             stats.lastActiveTime = new Date().toLocaleString('ar-SA');
@@ -549,6 +539,8 @@ const getTaskRepeatDelay = (taskName) => {
     return randomBetween((Number.isFinite(min) ? min : fallback) * 60 * 1000,
         (Number.isFinite(max) ? max : fallback) * 60 * 1000);
 };
+
+const taskTimers = { task1: null, task2: null, task3: null, task4: null, task5: null };
 
 const scheduleSingleTask = (taskName, taskFn) => {
     const delay = getTaskRepeatDelay(taskName);
@@ -591,44 +583,29 @@ const runTask2 = async () => {
     stats.task2CountLog += 1;
 };
 
-const runTask3Burst = async () => {
-    if (!taskStates.task3 || !config.task3Channel) return;
-    if (!Array.isArray(config.task3Msgs) || config.task3Msgs.length === 0) return;
-
-    const messages = config.task3Msgs.filter(m => m && String(m).trim());
-    if (messages.length === 0) return;
-
-    const gap = 3;
-
-    for (let i = 0; i < messages.length; i++) {
-        if (!isBotRunning || !isChatActive || !isTaskRunning || !taskStates.task3) return;
-        const sent = await sendChannelMessage(config.task3Channel, messages[i], 'مهمة 3');
-        if (sent) stats.task3CountLog += 1;
-        if (i < messages.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, gap * 1000));
-        }
-    }
+const runTask3 = async () => {
+    if (!taskStates.task3 || !config.task3Channel || !Array.isArray(config.task3Msgs) || config.task3Msgs.length === 0) return;
+    const msg = config.task3Msgs[task3Index % config.task3Msgs.length];
+    await sendChannelMessage(config.task3Channel, msg, 'مهمة 3');
+    stats.task3CountLog += 1;
+    task3Index += 1;
 };
-
-const runTask3 = runTask3Burst;
 
 const runTask4 = async () => {
     if (!taskStates.task4 || !config.task4Channel || !config.task4Msg) return;
     const targets = Array.isArray(config.task4TargetIds) && config.task4TargetIds.length > 0
         ? config.task4TargetIds
         : [config.task4TargetId].filter(Boolean);
-    if (targets.length === 0) {
-        console.warn('⚠️ مهمة 4: لا توجد أهداف هجوم صحيحة');
-        return;
-    }
     const targetId = config.task4TargetMode === 'random'
         ? targets[Math.floor(Math.random() * targets.length)]
-        : (config.task4TargetId && targets.includes(config.task4TargetId) ? config.task4TargetId : targets[0]);
+        : config.task4TargetId || targets[0];
     const targetMention = targetId ? `<@${targetId}>` : '';
     const taskMessage = config.task4Msg.replace(/<@!?\d+>/g, targetMention) || `!هجوم ${targetMention}`;
     await sendChannelMessage(config.task4Channel, taskMessage, 'مهمة 4');
     stats.task4CountLog += 1;
 };
+
+let task5Stopped = true;
 
 const runTask5 = async () => {
     if (!taskStates.task5 || !config.task5Channel) return;
@@ -640,6 +617,7 @@ const runTask5 = async () => {
     const gapMax = Math.max(gapMin, Number(config.task5GapMax) || 12);
 
     task5Stopped = false;
+    let firstMessage = true;
     while (!task5Stopped && taskStates.task5 && isBotRunning && isChatActive && isTaskRunning) {
         for (let i = 0; i < config.task5Games.length; i++) {
             if (task5Stopped || !taskStates.task5 || !isBotRunning || !isChatActive || !isTaskRunning) break;
@@ -647,7 +625,8 @@ const runTask5 = async () => {
             const game = config.task5Games[i];
             const bet = randomBetween(betMin, betMax);
             const message = `!كازينو ${game} ${bet}`;
-            const sent = await sendChannelMessage(config.task5Channel, message, 'مهمة 5', false);
+            const sent = await sendChannelMessage(config.task5Channel, message, 'مهمة 5', firstMessage);
+            firstMessage = false;
             if (sent) stats.task5CountLog = (stats.task5CountLog || 0) + 1;
 
             if (task5Stopped || !taskStates.task5) break;
@@ -662,7 +641,7 @@ const runTask5 = async () => {
     }
 };
 
-taskFunctions = {
+const taskFunctions = {
     task1: runTask1Burst,
     task2: runTask2,
     task3: runTask3,
@@ -702,7 +681,7 @@ const startTaskLoops = () => {
     if (taskStates.task2) runTaskInOrder('task2', runTask2);
     if (taskStates.task3) runTaskInOrder('task3', runTask3);
     if (taskStates.task4) runTaskInOrder('task4', runTask4);
-    if (taskStates.task5) runTask5();
+    if (taskStates.task5) runTaskInOrder('task5', runTask5);
 
     Object.entries(taskFunctions).forEach(([taskName, taskFn]) => {
         if (taskName === 'task5') return;
@@ -719,7 +698,173 @@ client.on('ready', () => {
     setInterval(syncState, 5000);
 });
 
-client.on('messageCreate', async () => {});
+client.on('messageCreate', async (message) => {
+    if (!message || !message.content || message.author.id !== client.user.id) return;
+
+    const text = message.content.trim();
+    const command = text.toLowerCase();
+
+    const isReply = async (textReply) => {
+        await message.reply(textReply);
+    };
+
+    if (command === '!status' || command === 'حالة' || command === 'status') {
+        await isReply(replyChatStatus());
+        return;
+    }
+
+    if (command === '!stop' || command === '!off' || command === 'ايقاف' || command === 'ايقاف تشغيل' || command === 'stop' || command === 'off') {
+        if (!isBotRunning) {
+            await isReply('⚠️ البوت متوقف بالفعل');
+            return;
+        }
+        isBotRunning = false;
+        isTaskRunning = false;
+        isVoiceActive = false;
+        const conn = getVoiceConnection(config.guildId);
+        if (conn) conn.destroy();
+        syncState();
+        await isReply('⏹️ تم إيقاف البوت بالكامل');
+        return;
+    }
+
+    if (command === '!start' || command === '!on' || command === 'تشغيل' || command === 'start' || command === 'on') {
+        if (isBotRunning) {
+            await isReply('⚠️ البوت يعمل بالفعل');
+            return;
+        }
+        isBotRunning = true;
+        isTaskRunning = true;
+        isVoiceActive = true;
+        connectToVoice();
+        startTaskLoops();
+        syncState();
+        await isReply('▶️ تم تشغيل البوت');
+        return;
+    }
+
+    if (command === '!voice off' || command === '!ايقاف صوت' || command === 'ايقاف صوت' || command === 'voice off') {
+        if (!isVoiceActive) {
+            await isReply('⚠️ الصوت متوقف بالفعل');
+            return;
+        }
+        isVoiceActive = false;
+        const conn = getVoiceConnection(config.guildId);
+        if (conn) conn.destroy();
+        syncState();
+        await isReply('🔇 تم إيقاف الصوت');
+        return;
+    }
+
+    if (command === '!voice on' || command === '!تشغيل صوت' || command === 'تشغيل صوت' || command === 'voice on') {
+        if (isVoiceActive) {
+            await isReply('⚠️ الصوت يعمل بالفعل');
+            return;
+        }
+        isVoiceActive = true;
+        connectToVoice();
+        syncState();
+        await isReply('🔊 تم تشغيل الصوت');
+        return;
+    }
+
+    if (command === '!chat off' || command === '!ايقاف كتابة' || command === 'ايقاف كتابة' || command === 'chat off') {
+        if (!isChatActive) {
+            await isReply('⚠️ الكتابة متوقفة بالفعل');
+            return;
+        }
+        isChatActive = false;
+        syncState();
+        await isReply('📝 تم إيقاف الكتابة');
+        return;
+    }
+
+    if (command === '!chat on' || command === '!تشغيل كتابة' || command === 'تشغيل كتابة' || command === 'chat on') {
+        if (isChatActive) {
+            await isReply('⚠️ الكتابة مفعلة بالفعل');
+            return;
+        }
+        isChatActive = true;
+        syncState();
+        await isReply('📝 تم تشغيل الكتابة');
+        return;
+    }
+
+    if (command === '!tasks off' || command === '!ايقاف مهام' || command === 'ايقاف مهام') {
+        if (!isTaskRunning) {
+            await isReply('⚠️ المهام متوقفة بالفعل');
+            return;
+        }
+        isTaskRunning = false;
+        syncState();
+        await isReply('🛑 تم إيقاف المهام');
+        return;
+    }
+
+    if (command === '!tasks on' || command === '!تشغيل مهام' || command === 'تشغيل مهام') {
+        if (isTaskRunning) {
+            await isReply('⚠️ المهام تعمل بالفعل');
+            return;
+        }
+        isTaskRunning = true;
+        startTaskLoops();
+        syncState();
+        await isReply('▶️ تم تشغيل المهام');
+        return;
+    }
+
+    if (command === '!planb off' || command === '!ايقاف خطة ب' || command === 'ايقاف خطة ب') {
+        if (!isPlanBRunning) {
+            await isReply('⚠️ خطة ب متوقفة بالفعل');
+            return;
+        }
+        isPlanBRunning = false;
+        stopPlanBLoop();
+        syncState();
+        await isReply('🛑 تم إيقاف خطة ب');
+        return;
+    }
+
+    if (command === '!planb on' || command === '!تشغيل خطة ب' || command === 'تشغيل خطة ب') {
+        if (isPlanBRunning) {
+            await isReply('⚠️ خطة ب تعمل بالفعل');
+            return;
+        }
+        isPlanBRunning = true;
+        startPlanBLoop();
+        syncState();
+        await isReply('▶️ تم تشغيل خطة ب');
+        return;
+    }
+
+    if (command.startsWith('!delete ') || command.startsWith('!مسح ') || command.startsWith('مسح ')) {
+        const parts = text.split(/\s+/);
+        const count = Number(parts[1] || 50);
+        const channelId = parts[2] || null;
+        if (!channelId) {
+            await isReply('⚠️ التنسيق: !delete 50 123456789012345678');
+            return;
+        }
+
+        const channel = client.channels.cache.get(channelId);
+        if (!channel || !channel.messages || typeof channel.messages.fetch !== 'function') {
+            await isReply('⚠️ الروم غير موجود أو لا يدعم حذف الرسائل');
+            return;
+        }
+
+        const messages = await channel.messages.fetch({ limit: Math.min(Math.max(count, 1), 100) });
+        const deleted = Array.from(messages.values());
+        for (let i = 0; i < deleted.length; i += 5) {
+            await Promise.all(deleted.slice(i, i + 5).map(msg => msg.delete().catch(() => {})));
+        }
+        await isReply(`🗑️ تم حذف ${deleted.length} رسالة من الروم ${channelId}`);
+        return;
+    }
+
+    if (command === '!help' || command === 'اوامر' || command === 'commands') {
+        await isReply('الأوامر المتاحة:\n!status\n!stop\n!start\n!voice off\n!voice on\n!chat off\n!chat on\n!tasks off\n!tasks on\n!planb off\n!planb on\n!delete 50 123456789012345678');
+    }
+});
 
 client.on('voiceStateUpdate', (oldState, newState) => {
     if (oldState.id !== client.user.id) return;
