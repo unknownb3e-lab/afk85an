@@ -24,5 +24,5 @@ RUN ollama serve & sleep 5 && ollama pull qwen2.5-coder:0.5b
 EXPOSE 8080
 EXPOSE 11434
 
-# 9. أمر التشغيل الصافي والسريع جداً لموقعك وأولاما بالتوازي
-CMD ["sh", "-c", "ollama serve & npm start"]
+# 9. أمر التشغيل: نشغل أولاما بالخلفية، نستنى لحد ما يجهز، ثم نشغل الموقع
+CMD ["sh", "-c", "ollama serve & OLLAMA_PID=$!; echo '⏳ في انتظار جاهزية أولاما...'; until curl -s http://127.0.0.1:11434/api/tags > /dev/null 2>&1; do sleep 3; done; echo '✅ أولاما جاهز'; npm start"]
