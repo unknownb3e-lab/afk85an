@@ -2105,7 +2105,7 @@ app.post('/api/ai-chat', express.json(), async (req, res) => {
 
     try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 120000);
+        const timeout = setTimeout(() => controller.abort(), 180000);
         const response = await fetch('http://127.0.0.1:11434/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -2119,15 +2119,15 @@ app.post('/api/ai-chat', express.json(), async (req, res) => {
 
         const data = await response.json();
         if (data && data.message && data.message.content) {
-            res.json({ success: true, reply: data.message.content });
+            return res.json({ success: true, reply: data.message.content });
         } else if (data && data.error) {
-            res.json({ success: false, message: '❌ ' + data.error });
+            return res.json({ success: false, message: '❌ ' + data.error });
         } else {
-            res.json({ success: false, message: '❌ استجابة غير متوقعة من الـ AI' });
+            return res.json({ success: false, message: '❌ استجابة غير مفهومة من الـ AI' });
         }
     } catch (e) {
         console.error("❌ خطأ اتصال بالذكاء الاصطناعي المحلي:", e && e.message ? e.message : e);
-        res.json({ success: false, message: '❌ السيرفر المحلي للـ AI غير جاهز أو ممتلئ حالياً' });
+        return res.json({ success: false, message: '❌ فشل الاتصال بالـ AI الداخلي: ' + (e && e.message ? e.message : 'خطأ غير معروف') });
     }
 });
 
