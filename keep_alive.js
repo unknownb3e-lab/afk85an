@@ -1638,20 +1638,52 @@ app.get('/', (req, res) => {
                     appendMessage('user', msg);
                     input.value = '';
                     const thinking = appendMessage('thinking', '⏳ جاري التفكير...');
+                    let aiMsgDiv = null;
 
                     fetch('/api/ai-chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ message: msg })
                     })
-                    .then(r => r.json())
-                    .then(data => {
+                    .then(response => {
                         if (thinking && thinking.parentNode) thinking.parentNode.removeChild(thinking);
-                        if (data.success) {
-                            appendMessage('ai', data.reply);
-                        } else {
-                            appendMessage('error', data.message);
+                        const reader = response.body.getReader();
+                        const decoder = new TextDecoder();
+                        let buffer = '';
+
+                        aiMsgDiv = appendMessage('ai', '');
+
+                        function read() {
+                            reader.read().then(({ done, value }) => {
+                                if (done) return;
+                                buffer += decoder.decode(value, { stream: true });
+                                const lines = buffer.split('\n\n');
+                                buffer = lines.pop() || '';
+
+                                for (const line of lines) {
+                                    if (line.startsWith('data: ')) {
+                                        const dataStr = line.slice(6).trim();
+                                        if (dataStr === '[DONE]') return;
+                                        try {
+                                            const data = JSON.parse(dataStr);
+                                            if (data.type === 'chunk' && aiMsgDiv) {
+                                                aiMsgDiv.textContent += data.content;
+                                                const box = document.getElementById('aiChatBox');
+                                                if (box) box.scrollTop = box.scrollHeight;
+                                            } else if (data.type === 'error') {
+                                                if (aiMsgDiv && aiMsgDiv.parentNode) aiMsgDiv.parentNode.removeChild(aiMsgDiv);
+                                                appendMessage('error', data.message);
+                                            }
+                                        } catch (e) {}
+                                    }
+                                }
+                                read();
+                            }).catch(() => {
+                                if (aiMsgDiv && aiMsgDiv.parentNode) aiMsgDiv.parentNode.removeChild(aiMsgDiv);
+                                appendMessage('error', '❌ فشل الاتصال بالخادم الداخلي');
+                            });
                         }
+                        read();
                     }).catch(() => {
                         if (thinking && thinking.parentNode) thinking.parentNode.removeChild(thinking);
                         appendMessage('error', '❌ فشل الاتصال بالخادم الداخلي');
@@ -2103,31 +2135,73 @@ app.post('/api/ai-chat', express.json(), async (req, res) => {
         return res.json({ success: false, message: '⚠️ الرسالة فارغة' });
     }
 
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+
+    let fullReply = '';
+    let aborted = false;
+
+    req.on('close', () => { aborted = true; });
+
     try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 180000);
+        const timeout = setTimeout(() => controller.abort(), 600000);
+        req.on('close', () => controller.abort());
+
         const response = await fetch('http://127.0.0.1:11434/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 model: 'qwen2.5-coder:0.5b',
-                messages: [{ role: 'user', content: String(message) }],
-                stream: false
+                messages: [
+                    { role: 'system', content: 'أنت مساعد ذكاء اصطناعي مفيد. أجب بالعربية بوضوح وباختصار. لا تختلق معلومات.' },
+                    { role: 'user', content: String(message) }
+                ],
+                stream: true
             }),
             signal: controller.signal
         }).finally(() => clearTimeout(timeout));
 
-        const data = await response.json();
-        if (data && data.message && data.message.content) {
-            return res.json({ success: true, reply: data.message.content });
-        } else if (data && data.error) {
-            return res.json({ success: false, message: '❌ ' + data.error });
-        } else {
-            return res.json({ success: false, message: '❌ استجابة غير مفهومة من الـ AI' });
+        if (!response.ok) {
+            const errText = await response.text();
+            res.write(`data: ${JSON.stringify({ type: 'error', message: '❌ خطأ من أولاما: ' + errText })}\n\n`);
+            res.write('data: [DONE]\n\n');
+            return res.end();
         }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (!aborted) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n').filter(l => l.trim());
+            for (const line of lines) {
+                try {
+                    const json = JSON.parse(line);
+                    if (json.message && json.message.content) {
+                        fullReply += json.message.content;
+                        res.write(`data: ${JSON.stringify({ type: 'chunk', content: json.message.content })}\n\n`);
+                    }
+                    if (json.done) {
+                        res.write(`data: ${JSON.stringify({ type: 'done', fullReply })}\n\n`);
+                        res.write('data: [DONE]\n\n');
+                        return res.end();
+                    }
+                } catch (e) {}
+            }
+        }
+        res.write('data: [DONE]\n\n');
+        res.end();
     } catch (e) {
+        if (aborted) return;
         console.error("❌ خطأ اتصال بالذكاء الاصطناعي المحلي:", e && e.message ? e.message : e);
-        return res.json({ success: false, message: '❌ فشل الاتصال بالـ AI الداخلي: ' + (e && e.message ? e.message : 'خطأ غير معروف') });
+        res.write(`data: ${JSON.stringify({ type: 'error', message: '❌ فشل الاتصال: ' + (e && e.message ? e.message : 'خطأ') })}\n\n`);
+        res.write('data: [DONE]\n\n');
+        res.end();
     }
 });
 

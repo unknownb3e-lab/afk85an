@@ -17,8 +17,13 @@ RUN npm install
 # 6. ننسخ باقي ملفات مشروعك
 COPY . .
 
-# 7. تحميل الموديل الخفيف أثناء البناء لحماية المعالج عند التشغيل
+# 7. تحميل الموديل الخفيف أثناء البناء
 RUN ollama serve & sleep 5 && ollama pull qwen2.5-coder:0.5b
+
+# 7.1 ضبط إعدادات أولاما الافتراضية لتعمل بكفاءة على سيرفرات محدودة الموارد
+ENV OLLAMA_NUM_PARALLEL=1
+ENV OLLAMA_MAX_LOADED_MODELS=1
+ENV OLLAMA_KEEP_ALIVE=5m
 
 # 8. نفتح المنافذ
 EXPOSE 8080
