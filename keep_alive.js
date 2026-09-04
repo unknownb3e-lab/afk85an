@@ -22,6 +22,7 @@ const updateBotState = (data) => {
 };
 
 app.get('/', (req, res) => {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
     const c = botState.config || {};
     const s = botState.stats || {};
     const t = botState.taskStates || {};
