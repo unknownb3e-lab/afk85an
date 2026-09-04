@@ -1183,6 +1183,128 @@ app.get('/', (req, res) => {
                     .target-mode select { width: 100%; }
                     .card { padding: 20px; }
                 }
+
+                /* ===== واجهة شات الذكاء الاصطناعي ===== */
+                .ai-chat-wrap {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 14px;
+                }
+                .ai-chat-box {
+                    height: 460px;
+                    overflow-y: auto;
+                    background: var(--bg-deep);
+                    border: 1px solid var(--gold-dim);
+                    border-radius: 14px;
+                    padding: 16px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.55), 0 0 18px var(--gold-glow);
+                    scrollbar-color: var(--gold-dim) var(--bg-deep);
+                }
+                .ai-msg {
+                    max-width: 80%;
+                    padding: 10px 14px;
+                    border-radius: 12px;
+                    font-size: 0.95rem;
+                    line-height: 1.55;
+                    word-wrap: break-word;
+                    white-space: pre-wrap;
+                    border: 1px solid transparent;
+                    box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
+                }
+                .ai-msg.user {
+                    align-self: flex-end;
+                    background: linear-gradient(135deg, rgba(214, 170, 72, 0.22), rgba(214, 170, 72, 0.08));
+                    color: var(--text-bright);
+                    border-color: var(--gold-dim);
+                    border-right: 3px solid var(--gold);
+                }
+                .ai-msg.ai {
+                    align-self: flex-start;
+                    background: var(--bg-card);
+                    color: var(--text-bright);
+                    border-color: var(--gold-dim);
+                    border-right: 3px solid var(--gold-bright);
+                    box-shadow: 0 0 14px var(--gold-glow);
+                }
+                .ai-msg.error {
+                    align-self: flex-start;
+                    background: rgba(180, 40, 40, 0.18);
+                    color: #ffb4b4;
+                    border-color: rgba(255, 90, 90, 0.45);
+                    border-right: 3px solid #ff6b6b;
+                }
+                .ai-msg.system {
+                    align-self: center;
+                    background: transparent;
+                    color: var(--text-sub);
+                    font-size: 0.82rem;
+                    border: 1px dashed var(--gold-dim);
+                    box-shadow: none;
+                }
+                .ai-chat-input-row {
+                    display: flex;
+                    gap: 10px;
+                    align-items: stretch;
+                }
+                #aiInput {
+                    flex: 1;
+                    background: var(--bg-deep);
+                    color: var(--text-bright);
+                    border: 1px solid var(--gold-dim);
+                    border-radius: 12px;
+                    padding: 12px 14px;
+                    font-size: 0.95rem;
+                    font-family: inherit;
+                    resize: none;
+                    min-height: 52px;
+                    max-height: 140px;
+                    outline: none;
+                    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                }
+                #aiInput:focus {
+                    border-color: var(--gold);
+                    box-shadow: 0 0 12px var(--gold-glow);
+                }
+                .ai-send-btn {
+                    min-width: 130px;
+                    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+                    color: #0d1117;
+                    border: 1px solid var(--gold-bright);
+                    border-radius: 12px;
+                    font-weight: 700;
+                    font-size: 0.95rem;
+                    cursor: pointer;
+                    box-shadow: 0 0 14px var(--gold-glow), inset 0 0 8px rgba(255, 255, 255, 0.15);
+                    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+                }
+                .ai-send-btn:hover {
+                    filter: brightness(1.08);
+                    box-shadow: 0 0 22px var(--gold-glow-strong), inset 0 0 10px rgba(255, 255, 255, 0.2);
+                }
+                .ai-send-btn:active {
+                    transform: scale(0.97);
+                }
+                .ai-send-btn:disabled {
+                    filter: grayscale(0.4) brightness(0.85);
+                    cursor: not-allowed;
+                }
+                .ai-chat-hint {
+                    color: var(--text-sub);
+                    font-size: 0.8rem;
+                    text-align: center;
+                    margin-top: 4px;
+                }
+                .ai-chat-hint kbd {
+                    background: var(--bg-card);
+                    border: 1px solid var(--gold-dim);
+                    color: var(--gold);
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    font-size: 0.78rem;
+                }
             </style>
         </head>
         <body>
@@ -1197,6 +1319,7 @@ app.get('/', (req, res) => {
                     <button type="button" data-panel-target="tasks">⚡ إدارة المهام</button>
                     <button type="button" data-panel-target="channels">🎙️ القنوات والرسائل</button>
                     <button type="button" data-panel-target="monitor">🛰️ المراقبة</button>
+                    <button type="button" data-panel-target="aichat">🤖 شات الذكاء الاصطناعي</button>
                 </nav>
 
                 <div style="display:flex; flex-direction:column; gap:25px;">
@@ -1448,6 +1571,26 @@ app.get('/', (req, res) => {
                         <div class="monitor-messages-list" id="monitorMessagesList"></div>
                     </div>
                 </div>
+
+                <div class="grid panel" data-panel="aichat">
+                    <div class="card">
+                        <h3>🤖 شات الذكاء الاصطناعي</h3>
+                        <p style="color:var(--text-sub); font-size:0.85rem; margin-bottom:14px;">
+                            يتحدث النموذج معك عبر Hugging Face Spaces السحابي — مجاناً وبدون حدود، وبدون استهلاك لرام السيرفر.
+                            <span style="color:var(--gold);">HF_SPACE_URL</span> مطلوب في متغيرات ريلواي.
+                        </p>
+                        <div class="ai-chat-wrap">
+                            <div class="ai-chat-box" id="aiChatBox">
+                                <div class="ai-msg system">✨ مرحباً! أنا مساعدك الذكي. اكتب رسالتك بالأسفل وابدأ المحادثة.</div>
+                            </div>
+                            <div class="ai-chat-input-row">
+                                <textarea id="aiInput" placeholder="اكتب رسالتك هنا... (يدعم النصوص حالياً، والصور قريباً)" rows="2"></textarea>
+                                <button type="button" class="ai-send-btn" onclick="sendAIChat()">📤 إرسال</button>
+                            </div>
+                            <div class="ai-chat-hint">اضغط <kbd>Enter</kbd> للإرسال · <kbd>Shift + Enter</kbd> لسطر جديد</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <script>
@@ -1500,8 +1643,69 @@ app.get('/', (req, res) => {
                     }).catch(() => {});
                 }
 
-                setInterval(refreshState, 300);
+                setInterval(refreshState, 3000);
                 refreshState();
+
+                function sendAIChat() {
+                    const input = document.getElementById('aiInput');
+                    const sendBtn = document.querySelector('.ai-send-btn');
+                    if (!input || !input.value.trim()) return;
+
+                    const msg = input.value.trim();
+                    appendMessage('user', msg);
+                    input.value = '';
+                    input.style.height = 'auto';
+
+                    if (sendBtn) {
+                        sendBtn.disabled = true;
+                        sendBtn.textContent = '⏳ جاري التفكير...';
+                    }
+
+                    fetch('/api/ai-chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: msg })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            appendMessage('ai', data.reply);
+                        } else {
+                            appendMessage('error', data.message);
+                        }
+                    })
+                    .catch(() => appendMessage('error', '❌ فشل الاتصال بخادم اللوحة الداخلي'))
+                    .finally(() => {
+                        if (sendBtn) {
+                            sendBtn.disabled = false;
+                            sendBtn.textContent = '📤 إرسال';
+                        }
+                    });
+                }
+
+                function appendMessage(sender, text) {
+                    const box = document.getElementById('aiChatBox');
+                    if (!box) return;
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'ai-msg ' + sender;
+                    msgDiv.textContent = text;
+                    box.appendChild(msgDiv);
+                    box.scrollTop = box.scrollHeight;
+                }
+
+                const aiInputEl = document.getElementById('aiInput');
+                if (aiInputEl) {
+                    aiInputEl.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            sendAIChat();
+                        }
+                    });
+                    aiInputEl.addEventListener('input', function() {
+                        this.style.height = 'auto';
+                        this.style.height = Math.min(this.scrollHeight, 140) + 'px';
+                    });
+                }
                 document.querySelectorAll('[data-panel-target]').forEach(button => {
                     button.addEventListener('click', function(event) {
                         event.preventDefault();
@@ -1937,6 +2141,41 @@ app.post('/api/delete-messages', async (req, res) => {
     });
 
     res.json(result || { success: false, message: '⚠️ لم يتم حذف الرسائل' });
+});
+
+app.post('/api/ai-chat', express.json({ limit: '10mb' }), async (req, res) => {
+    const { message, image } = req.body;
+    if (!message) return res.json({ success: false, message: '⚠️ الرسالة فارغة' });
+
+    const hfSpaceUrl = process.env.HF_SPACE_URL;
+    if (!hfSpaceUrl) {
+        return res.json({ success: false, message: '⚠️ لم يتم تعيين رابط الـ HF_SPACE_URL في إعدادات ريلواي بعد' });
+    }
+
+    try {
+        const cleanUrl = hfSpaceUrl.endsWith('/') ? hfSpaceUrl.slice(0, -1) : hfSpaceUrl;
+
+        const response = await fetch(`${cleanUrl}/api/predict`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                data: [message, image || null]
+            }),
+            signal: AbortSignal.timeout(60000)
+        });
+
+        if (!response.ok) throw new Error(`خطأ من السيرفر: ${response.status}`);
+
+        const data = await response.json();
+        if (data && data.data && data.data[0]) {
+            res.json({ success: true, reply: data.data[0] });
+        } else {
+            res.json({ success: false, message: '❌ لم يرسل سيرفر Hugging Face استجابة مفهومة' });
+        }
+    } catch (e) {
+        console.error("❌ خطأ اتصال بسيرفر الـ AI الخارجي:", e);
+        res.json({ success: false, message: '❌ فشل الاتصال بالسيرفر السحابي للـ AI أو انتهت مهلة الطلب' });
+    }
 });
 
 app.listen(port, () => {
