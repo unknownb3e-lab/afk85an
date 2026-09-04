@@ -22,4 +22,5 @@ EXPOSE 8080
 EXPOSE 11434
 
 # 8. تشغيل أولاما بالخلفية، سحب الموديل مجاناً، ثم تشغيل الموقع عبر باقة السيرفر
-CMD ["sh", "-c", "ollama serve & sleep 5 && ollama pull qwen2.5-coder:1.5b && npm start"]
+CMD ["sh", "-c", "ollama serve & sleep 5 && ollama pull qwen2.5-coder:0.5b && npm start"]
+

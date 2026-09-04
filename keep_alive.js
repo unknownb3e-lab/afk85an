@@ -2110,7 +2110,7 @@ app.post('/api/ai-chat', express.json(), async (req, res) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                model: 'qwen2.5-coder:1.5b',
+                model: 'qwen2.5-coder:0.5b',
                 messages: [{ role: 'user', content: String(message) }],
                 stream: false
             }),
