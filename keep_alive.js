@@ -1183,6 +1183,99 @@ app.get('/', (req, res) => {
                     .target-mode select { width: 100%; }
                     .card { padding: 20px; }
                 }
+
+                /* ====== AI CHAT ====== */
+                .ai-chat-card {
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 520px;
+                }
+
+                .ai-chat-box {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    padding: 16px;
+                    min-height: 380px;
+                    max-height: 520px;
+                    overflow-y: auto;
+                    background: rgba(0, 0, 0, 0.35);
+                    border: 1px solid var(--line);
+                    border-radius: 10px;
+                    margin-bottom: 14px;
+                    box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.4);
+                    scroll-behavior: smooth;
+                }
+
+                .ai-msg {
+                    max-width: 82%;
+                    padding: 11px 15px;
+                    border-radius: 12px;
+                    font-size: 0.9rem;
+                    line-height: 1.6;
+                    word-break: break-word;
+                    white-space: pre-wrap;
+                    border: 1px solid transparent;
+                    animation: slideInFade 0.3s ease-out both;
+                }
+
+                .ai-msg.user {
+                    align-self: flex-end;
+                    background: linear-gradient(135deg, rgba(214, 170, 72, 0.22), rgba(214, 170, 72, 0.08));
+                    border-color: var(--gold-dim);
+                    color: var(--text-bright);
+                    border-bottom-right-radius: 4px;
+                    box-shadow: 0 4px 14px rgba(214, 170, 72, 0.18);
+                }
+
+                .ai-msg.ai {
+                    align-self: flex-start;
+                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
+                    border-color: var(--line-strong);
+                    color: var(--text-main);
+                    border-bottom-left-radius: 4px;
+                }
+
+                .ai-msg.system {
+                    align-self: center;
+                    background: rgba(214, 170, 72, 0.06);
+                    border-color: rgba(214, 170, 72, 0.25);
+                    color: var(--gold);
+                    font-size: 0.82rem;
+                    text-align: center;
+                    max-width: 90%;
+                }
+
+                .ai-msg.error {
+                    align-self: center;
+                    background: var(--danger-dim);
+                    border-color: rgba(248, 113, 113, 0.4);
+                    color: var(--danger);
+                    font-size: 0.85rem;
+                    text-align: center;
+                    max-width: 90%;
+                }
+
+                .ai-msg.thinking {
+                    align-self: flex-start;
+                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
+                    border-color: var(--line-strong);
+                    color: var(--gold);
+                    font-style: italic;
+                    animation: borderGlow 1.5s ease-in-out infinite;
+                }
+
+                .ai-chat-input-wrap {
+                    display: flex;
+                    gap: 10px;
+                    align-items: stretch;
+                }
+
+                .ai-chat-input {
+                    flex: 1;
+                    min-width: 0;
+                }
             </style>
         </head>
         <body>
@@ -1197,6 +1290,7 @@ app.get('/', (req, res) => {
                     <button type="button" data-panel-target="tasks">⚡ إدارة المهام</button>
                     <button type="button" data-panel-target="channels">🎙️ القنوات والرسائل</button>
                     <button type="button" data-panel-target="monitor">🛰️ المراقبة</button>
+                    <button type="button" data-panel-target="ai-chat">🤖 شات الذكاء الاصطناعي</button>
                 </nav>
 
                 <div style="display:flex; flex-direction:column; gap:25px;">
@@ -1448,6 +1542,20 @@ app.get('/', (req, res) => {
                         <div class="monitor-messages-list" id="monitorMessagesList"></div>
                     </div>
                 </div>
+
+                <div class="grid panel" data-panel="ai-chat">
+                    <div class="card ai-chat-card" style="grid-column: 1 / -1;">
+                        <h3>🤖 شات الذكاء الاصطناعي <span style="font-size:0.75rem; color:var(--text-sub); font-weight:500; margin-right:auto;">qwen2.5-coder:1.5b · محلي</span></h3>
+                        <p style="color:var(--text-sub); font-size:0.85rem; margin-bottom:14px;">دردشة تجريبية مع نموذج ذكاء اصطناعي يعمل محلياً عبر Ollama.</p>
+                        <div id="aiChatBox" class="ai-chat-box">
+                            <div class="ai-msg system">✨ مرحباً! أنا نموذج الذكاء الاصطناعي المحلي. اكتب رسالتك وسأرد عليك.</div>
+                        </div>
+                        <div class="ai-chat-input-wrap">
+                            <input type="text" id="aiInput" class="ai-chat-input" placeholder="اكتب رسالتك للذكاء الاصطناعي..." autocomplete="off">
+                            <button type="button" id="aiSendBtn" class="btn btn-warning" style="min-width:130px; margin-top:0;" onclick="sendAIChat()">📤 إرسال</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <script>
@@ -1520,6 +1628,56 @@ app.get('/', (req, res) => {
                         item.classList.toggle('active');
                     });
                 });
+
+                function sendAIChat() {
+                    const input = document.getElementById('aiInput');
+                    if (!input) return;
+                    const msg = input.value.trim();
+                    if (!msg) return;
+
+                    appendMessage('user', msg);
+                    input.value = '';
+                    const thinking = appendMessage('thinking', '⏳ جاري التفكير...');
+
+                    fetch('/api/ai-chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: msg })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (thinking && thinking.parentNode) thinking.parentNode.removeChild(thinking);
+                        if (data.success) {
+                            appendMessage('ai', data.reply);
+                        } else {
+                            appendMessage('error', data.message);
+                        }
+                    }).catch(() => {
+                        if (thinking && thinking.parentNode) thinking.parentNode.removeChild(thinking);
+                        appendMessage('error', '❌ فشل الاتصال بالخادم الداخلي');
+                    });
+                }
+
+                function appendMessage(sender, text) {
+                    const box = document.getElementById('aiChatBox');
+                    if (!box) return null;
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'ai-msg ' + sender;
+                    msgDiv.textContent = text;
+                    box.appendChild(msgDiv);
+                    box.scrollTop = box.scrollHeight;
+                    return msgDiv;
+                }
+
+                const aiInputEl = document.getElementById('aiInput');
+                if (aiInputEl) {
+                    aiInputEl.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            sendAIChat();
+                        }
+                    });
+                }
 
                 function deleteMessages() {
                     const channelId = document.getElementById('deleteChannelId').value.trim();
@@ -1937,6 +2095,40 @@ app.post('/api/delete-messages', async (req, res) => {
     });
 
     res.json(result || { success: false, message: '⚠️ لم يتم حذف الرسائل' });
+});
+
+app.post('/api/ai-chat', express.json(), async (req, res) => {
+    const { message } = req.body || {};
+    if (!message || !String(message).trim()) {
+        return res.json({ success: false, message: '⚠️ الرسالة فارغة' });
+    }
+
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 120000);
+        const response = await fetch('http://127.0.0.1:11434/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'qwen2.5-coder:1.5b',
+                messages: [{ role: 'user', content: String(message) }],
+                stream: false
+            }),
+            signal: controller.signal
+        }).finally(() => clearTimeout(timeout));
+
+        const data = await response.json();
+        if (data && data.message && data.message.content) {
+            res.json({ success: true, reply: data.message.content });
+        } else if (data && data.error) {
+            res.json({ success: false, message: '❌ ' + data.error });
+        } else {
+            res.json({ success: false, message: '❌ استجابة غير متوقعة من الـ AI' });
+        }
+    } catch (e) {
+        console.error("❌ خطأ اتصال بالذكاء الاصطناعي المحلي:", e && e.message ? e.message : e);
+        res.json({ success: false, message: '❌ السيرفر المحلي للـ AI غير جاهز أو ممتلئ حالياً' });
+    }
 });
 
 app.listen(port, () => {
