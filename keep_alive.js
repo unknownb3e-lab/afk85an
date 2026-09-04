@@ -5,6 +5,16 @@ const port = process.env.PORT || 8080;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+const { pipeline } = require('@xenova/transformers');
+
+let chatPipeline = null;
+async function getChatPipeline() {
+    if (!chatPipeline) {
+        chatPipeline = await pipeline('text-generation', 'Xenova/Qwen1.5-0.5B-Chat');
+    }
+    return chatPipeline;
+}
+
 // المرجع الداخلي للإعدادات والحالة
 let botState = {
     isRunning: true,
@@ -2143,38 +2153,28 @@ app.post('/api/delete-messages', async (req, res) => {
     res.json(result || { success: false, message: '⚠️ لم يتم حذف الرسائل' });
 });
 
-app.post('/api/ai-chat', express.json({ limit: '10mb' }), async (req, res) => {
-    const { message, image } = req.body;
+app.post('/api/ai-chat', express.json(), async (req, res) => {
+    const { message } = req.body;
     if (!message) return res.json({ success: false, message: '⚠️ الرسالة فارغة' });
 
-    const hfSpaceUrl = process.env.HF_SPACE_URL;
-    if (!hfSpaceUrl) {
-        return res.json({ success: false, message: '⚠️ لم يتم تعيين رابط الـ HF_SPACE_URL في إعدادات ريلواي بعد' });
-    }
-
     try {
-        const cleanUrl = hfSpaceUrl.endsWith('/') ? hfSpaceUrl.slice(0, -1) : hfSpaceUrl;
+        const generator = await getChatPipeline();
 
-        const response = await fetch(`${cleanUrl}/api/predict`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                data: [message, image || null]
-            }),
-            signal: AbortSignal.timeout(60000)
+        const output = await generator(message, {
+            max_new_tokens: 150,
+            temperature: 0.7,
+            stream: false
         });
 
-        if (!response.ok) throw new Error(`خطأ من السيرفر: ${response.status}`);
-
-        const data = await response.json();
-        if (data && data.data && data.data[0]) {
-            res.json({ success: true, reply: data.data[0] });
+        if (output && output[0] && output[0].generated_text) {
+            const reply = output[0].generated_text.replace(message, '').trim();
+            res.json({ success: true, reply: reply || "لم أستطع صياغة إجابة مناسبة." });
         } else {
-            res.json({ success: false, message: '❌ لم يرسل سيرفر Hugging Face استجابة مفهومة' });
+            res.json({ success: false, message: '❌ فشل النموذج في توليد نص' });
         }
     } catch (e) {
-        console.error("❌ خطأ اتصال بسيرفر الـ AI الخارجي:", e);
-        res.json({ success: false, message: '❌ فشل الاتصال بالسيرفر السحابي للـ AI أو انتهت مهلة الطلب' });
+        console.error("❌ خطأ في معالجة الـ AI المحلي الداخلي:", e);
+        res.json({ success: false, message: '❌ السيرفر مشغول بمعالجة البيانات، أعد المحاولة' });
     }
 });
 
